@@ -82,6 +82,7 @@ fun KaalaKolamApp(
     onValidateBackup: (String) -> AppState?,
     onRestore: (AppState) -> Unit,
     onReset: () -> Unit,
+    initialRoute: String = Destination.HOME.route,
 ) {
     val navController = rememberNavController()
     val entry by navController.currentBackStackEntryAsState()
@@ -144,7 +145,7 @@ fun KaalaKolamApp(
         ) { padding ->
             NavHost(
                 navController = navController,
-                startDestination = Destination.HOME.route,
+                startDestination = initialRoute,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding),

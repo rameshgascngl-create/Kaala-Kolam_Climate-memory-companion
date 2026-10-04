@@ -1,4 +1,4 @@
-name: Signed release bundle
+name: Signed candidate gate
 
 on:
   push:
@@ -10,10 +10,22 @@ permissions:
   contents: read
 
 jobs:
-  signed-release:
+  signed-candidate:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Enforce visual-completion gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -Eq '\| \*\*(PARTIAL|PLACEHOLDER)\*\* \|' docs/build-status.md; then
+            echo "::error::Signed candidate blocked: docs/build-status.md still contains PARTIAL or PLACEHOLDER screen rows."
+            exit 1
+          fi
+
       - name: Check signing configuration
         id: signing
         shell: bash
@@ -40,16 +52,12 @@ jobs:
             echo "configured=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Check out source
-        if: steps.signing.outputs.configured == 'true'
-        uses: actions/checkout@v5
-
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         if: steps.signing.outputs.configured == 'true'
         uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
 
       - name: Validate Gradle wrapper
         if: steps.signing.outputs.configured == 'true'
@@ -59,7 +67,7 @@ jobs:
         if: steps.signing.outputs.configured == 'true'
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Restore release keystore
+      - name: Restore signing keystore
         if: steps.signing.outputs.configured == 'true'
         shell: bash
         env:
@@ -72,7 +80,7 @@ jobs:
           chmod 600 "$key_path"
           echo "KK_STORE_FILE=$key_path" >> "$GITHUB_ENV"
 
-      - name: Build signed release bundle
+      - name: Build signed candidate bundle
         if: steps.signing.outputs.configured == 'true'
         env:
           KK_STORE_PASSWORD: ${{ secrets.KK_STORE_PASSWORD }}
@@ -80,15 +88,15 @@ jobs:
           KK_KEY_PASSWORD: ${{ secrets.KK_KEY_PASSWORD }}
         run: ./gradlew --no-daemon lintRelease bundleRelease
 
-      - name: Upload release bundle
+      - name: Upload signed candidate bundle
         if: steps.signing.outputs.configured == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: KaalaKolam-native-v2-release-aab
+          name: KaalaKolam-native-v2-signed-candidate-aab
           path: app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: error
 
-      - name: Report unsigned release state
+      - name: Report unsigned candidate state
         if: steps.signing.outputs.configured != 'true'
         run: |
-          echo "::notice::Signed release was skipped because one or more KK_* signing secrets are not configured."
+          echo "::notice::Signed candidate was skipped because one or more KK_* signing secrets are not configured."
