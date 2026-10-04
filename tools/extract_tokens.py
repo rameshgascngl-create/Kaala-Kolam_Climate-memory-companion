@@ -107,6 +107,8 @@ def render(html: str) -> str:
 // Source generator: tools/extract_tokens.py. Do not introduce Material tonal substitutes here.
 package edu.gascnagercoil.kaalakolam.ui.theme
 
+import android.graphics.Paint
+import android.graphics.Typeface
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -117,13 +119,17 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import edu.gascnagercoil.kaalakolam.R
 import edu.gascnagercoil.kaalakolam.domain.ThemeMode
 
 data class PrototypePalette(
@@ -176,18 +182,38 @@ private fun scheme(p: PrototypePalette, dark: Boolean) =
         error=p.vermilion, onError=Color.White, scrim=Color(0xFF000000),
     )
 
-private val PrototypeTypography = Typography(
-    headlineLarge=TextStyle(fontFamily=FontFamily.Serif,fontWeight=FontWeight.SemiBold,fontSize=30.4.sp,lineHeight=36.48.sp),
-    headlineMedium=TextStyle(fontFamily=FontFamily.Serif,fontWeight=FontWeight.SemiBold,fontSize=21.6.sp,lineHeight=25.92.sp),
-    headlineSmall=TextStyle(fontFamily=FontFamily.Serif,fontWeight=FontWeight.SemiBold,fontSize=17.28.sp,lineHeight=20.74.sp),
-    titleLarge=TextStyle(fontFamily=FontFamily.Serif,fontWeight=FontWeight.SemiBold,fontSize=18.4.sp,lineHeight=22.08.sp),
-    titleMedium=TextStyle(fontFamily=FontFamily.Serif,fontWeight=FontWeight.SemiBold,fontSize=17.28.sp,lineHeight=20.74.sp),
-    bodyLarge=TextStyle(fontFamily=FontFamily.SansSerif,fontSize=16.sp,lineHeight=24.8.sp),
-    bodyMedium=TextStyle(fontFamily=FontFamily.SansSerif,fontSize=14.4.sp,lineHeight=22.32.sp),
-    bodySmall=TextStyle(fontFamily=FontFamily.SansSerif,fontSize=12.8.sp,lineHeight=19.84.sp),
-    labelMedium=TextStyle(fontFamily=FontFamily.SansSerif,fontSize=12.48.sp,lineHeight=16.sp),
-    labelSmall=TextStyle(fontFamily=FontFamily.SansSerif,fontSize=12.sp,lineHeight=14.4.sp),
-)
+private val BundledTamilFont = FontFamily(Font(R.font.noto_sans_tamil))
+private const val TamilGlyphProbe = "ஃஅஆஇஈஉஊஎஏஐஒஓஔகஙசஜஞடணதநனபமயரறலளழவஷஸஹாிீுூெேைொோௌ்ௗ"
+
+private fun systemSansHasTamilCoverage(): Boolean {{
+    val paint = Paint().apply {{
+        typeface = Typeface.create("sans-serif", Typeface.NORMAL)
+    }}
+    return TamilGlyphProbe.codePoints().allMatch {{ codePoint ->
+        paint.hasGlyph(String(Character.toChars(codePoint)))
+    }}
+}}
+
+@Composable
+private fun prototypeTypography(): Typography {{
+    val isTamil = LocalConfiguration.current.locales[0].language == "ta"
+    val bodyFamily = remember(isTamil) {{
+        if (isTamil && !systemSansHasTamilCoverage()) BundledTamilFont else FontFamily.SansSerif
+    }}
+    val displayFamily = if (isTamil) bodyFamily else FontFamily.Serif
+    return Typography(
+        headlineLarge=TextStyle(fontFamily=displayFamily,fontWeight=FontWeight.SemiBold,fontSize=30.4.sp,lineHeight=36.48.sp),
+        headlineMedium=TextStyle(fontFamily=displayFamily,fontWeight=FontWeight.SemiBold,fontSize=21.6.sp,lineHeight=25.92.sp),
+        headlineSmall=TextStyle(fontFamily=displayFamily,fontWeight=FontWeight.SemiBold,fontSize=17.28.sp,lineHeight=20.74.sp),
+        titleLarge=TextStyle(fontFamily=displayFamily,fontWeight=FontWeight.SemiBold,fontSize=18.4.sp,lineHeight=22.08.sp),
+        titleMedium=TextStyle(fontFamily=displayFamily,fontWeight=FontWeight.SemiBold,fontSize=17.28.sp,lineHeight=20.74.sp),
+        bodyLarge=TextStyle(fontFamily=bodyFamily,fontSize=16.sp,lineHeight=24.8.sp),
+        bodyMedium=TextStyle(fontFamily=bodyFamily,fontSize=14.4.sp,lineHeight=22.32.sp),
+        bodySmall=TextStyle(fontFamily=bodyFamily,fontSize=12.8.sp,lineHeight=19.84.sp),
+        labelMedium=TextStyle(fontFamily=bodyFamily,fontSize=12.48.sp,lineHeight=16.sp),
+        labelSmall=TextStyle(fontFamily=bodyFamily,fontSize=12.sp,lineHeight=14.4.sp),
+    )
+}}
 private val PrototypeShapes = Shapes(
     extraSmall=RoundedCornerShape(4.dp), small=RoundedCornerShape(10.dp),
     medium=RoundedCornerShape(12.dp), large=RoundedCornerShape(14.dp), extraLarge=RoundedCornerShape(14.dp),
@@ -198,7 +224,7 @@ fun KaalaKolamTheme(themeMode: ThemeMode, content: @Composable () -> Unit) {{
     val dark = when(themeMode) {{ ThemeMode.SYSTEM -> isSystemInDarkTheme(); ThemeMode.LIGHT -> false; ThemeMode.DARK -> true }}
     val palette = if (dark) PrototypeTokens.Dark else PrototypeTokens.Light
     CompositionLocalProvider(LocalPrototypePalette provides palette) {{
-        MaterialTheme(colorScheme=scheme(palette,dark), typography=PrototypeTypography, shapes=PrototypeShapes, content=content)
+        MaterialTheme(colorScheme=scheme(palette,dark), typography=prototypeTypography(), shapes=PrototypeShapes, content=content)
     }}
 }}
 """

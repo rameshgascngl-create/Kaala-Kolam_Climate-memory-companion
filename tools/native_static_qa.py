@@ -155,6 +155,11 @@ if content_tamil.returncode:
     fail(content_tamil.stdout + content_tamil.stderr)
 print(content_tamil.stdout.strip())
 
+font_coverage = subprocess.run([sys.executable, str(ROOT / "tools" / "test_font_coverage.py")], text=True, capture_output=True)
+if font_coverage.returncode:
+    fail(font_coverage.stdout + font_coverage.stderr)
+print(font_coverage.stdout.strip())
+
 typography = subprocess.run([sys.executable, str(ROOT / "tools" / "test_tamil_typography.py")], text=True, capture_output=True)
 if typography.returncode:
     fail(typography.stdout + typography.stderr)

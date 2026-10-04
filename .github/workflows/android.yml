@@ -36,6 +36,9 @@ jobs:
       - name: Verify generated content policy
         run: python3 tools/test_content_asset.py
 
+      - name: Install Tamil font QA dependency
+        run: python3 -m pip install --disable-pip-version-check fonttools==4.60.1
+
       - name: Run native static QA
         run: python3 tools/native_static_qa.py
 
