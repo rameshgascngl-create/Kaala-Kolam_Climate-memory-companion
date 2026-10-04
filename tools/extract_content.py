@@ -70,12 +70,14 @@ def validate_bilingual(value: Any, path: str = "$") -> list[str]:
         if "en" in value or "ta" in value:
             en = value.get("en")
             ta = value.get("ta")
+
             def present(v: Any) -> bool:
                 if isinstance(v, str):
                     return bool(v.strip())
                 if isinstance(v, (list, dict)):
                     return len(v) > 0
                 return v is not None
+
             if not present(en):
                 errors.append(f"{path}: empty/missing English field")
             if not present(ta):
@@ -110,6 +112,7 @@ def main() -> int:
     ap.add_argument("output_dir", type=Path)
     ap.add_argument("--source-label", default="v1.0 audited HTML")
     ap.add_argument("--expected-sha256")
+    ap.add_argument("--chromium-executable", type=Path)
     args = ap.parse_args()
 
     raw = args.html.read_bytes()
@@ -127,7 +130,12 @@ def main() -> int:
     instrumented = text.replace(marker, TABLE_EXPOSURE + "\n})();", 1)
 
     with sync_playwright() as p:
-        browser = p.chromium.launch(executable_path="/usr/bin/chromium", headless=True, args=["--no-sandbox"])
+        launch_args: dict[str, Any] = {"headless": True, "args": ["--no-sandbox"]}
+        if args.chromium_executable is not None:
+            launch_args["executable_path"] = str(args.chromium_executable)
+        elif Path("/usr/bin/chromium").exists():
+            launch_args["executable_path"] = "/usr/bin/chromium"
+        browser = p.chromium.launch(**launch_args)
         context = browser.new_context(offline=True, java_script_enabled=True)
         page = context.new_page()
         page.route("**/*", lambda route: route.abort())
