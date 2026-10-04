@@ -11,6 +11,28 @@ THEME = JAVA / "edu/gascnagercoil/kaalakolam/ui/theme/Theme.kt"
 def fail(message: str) -> None:
     raise SystemExit("TAMIL_TYPOGRAPHY_FAIL: " + message)
 
+def call_block(lines: list[str], start: int) -> str:
+    """Return only the balanced Kotlin call that starts on the Text( line."""
+    block: list[str] = []
+    depth = 0
+    started = False
+    for line in lines[start:]:
+        block.append(line)
+        # Parentheses inside quoted strings are irrelevant to call structure.
+        structural = re.sub(r'"(?:\\.|[^"\\])*"', '""', line)
+        if not started:
+            marker = structural.find("Text(")
+            if marker < 0:
+                marker = structural.find("Text (")
+            if marker >= 0:
+                structural = structural[marker:]
+                started = True
+        if started:
+            depth += structural.count("(") - structural.count(")")
+            if depth <= 0:
+                break
+    return "\n".join(block)
+
 sources = {
     path: path.read_text(encoding="utf-8")
     for path in sorted(JAVA.rglob("*.kt"))
@@ -27,12 +49,12 @@ for path, text in sources.items():
             fail(f"{path}: non-zero letter spacing {value}")
 
 # Fixed heights are permitted for drawing canvases; reject a fixed-height modifier
-# in the immediate Text call block.
+# only when it belongs to the balanced Text(...) call itself.
 for path, text in sources.items():
     lines = text.splitlines()
     for index, line in enumerate(lines):
         if re.search(r"\bText\s*\(", line):
-            block = "\n".join(lines[index:index + 18])
+            block = call_block(lines, index)
             if re.search(r"Modifier[\s\S]*?\.height\(", block):
                 fail(f"{path}:{index+1}: fixed-height Text container")
 
