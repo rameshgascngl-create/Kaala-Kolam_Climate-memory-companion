@@ -1,3 +1,4 @@
 # Exact source exceptions for non-visible/collection operations.
 # Format: relative-path | literal | reason
-app/src/main/java/edu/gascnagercoil/kaalakolam/domain/AppState.kt | .take(256) | caps a sequence collection, never truncates visible text
+app/src/main/java/edu/gascnagercoil/kaalakolam/domain/AppState.kt | .take( | caps sequence collections, never truncates visible text
+app/src/main/java/edu/gascnagercoil/kaalakolam/domain/BackupCodec.kt | .lowercase( | normalises an ASCII hexadecimal backup checksum, never visible/localised prose
