@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "status": "DRAFT",
+  "notice": "UI Tamil changed in T2 remains owner-unreviewed.",
+  "entries": [
+    {
+      "resource": "about_purpose",
+      "value": "காலக்கோலம் முழுமையாக இணையமின்றி இயங்கும் இருமொழிக் காலநிலை கல்விச் செயலி. கற்றல், நினைவு நேர்காணல்கள், வகுப்பு ஒப்பீடு, ஊர்சபை முடிவுகள், கணிப்பு நம்பகத்தன்மைப் பயிற்சி ஆகியவற்றுக்கு இது பயன்படுகிறது.",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "resource": "about_sources",
+      "value": "செயலியில் பயன்படுத்தப்படும் அறிவியல் படங்கள், அளவுவரம்புகள், ஆதாரங்கள் ஆகியவை இத்திரையில் பெயருடன் வழங்கப்பட வேண்டும்.",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "resource": "contact_placeholder",
+      "value": "வெளியீட்டுக்கு முன் தொடர்பு விவரங்கள் சேர்க்கப்படும்.",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "resource": "content_review_note",
+      "value": "இந்தத் திரையில் உள்ள தமிழ் உரை உரிமையாளர் ஆய்வுக்காக இன்னும் வரைவு நிலையில் உள்ளது.",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    }
+  ]
+}

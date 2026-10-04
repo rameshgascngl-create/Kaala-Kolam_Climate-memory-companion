@@ -1,0 +1,25 @@
+# Kaala Kolam Tamil-mode Latin allow-list.
+# One exact token or exact visible string per line. Tests load this file directly.
+IPCC
+AR6
+SR1.5
+IMD
+MoES
+NOAA
+WMO
+UNEP
+ENSO
+ITCZ
+SPI
+SPEI
+ONI
+CO₂
+ppm
+°C
+K
+W/m²
+µm
+KK1
+KP1
+KB1
+Department of Zoology, GASC, Nagercoil / Created by R. Ramesh

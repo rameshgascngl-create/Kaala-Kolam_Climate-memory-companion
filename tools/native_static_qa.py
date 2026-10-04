@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -97,15 +98,15 @@ for literal, label in required_gradle.items():
         fail(f"{label} configuration missing")
 
 gaps = json.loads((CONTENT / "gaps.json").read_text(encoding="utf-8"))
-if gaps.get("count") != 77:
-    fail(f"gaps count is {gaps.get('count')!r}, expected 77")
+if gaps.get("count") != 0:
+    fail(f"gaps count is {gaps.get('count')!r}, expected 0")
 if gaps.get("uiLabel") != "English only":
     fail("gaps uiLabel must be exactly 'English only'")
 expected_kinds = {
-    "deepDive": 24,
-    "councilDescription": 7,
-    "eldersCrossCheck": 30,
-    "predictExplanation": 16,
+    "deepDive": 0,
+    "councilDescription": 0,
+    "eldersCrossCheck": 0,
+    "predictExplanation": 0,
 }
 if gaps.get("countsByKind") != expected_kinds:
     fail(f"unexpected gap kind counts: {gaps.get('countsByKind')!r}")
@@ -147,8 +148,12 @@ print("PASS: allowBackup=false and cleartext disabled")
 print("PASS: no android.webkit/WebView/WebViewAssetLoader runtime code")
 print("PASS: no HTML or JavaScript under app/src/main")
 print("PASS: Android identifiers and release shrinker configuration")
-print("PASS: gaps.json has 77 entries and exact 'English only' UI contract")
+print("PASS: gaps.json has zero untranslated long-form entries; future-gap chip contract retained")
 print("PASS: all four gap kinds are wired and each item renders manifest.uiLabel")
-print("PASS: EN/TA native string key parity")
+parity = subprocess.run([sys.executable, str(ROOT / "tools" / "test_string_parity.py")], text=True, capture_output=True)
+if parity.returncode:
+    fail(parity.stdout + parity.stderr)
+print(parity.stdout.strip())
+print("PASS: EN/TA native string parity, placeholders and translation policy")
 print("PASS: dependency groups limited to AndroidX, kotlinx and JUnit")
 print("NATIVE_STATIC_QA_PASS")

@@ -10,7 +10,7 @@
     <string name="nav_predict">கணிப்பு</string>
     <string name="nav_more">மேலும்</string>
     <string name="about">பற்றி</string>
-    <string name="language_toggle">English</string>
+    <string name="language_toggle">EN</string>
     <string name="theme">தோற்றம்</string>
     <string name="theme_system">கணினி அமைப்பு</string>
     <string name="theme_light">ஒளி</string>
@@ -18,16 +18,16 @@
     <string name="home_title">காலநிலை நினைவுகள், சான்றுகள், முடிவுகள்</string>
     <string name="home_body">மூத்தோரிடம் கேளுங்கள். சான்றைச் சோதியுங்கள். இணைந்து முடிவெடுங்கள்.</string>
     <string name="about_purpose_title">நோக்கம்</string>
-    <string name="about_purpose">காலக்கோலம் முழுமையாக இணையமின்றி இயங்கும் இருமொழிக் காலநிலை கல்விச் செயலி.</string>
+    <string name="about_purpose">காலக்கோலம் முழுமையாக இணையமின்றி இயங்கும் இருமொழிக் காலநிலை கல்விச் செயலி. கற்றல், நினைவு நேர்காணல்கள், வகுப்பு ஒப்பீடு, ஊர்சபை முடிவுகள், கணிப்பு நம்பகத்தன்மைப் பயிற்சி ஆகியவற்றுக்கு இது பயன்படுகிறது.</string>
     <string name="about_storage_title">இந்தச் சாதனத்தில் சேமிக்கப்படுவது</string>
     <string name="about_storage">செயலி முன்னேற்றமும் பதிவுகளும் இந்தச் சாதனத்தில் மட்டுமே சேமிக்கப்படும். எதுவும் வெளியே அனுப்பப்படாது.</string>
     <string name="about_version">பதிப்பு 2.0.0</string>
     <string name="about_credit">Department of Zoology, GASC, Nagercoil / Created by R. Ramesh</string>
     <string name="about_sources_title">ஆதாரங்கள்</string>
-    <string name="about_sources">M1 நிலையில் அறிவியல் படங்கள் காட்டப்படவில்லை. பின்னர் சேர்க்கப்படும் ஒவ்வொரு படத்திற்கும் பெயரிட்ட ஆதாரம் இத்திரையில் வழங்கப்பட வேண்டும்.</string>
+    <string name="about_sources">செயலியில் பயன்படுத்தப்படும் அறிவியல் படங்கள், அளவுவரம்புகள், ஆதாரங்கள் ஆகியவை இத்திரையில் பெயருடன் வழங்கப்பட வேண்டும்.</string>
     <string name="about_limits_title">வரம்புகள்</string>
     <string name="about_limits">ஊர்சபை ஒரு எளிமைப்படுத்தப்பட்ட மாதிரி. அனுபவச் சாட்சி ஒரு அளவீடு அல்ல. தமிழ் மனித ஆய்வில் உள்ளது.</string>
-    <string name="contact_placeholder">CONTACT PLACEHOLDER — வெளியீட்டுக்கு முன் மாற்றவும்</string>
+    <string name="contact_placeholder">வெளியீட்டுக்கு முன் தொடர்பு விவரங்கள் சேர்க்கப்படும்.</string>
     <string name="reset_data">தரவை மீட்டமை</string>
     <string name="reset_confirm_title">அனைத்து செயலித் தரவையும் மீட்டமைக்கவா?</string>
     <string name="reset_confirm_body">இந்தச் சாதனத்தில் சேமிக்கப்பட்ட காலக்கோலம் நிலை நீக்கப்படும்.</string>
@@ -41,5 +41,5 @@
     <string name="restore_confirm_title">தற்போதைய தரவை மாற்றவா?</string>
     <string name="restore_confirm_body">சரிபார்க்கப்பட்ட காப்புப் பிரதி தற்போதைய உள்ளூர் நிலையை மாற்றும்.</string>
     <string name="backup_explanation">காப்புப் பிரதி குறியீட்டில் உங்கள் உள்ளூர் செயலி நிலை இருக்கும். தனிப்பட்ட தகவல் இருந்தால் அதை பாதுகாப்பாக வைத்திருங்கள்.</string>
-    <string name="content_review_note">கீழே “English only” எனக் குறிக்கப்பட்ட புலங்களுக்கான தமிழ் இன்னும் அங்கீகரிக்கப்படவில்லை.</string>
+    <string name="content_review_note">இந்தத் திரையில் உள்ள தமிழ் உரை உரிமையாளர் ஆய்வுக்காக இன்னும் வரைவு நிலையில் உள்ளது.</string>
 </resources>

@@ -76,6 +76,12 @@ android {
     testOptions {
         unitTests.isReturnDefaultValues = true
     }
+
+    lint {
+        abortOnError = true
+        checkReleaseBuilds = true
+        fatal += "MissingTranslation"
+    }
 }
 
 tasks.withType<org.gradle.api.tasks.testing.Test>().configureEach {

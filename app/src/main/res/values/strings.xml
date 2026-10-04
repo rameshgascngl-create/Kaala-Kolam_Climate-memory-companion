@@ -23,10 +23,10 @@
     <string name="about_version">Version 2.0.0</string>
     <string name="about_credit">Department of Zoology, GASC, Nagercoil / Created by R. Ramesh</string>
     <string name="about_sources_title">Sources</string>
-    <string name="about_sources">M1 shows no scientific figures. Every figure added in later milestones must have a named source on this screen.</string>
+    <string name="about_sources">Scientific figures, thresholds and sources used by the app must be named on this screen.</string>
     <string name="about_limits_title">Limits</string>
     <string name="about_limits">The council is a toy model. Testimony is evidence about experience, not a measurement. Tamil is under human review.</string>
-    <string name="contact_placeholder">CONTACT PLACEHOLDER — replace before publishing</string>
+    <string name="contact_placeholder">Contact details will be added before publishing.</string>
     <string name="reset_data">Reset data</string>
     <string name="reset_confirm_title">Reset all app data?</string>
     <string name="reset_confirm_body">This removes the locally stored Kaala Kolam state on this device.</string>
@@ -40,5 +40,5 @@
     <string name="restore_confirm_title">Replace current data?</string>
     <string name="restore_confirm_body">The validated backup will replace the current local state.</string>
     <string name="backup_explanation">Backup codes contain your local app state. Keep them private if your entries contain personal information.</string>
-    <string name="content_review_note">Tamil translations for the fields marked below have not yet been approved.</string>
+    <string name="content_review_note">Tamil content on this screen remains a DRAFT pending owner review.</string>
 </resources>
