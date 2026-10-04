@@ -1802,6 +1802,12 @@ function boot(){
 /* ===== Android shell hooks (used only by the native wrapper) ===== */
 window.__appIsHome=function(){return S.view==='home'};
 window.__appGoHome=function(){if(S.view!=='home')go('home')};
+window.__appBack=function(){
+  try{killPlayer();stopSpeechSafe()}catch(e){}
+  if(S.view==='learn'&&S.lmode!=='home'){S.lmode='home';G=null;save();render();window.scrollTo(0,0);return true}
+  if(S.view!=='home'){go('home');return true}
+  return false
+};
 
 boot();
 })();
