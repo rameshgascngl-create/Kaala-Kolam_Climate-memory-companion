@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The app is always dark-grounded; the page has its own light/dark switch inside. -->
+    <style name="Theme.KaalaKolam" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/turmeric</item>
+        <item name="colorOnPrimary">@color/ground</item>
+        <item name="colorSurface">@color/ground2</item>
+        <item name="colorOnSurface">@color/flour</item>
+        <item name="android:windowBackground">@color/ground</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:textColorPrimary">@color/flour</item>
+    </style>
+
+    <style name="Theme.KaalaKolam.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/ground</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.KaalaKolam</item>
+    </style>
+
+    <style name="ThemeOverlay.KaalaKolam.Toolbar" parent="ThemeOverlay.Material3.Dark.ActionBar">
+        <item name="colorControlNormal">@color/flour</item>
+    </style>
+</resources>
