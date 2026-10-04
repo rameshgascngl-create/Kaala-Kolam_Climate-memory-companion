@@ -12,11 +12,18 @@ permissions:
 
 jobs:
   verify:
+    needs: golden-web
     runs-on: ubuntu-latest
 
     steps:
       - name: Check out source
         uses: actions/checkout@v5
+
+      - name: Download Tamil Playwright references
+        uses: actions/download-artifact@v5
+        with:
+          name: KaalaKolam-golden-tamil-80
+          path: tests/golden-tamil
 
       - name: Set up JDK 21
         uses: actions/setup-java@v5
@@ -49,6 +56,7 @@ jobs:
         run: |
           python3 -m pip install --disable-pip-version-check pillow
           python3 tools/compare_visuals.py
+          python3 tools/compare_tamil_visuals.py
 
       - name: Lint and bundle release QA
         run: ./gradlew --no-daemon lintRelease bundleRelease
@@ -107,7 +115,9 @@ jobs:
           name: KaalaKolam-native-v2-visual-parity
           path: |
             app/build/visual-native/
+            app/build/visual-tamil/
             docs/visual-parity-report.md
+            docs/tamil-visual-parity-report.md
           if-no-files-found: error
 
 
@@ -134,6 +144,9 @@ jobs:
       - name: Capture HTML prototype golden matrix
         run: python3 tools/capture_golden_web.py
 
+      - name: Capture Tamil localisation golden matrix
+        run: python3 tools/capture_tamil_golden.py
+
       - name: Verify golden matrix
         run: |
           python3 - <<'PY'
@@ -145,6 +158,11 @@ jobs:
           if count != 72 or len(files) != 72:
               raise SystemExit(f"Expected 72 golden PNGs; manifest={count}, files={len(files)}")
           print("GOLDEN_WEB_MATRIX_PASS 72/72")
+          tamil = json.loads(Path("tests/golden-tamil/manifest.json").read_text(encoding="utf-8"))
+          tamil_files = list(Path("tests/golden-tamil").glob("*/*/*/*.png"))
+          if tamil["captureCount"] != 80 or len(tamil_files) != 80:
+              raise SystemExit(f"Expected 80 Tamil golden PNGs; manifest={tamil['captureCount']}, files={len(tamil_files)}")
+          print("GOLDEN_TAMIL_MATRIX_PASS 80/80")
           PY
 
       - name: Store generated visual contract on native-v2
@@ -161,6 +179,13 @@ jobs:
             git commit -m "test: store generated visual contract [skip ci]"
             git push origin HEAD:native-v2
           fi
+
+      - name: Upload Tamil golden references
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-golden-tamil-80
+          path: tests/golden-tamil/
+          if-no-files-found: error
 
       - name: Upload golden web references
         uses: actions/upload-artifact@v4

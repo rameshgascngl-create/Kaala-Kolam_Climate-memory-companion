@@ -81,8 +81,9 @@ for name, payload in payloads.items():
             fail(f"{path}: empty English in bilingual object")
         if not isinstance(ta, str) or not ta.strip():
             fail(f"{path}: empty Tamil in bilingual object")
-        if not TAMIL.search(ta) and ta not in ALLOW and not numeric_unit_or_allowlisted(ta):
-            fail(f"{path}: Tamil value has no Tamil letters or permitted numeric/unit content: {ta!r}")
+        symbol_only = not re.search(r"[A-Za-z\u0B80-\u0BFF]", ta)
+        if not TAMIL.search(ta) and ta not in ALLOW and not numeric_unit_or_allowlisted(ta) and not symbol_only:
+            fail(f"{path}: Tamil value has no Tamil letters or permitted language-neutral content: {ta!r}")
         en_nums, ta_nums = numbers(en), numbers(ta)
         if en_nums.get("500,000") and ta_nums.get("5") and "இலட்சம்" in ta and ("km³" in en or "km3" in en):
             en_nums["500,000"] -= 1

@@ -224,7 +224,7 @@ fun KaalaKolamVisualFixture(
 ) {
     val lang = uiState.appState.language
     val primaryRoute = when (visualState) {
-        "learn-topic", "learn-game", "learn-words" -> Destination.LEARN.route
+        "learn-topic", "learn-deep", "learn-game", "learn-words" -> Destination.LEARN.route
         else -> visualState
     }
     Scaffold(
@@ -260,6 +260,7 @@ fun KaalaKolamVisualFixture(
                 )
                 Destination.LEARN.route,
                 "learn-topic",
+                "learn-deep",
                 "learn-game",
                 "learn-words",
                 -> GapListScreen(
@@ -339,7 +340,6 @@ private fun PrototypeTopBar(
                     ),
                     color = p.faint,
                     fontSize = 11.84.sp,
-                    maxLines = 1,
                 )
             }
         }
