@@ -2,28 +2,45 @@ package edu.gascnagercoil.kaalakolam.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationRail
-import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -32,23 +49,28 @@ import androidx.navigation.compose.rememberNavController
 import edu.gascnagercoil.kaalakolam.R
 import edu.gascnagercoil.kaalakolam.domain.AppState
 import edu.gascnagercoil.kaalakolam.domain.ThemeMode
+import edu.gascnagercoil.kaalakolam.ui.theme.PrototypeTheme
 
 private const val ABOUT_ROUTE = "about"
 
 private enum class Destination(
     val route: String,
     @StringRes val label: Int,
-    val mark: String,
+    val icon: String,
+    val en: String,
+    val ta: String,
 ) {
-    HOME("home", R.string.nav_home, "H"),
-    LEARN("learn", R.string.nav_learn, "L"),
-    ELDERS("elders", R.string.nav_elders, "E"),
-    CLASS("class", R.string.nav_class, "C"),
-    COUNCIL("council", R.string.nav_council, "U"),
-    PREDICT("predict", R.string.nav_predict, "P"),
+    HOME("home", R.string.nav_home, "home", "Home", "முகப்பு"),
+    LEARN("learn", R.string.nav_learn, "learn", "Learn", "கற்க"),
+    ELDERS("elders", R.string.nav_elders, "elder", "Elders", "மூத்தோர்"),
+    CLASS("class", R.string.nav_class, "pool", "Class", "வகுப்பு"),
+    COUNCIL("council", R.string.nav_council, "council", "Council", "ஊர்சபை"),
+    PREDICT("predict", R.string.nav_predict, "predict", "Predict", "கணிப்பு"),
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+private fun localized(lang: String, en: String, ta: String) = if (lang == "ta") ta else en
+
+@Suppress("UNUSED_PARAMETER")
 @Composable
 fun KaalaKolamApp(
     uiState: AppUiState,
@@ -63,14 +85,14 @@ fun KaalaKolamApp(
     val navController = rememberNavController()
     val entry by navController.currentBackStackEntryAsState()
     val currentRoute = entry?.destination?.route ?: Destination.HOME.route
-    val useRail = widthSizeClass != WindowWidthSizeClass.Compact
-    var overflowOpen by remember { mutableStateOf(false) }
+    val lang = uiState.appState.language
+    var zoom by remember { mutableIntStateOf(0) }
+    val baseDensity = LocalDensity.current
+    val fontScale = listOf(1f, 1.2f, 1.42f)[zoom]
 
     fun navigatePrimary(destination: Destination) {
         navController.navigate(destination.route) {
-            popUpTo(navController.graph.findStartDestination().id) {
-                saveState = true
-            }
+            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
             launchSingleTop = true
             restoreState = true
         }
@@ -87,121 +109,80 @@ fun KaalaKolamApp(
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.app_name), maxLines = 1) },
-                actions = {
-                    TextButton(
-                        onClick = {
-                            onLanguageChange(
-                                if (uiState.appState.language == "ta") "en" else "ta",
-                            )
-                        },
-                    ) {
-                        Text(stringResource(R.string.language_toggle))
-                    }
-                    TextButton(onClick = { overflowOpen = true }) {
-                        Text("⋮")
-                    }
-                    DropdownMenu(
-                        expanded = overflowOpen,
-                        onDismissRequest = { overflowOpen = false },
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.theme_system)) },
-                            onClick = {
-                                overflowOpen = false
-                                onThemeChange(ThemeMode.SYSTEM)
+    CompositionLocalProvider(
+        LocalDensity provides Density(baseDensity.density, baseDensity.fontScale * fontScale),
+    ) {
+        Scaffold(
+            containerColor = PrototypeTheme.palette.ground,
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            topBar = {
+                PrototypeTopBar(
+                    lang = lang,
+                    zoom = zoom,
+                    onZoom = { zoom = (zoom + 1) % 3 },
+                    onLanguage = { onLanguageChange(if (lang == "ta") "en" else "ta") },
+                    onTheme = {
+                        onThemeChange(
+                            if (uiState.appState.themeMode == ThemeMode.DARK) {
+                                ThemeMode.LIGHT
+                            } else {
+                                ThemeMode.DARK
                             },
                         )
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.theme_light)) },
-                            onClick = {
-                                overflowOpen = false
-                                onThemeChange(ThemeMode.LIGHT)
-                            },
-                        )
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.theme_dark)) },
-                            onClick = {
-                                overflowOpen = false
-                                onThemeChange(ThemeMode.DARK)
-                            },
-                        )
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.about)) },
-                            onClick = {
-                                overflowOpen = false
-                                navController.navigate(ABOUT_ROUTE)
-                            },
-                        )
-                    }
-                },
-            )
-        },
-        bottomBar = {
-            if (!useRail) {
-                CompactNavigation(
+                    },
+                    onAbout = { navController.navigate(ABOUT_ROUTE) },
+                )
+            },
+            bottomBar = {
+                PrototypeTabs(
+                    lang = lang,
                     currentRoute = currentRoute,
                     onNavigate = ::navigatePrimary,
                 )
-            }
-        },
-    ) { padding ->
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-        ) {
-            if (useRail) {
-                NavigationRail {
-                    Destination.entries.forEach { destination ->
-                        NavigationRailItem(
-                            selected = currentRoute == destination.route,
-                            onClick = { navigatePrimary(destination) },
-                            icon = { Text(destination.mark) },
-                            label = { Text(stringResource(destination.label)) },
-                        )
-                    }
-                }
-            }
-
+            },
+        ) { padding ->
             NavHost(
                 navController = navController,
                 startDestination = Destination.HOME.route,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
             ) {
                 composable(Destination.HOME.route) {
-                    HomeScreen()
+                    HomeScreen(
+                        appState = uiState.appState,
+                        onNavigate = { route ->
+                            Destination.entries.firstOrNull { it.route == route }?.let(::navigatePrimary)
+                        },
+                    )
                 }
                 composable(Destination.LEARN.route) {
                     GapListScreen(
-                        title = stringResource(R.string.nav_learn),
+                        title = localized(lang, "Learn", "கற்க"),
                         manifest = uiState.gaps,
                         kind = "deepDive",
                     )
                 }
                 composable(Destination.ELDERS.route) {
                     GapListScreen(
-                        title = stringResource(R.string.nav_elders),
+                        title = localized(lang, "Elder interviews", "மூத்தோர் நேர்காணல்"),
                         manifest = uiState.gaps,
                         kind = "eldersCrossCheck",
                     )
                 }
                 composable(Destination.CLASS.route) {
-                    PlaceholderScreen(title = stringResource(R.string.nav_class))
+                    PlaceholderScreen(title = localized(lang, "Class", "வகுப்பு"))
                 }
                 composable(Destination.COUNCIL.route) {
                     GapListScreen(
-                        title = stringResource(R.string.nav_council),
+                        title = localized(lang, "Council", "ஊர்சபை"),
                         manifest = uiState.gaps,
                         kind = "councilDescription",
                     )
                 }
                 composable(Destination.PREDICT.route) {
                     GapListScreen(
-                        title = stringResource(R.string.nav_predict),
+                        title = localized(lang, "Predict", "கணிப்பு"),
                         manifest = uiState.gaps,
                         kind = "predictExplanation",
                     )
@@ -221,46 +202,131 @@ fun KaalaKolamApp(
 }
 
 @Composable
-private fun CompactNavigation(
+private fun PrototypeTopBar(
+    lang: String,
+    zoom: Int,
+    onZoom: () -> Unit,
+    onLanguage: () -> Unit,
+    onTheme: () -> Unit,
+    onAbout: () -> Unit,
+) {
+    val p = PrototypeTheme.palette
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .drawBehind {
+                drawLine(
+                    color = p.line,
+                    start = androidx.compose.ui.geometry.Offset(0f, size.height - 1f),
+                    end = androidx.compose.ui.geometry.Offset(size.width, size.height - 1f),
+                    strokeWidth = 1f,
+                )
+            }
+            .statusBarsPadding()
+            .padding(horizontal = 16.dp, vertical = 10.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .clickable(onClick = onAbout),
+        ) {
+            Text(
+                localized(lang, "Kaala Kolam", "காலக்கோலம்"),
+                color = p.flour,
+                fontFamily = MaterialTheme.typography.titleLarge.fontFamily,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.4.sp,
+                maxLines = 1,
+            )
+            Text(
+                localized(
+                    lang,
+                    "Ask your elders. Test the evidence. Decide together.",
+                    "மூத்தோரிடம் கேளுங்கள். சான்றைச் சோதியுங்கள். இணைந்து முடிவெடுங்கள்.",
+                ),
+                color = p.faint,
+                fontSize = 11.84.sp,
+                maxLines = 1,
+            )
+        }
+        HeaderTool(text = listOf("Aa", "Aa+", "Aa++")[zoom], onClick = onZoom)
+        HeaderTool(text = if (lang == "ta") "EN" else "தமிழ்", onClick = onLanguage)
+        HeaderTool(text = "◐", onClick = onTheme)
+    }
+}
+
+@Composable
+private fun HeaderTool(text: String, onClick: () -> Unit) {
+    val p = PrototypeTheme.palette
+    Surface(
+        modifier = Modifier
+            .heightIn(min = 44.dp)
+            .widthIn(min = 44.dp)
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(12.dp),
+        color = p.ground2,
+        border = BorderStroke(1.dp, p.line),
+    ) {
+        Box(
+            modifier = Modifier.padding(horizontal = 10.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(text, color = p.flour, maxLines = 1)
+        }
+    }
+}
+
+@Composable
+private fun PrototypeTabs(
+    lang: String,
     currentRoute: String,
     onNavigate: (Destination) -> Unit,
 ) {
-    var moreOpen by remember { mutableStateOf(false) }
-    val direct = listOf(
-        Destination.HOME,
-        Destination.LEARN,
-        Destination.ELDERS,
-        Destination.CLASS,
-        Destination.COUNCIL,
-    )
-    val moreRoutes = setOf(Destination.PREDICT.route)
-
-    NavigationBar {
-        direct.forEach { destination ->
-            NavigationBarItem(
-                selected = currentRoute == destination.route,
-                onClick = { onNavigate(destination) },
-                icon = { Text(destination.mark) },
-                label = { Text(stringResource(destination.label), maxLines = 1) },
-            )
-        }
-        NavigationBarItem(
-            selected = currentRoute in moreRoutes,
-            onClick = { moreOpen = true },
-            icon = { Text("…") },
-            label = { Text(stringResource(R.string.nav_more), maxLines = 1) },
-        )
-        DropdownMenu(
-            expanded = moreOpen,
-            onDismissRequest = { moreOpen = false },
-        ) {
-            listOf(Destination.PREDICT).forEach { destination ->
-                DropdownMenuItem(
-                    text = { Text(stringResource(destination.label)) },
-                    onClick = {
-                        moreOpen = false
-                        onNavigate(destination)
-                    },
+    val p = PrototypeTheme.palette
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .drawBehind {
+                drawLine(
+                    color = p.line,
+                    start = androidx.compose.ui.geometry.Offset.Zero,
+                    end = androidx.compose.ui.geometry.Offset(size.width, 0f),
+                    strokeWidth = 1f,
+                )
+            }
+            .navigationBarsPadding()
+            .padding(6.dp),
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        Destination.entries.forEach { destination ->
+            val selected = currentRoute == destination.route
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .heightIn(min = 56.dp)
+                    .clickable { onNavigate(destination) }
+                    .padding(vertical = 4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = if (selected) p.ground3 else p.ground2,
+                ) {
+                    Icon(
+                        imageVector = PrototypeIcons.get(destination.icon),
+                        contentDescription = null,
+                        tint = if (selected) p.turmeric else p.faint,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp),
+                    )
+                }
+                Text(
+                    text = localized(lang, destination.en, destination.ta),
+                    color = if (selected) p.turmeric else p.faint,
+                    fontSize = 12.sp,
+                    maxLines = 1,
                 )
             }
         }

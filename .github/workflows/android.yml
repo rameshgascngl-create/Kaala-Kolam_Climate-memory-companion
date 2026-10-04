@@ -30,6 +30,9 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Regenerate prototype visual tokens
+        run: python3 tools/extract_tokens.py
+
       - name: Verify generated content policy
         run: python3 tools/test_content_asset.py
 
@@ -88,4 +91,45 @@ jobs:
           path: |
             app/build/test-results/testDebugUnitTest/
             app/build/reports/tests/testDebugUnitTest/
+          if-no-files-found: error
+
+
+  golden-web:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install Playwright Chromium
+        run: |
+          python -m pip install --disable-pip-version-check playwright==1.55.0
+          python -m playwright install --with-deps chromium
+
+      - name: Capture HTML prototype golden matrix
+        run: python3 tools/capture_golden_web.py
+
+      - name: Verify golden matrix
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          manifest = json.loads(Path("tests/golden-web/manifest.json").read_text(encoding="utf-8"))
+          count = manifest["captureCount"]
+          files = list(Path("tests/golden-web").glob("*/*/*/*.png"))
+          if count != 72 or len(files) != 72:
+              raise SystemExit(f"Expected 72 golden PNGs; manifest={count}, files={len(files)}")
+          print("GOLDEN_WEB_MATRIX_PASS 72/72")
+          PY
+
+      - name: Upload golden web references
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-golden-web-72
+          path: tests/golden-web/
           if-no-files-found: error
