@@ -2,8 +2,17 @@ plugins {
     alias(libs.plugins.android.application)
 }
 
-// Release signing is read from ~/.gradle/gradle.properties; no secret belongs in this repository.
-val ksFile = providers.gradleProperty("KK_STORE_FILE").orNull
+// Release signing is optional. Values may come from ~/.gradle/gradle.properties or CI environment variables.
+// Never place signing secrets in this repository.
+fun secret(name: String): String? = providers.gradleProperty(name).orNull
+    ?: providers.environmentVariable(name).orNull
+
+val ksFile = secret("KK_STORE_FILE")
+val ksPassword = secret("KK_STORE_PASSWORD")
+val keyAliasValue = secret("KK_KEY_ALIAS")
+val keyPasswordValue = secret("KK_KEY_PASSWORD")
+val hasReleaseSigning = listOf(ksFile, ksPassword, keyAliasValue, keyPasswordValue)
+    .all { !it.isNullOrBlank() }
 
 android {
     namespace = "edu.gascnagercoil.kaalakolam"
@@ -15,15 +24,16 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0.0"
+        buildConfigField("boolean", "SHOW_NATIVE_BAR", "true")
     }
 
     signingConfigs {
-        if (ksFile != null) {
+        if (hasReleaseSigning) {
             create("release") {
-                storeFile = file(ksFile)
-                storePassword = providers.gradleProperty("KK_STORE_PASSWORD").get()
-                keyAlias = providers.gradleProperty("KK_KEY_ALIAS").get()
-                keyPassword = providers.gradleProperty("KK_KEY_PASSWORD").get()
+                storeFile = file(ksFile!!)
+                storePassword = ksPassword
+                keyAlias = keyAliasValue
+                keyPassword = keyPasswordValue
             }
         }
     }
@@ -37,7 +47,7 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            if (ksFile != null) signingConfig = signingConfigs.getByName("release")
+            if (hasReleaseSigning) signingConfig = signingConfigs.getByName("release")
         }
     }
 
