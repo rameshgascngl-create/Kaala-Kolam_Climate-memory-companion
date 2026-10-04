@@ -14,6 +14,7 @@ SPI
 SPEI
 ONI
 CO₂
+O₂
 ppm
 °C
 K
