@@ -11,6 +11,11 @@ permissions:
 jobs:
   bundle:
     runs-on: ubuntu-latest
+    env:
+      KK_KEYSTORE_BASE64: ${{ secrets.KK_KEYSTORE_BASE64 }}
+      KK_STORE_PASSWORD: ${{ secrets.KK_STORE_PASSWORD }}
+      KK_KEY_ALIAS: ${{ secrets.KK_KEY_ALIAS }}
+      KK_KEY_PASSWORD: ${{ secrets.KK_KEY_PASSWORD }}
 
     steps:
       - name: Check out source
@@ -32,10 +37,8 @@ jobs:
         run: python3 scripts/static_qa.py
 
       - name: Restore release keystore when all signing secrets exist
-        if: ${{ secrets.KK_KEYSTORE_BASE64 != '' && secrets.KK_STORE_PASSWORD != '' && secrets.KK_KEY_ALIAS != '' && secrets.KK_KEY_PASSWORD != '' }}
+        if: ${{ env.KK_KEYSTORE_BASE64 != '' && env.KK_STORE_PASSWORD != '' && env.KK_KEY_ALIAS != '' && env.KK_KEY_PASSWORD != '' }}
         shell: bash
-        env:
-          KK_KEYSTORE_BASE64: ${{ secrets.KK_KEYSTORE_BASE64 }}
         run: |
           set -euo pipefail
           printf '%s' "$KK_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/kaalakolam-release.jks"
@@ -45,9 +48,6 @@ jobs:
         shell: bash
         env:
           KK_STORE_FILE: ${{ runner.temp }}/kaalakolam-release.jks
-          KK_STORE_PASSWORD: ${{ secrets.KK_STORE_PASSWORD }}
-          KK_KEY_ALIAS: ${{ secrets.KK_KEY_ALIAS }}
-          KK_KEY_PASSWORD: ${{ secrets.KK_KEY_PASSWORD }}
         run: ./gradlew --no-daemon bundleRelease
 
       - name: Upload release AAB
