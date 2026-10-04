@@ -1,0 +1,68 @@
+# Native v2 verification report
+
+Date: 4 October 2026  
+Branch: `native-v2`
+
+Status meanings:
+
+- **PASS** — the stated command or check was executed and passed.
+- **FAIL** — the stated command or check was executed and failed.
+- **BLOCKED** — the required environment, device, network path or credential was unavailable. BLOCKED is never treated as PASS.
+
+## M0 — Recon and content extraction
+
+| Check | Status | Evidence |
+|---|---|---|
+| Audited v1.0 input size | **PASS** | `stat -c '%n %s bytes' /mnt/data/native_v2_inputs/Kaala_Kolam_Climate_Memory_Companion.html` → 361881 bytes |
+| Audited v1.0 SHA-256 | **PASS** | `sha256sum ...` → `ae7b87a4f90fd990806f68cf6db1d3a0903d9cf6b5ef75c9be2c5392e66508a9` |
+| Corrected v1.1 source | **BLOCKED / NOT PRESENT AS SPECIFIED** | `correction-v1-1` exists at the inspected checkpoint but still contains the audited v1.0 source plus wrapper hardening; no corrected v1.1 content source was found, so the specification requires use of A |
+| Reference APK fingerprint | **PASS** | 7,283,796 bytes; SHA-256 `f5264502e7adf62d5f1f1a6b952647f84105a91c288bde54a045fdc17287c7b8`; APK not executed |
+| Local Git clone | **BLOCKED** | `git clone ...` → `Could not resolve host: github.com` |
+| Remote branch creation | **PASS** | `native-v2` created from main SHA `e33da90a2e93db139b61d0377ed23bd34e653efd`; no main write, merge or force-push |
+| Playwright extraction | **PASS** | `python3 tools/extract_content.py ...` → `M0_EXTRACT_PASS` |
+| Content-integrity tests | **PASS** | `python3 tools/test_content_asset.py` → 5 tests, `OK` |
+| Topics | **PASS** | 24 |
+| Clips | **PASS** | 24; four JSON batches of 6 |
+| Word-list entries | **PASS** | 77 |
+| Elder questions | **PASS** | 10 |
+| Council options | **PASS** | 7 |
+| Council groups | **PASS** | 4 |
+| Council scenarios | **PASS** | 3 |
+| Council roles | **PASS** | 6 |
+| Predictions | **PASS** | 8 |
+| Interactive demos | **PASS** | 3 |
+| Games | **PASS** | 2 |
+| Non-empty EN + TA on exposed bilingual objects | **PASS** | recursive content test |
+| Approved Tamil terminology / banned-term gate | **PASS** | generated assets contain none of the ten banned forms |
+| UTF-8, U+FFFD and mojibake gate | **PASS** | content-integrity test |
+| Draft word flags retained | **PASS** | 8 source entries retain draft flag for later `⚠` UI rendering |
+| GitHub-hosted extraction checkpoint | **PASS** | Actions run `37192429989`; all extraction/verification/commit steps concluded success |
+| Remote generated-assets commit | **PASS** | `b1cb63dc127223633326e02a13bab96750569b27` |
+| Remote manifest re-read | **PASS** | source SHA, source byte count and all counts match M0 evidence |
+| Temporary M0 workflow removed | **PASS** | remote fetch of `.github/workflows/m0-content-extraction.yml` at current branch returns 404 |
+
+### M0 content source decision
+
+Input A is the authoritative content and logic source because a genuine corrected v1.1 content source was not found on `correction-v1-1` at M0. This decision must be rechecked before domain golden-fixture generation in M2.
+
+### M0 generated assets
+
+`app/src/main/assets/content/` contains:
+
+- `manifest.json`
+- `shared.json`
+- `elders.json`
+- `predictions.json`
+- `council.json`
+- `games.json`
+- `words.json`
+- `topics-1.json`
+- `topics-2.json`
+- `clips-1.json`
+- `clips-2.json`
+- `clips-3.json`
+- `clips-4.json`
+
+**M0 STATUS: PASS**, with local Git clone retained as an environmental **BLOCKED** item.
+
+M1 has not started.
