@@ -14,9 +14,9 @@ Offline Android shell for the finished single-file `Kaala_Kolam_Climate_Memory_C
 - The HTML is at `app/src/main/assets/www/index.html` and is served only through `WebViewAssetLoader` at `https://appassets.androidplatform.net/assets/www/index.html`.
 - No `file://`, file access, content access, `INTERNET` permission, analytics, advertising or third-party service SDK.
 - The original CSP is unchanged.
-- The only HTML delta is the two permitted native navigation hooks. See `docs/html-changes.diff`.
+- The only HTML delta is one permitted native hook block defining `window.__appIsHome`, `window.__appGoHome` and `window.__appBack`. See `docs/html-changes.diff`.
 - WebView debugging is enabled only in debug builds.
-- Native Android TextToSpeech is an origin-restricted fallback only when WebView speech synthesis is missing or reports no voices.
+- Native Android TextToSpeech is exposed only through the origin-restricted `AndroidTTS` WebMessage bridge; no `addJavascriptInterface` is used.
 
 ## Toolchain
 
@@ -66,7 +66,7 @@ keytool -genkeypair -v \
   -keyalg RSA -keysize 4096 -validity 10000
 ```
 
-Add the following to `~/.gradle/gradle.properties` and supply your own secrets locally:
+Supply the following through `~/.gradle/gradle.properties` or equivalently named environment variables:
 
 ```properties
 KK_STORE_FILE=/absolute/path/to/kaalakolam-release.jks
@@ -113,6 +113,12 @@ Replace `app/src/main/assets/www/index.html` with the new single-file HTML, pres
 /* ===== Android shell hooks (used only by the native wrapper) ===== */
 window.__appIsHome=function(){return S.view==='home'};
 window.__appGoHome=function(){if(S.view!=='home')go('home')};
+window.__appBack=function(){
+  try{killPlayer();stopSpeechSafe()}catch(e){}
+  if(S.view==='learn'&&S.lmode!=='home'){S.lmode='home';G=null;save();render();window.scrollTo(0,0);return true}
+  if(S.view!=='home'){go('home');return true}
+  return false
+};
 ```
 
 Do not change the `appassets.androidplatform.net` origin. It is intentionally stable so WebView `localStorage` remains associated with the same origin after app updates.
@@ -129,4 +135,4 @@ Do not change the `appassets.androidplatform.net` origin. It is intentionally st
 - `docs/minimum-functionality.md`
 - `docs/playstore-icon-512.png`
 
-Before Play submission, replace the privacy URL placeholder in `app/src/main/res/values/strings.xml`, publish `docs/privacy-policy.html`, add a real developer/grievance contact email to that page, and complete the device tests in `docs/test-report.md`.
+Before Play submission, merge only after review, enable GitHub Pages from `main` / `docs`, confirm the configured privacy-policy URL returns HTTP 200, fill the policy's publication-date and developer/grievance-contact placeholders, and complete the device tests in `docs/test-report.md`.
