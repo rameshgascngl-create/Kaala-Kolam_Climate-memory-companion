@@ -231,8 +231,9 @@ private fun CompactNavigation(
         Destination.LEARN,
         Destination.ELDERS,
         Destination.CLASS,
+        Destination.COUNCIL,
     )
-    val moreRoutes = setOf(Destination.COUNCIL.route, Destination.PREDICT.route)
+    val moreRoutes = setOf(Destination.PREDICT.route)
 
     NavigationBar {
         direct.forEach { destination ->
@@ -253,7 +254,7 @@ private fun CompactNavigation(
             expanded = moreOpen,
             onDismissRequest = { moreOpen = false },
         ) {
-            listOf(Destination.COUNCIL, Destination.PREDICT).forEach { destination ->
+            listOf(Destination.PREDICT).forEach { destination ->
                 DropdownMenuItem(
                     text = { Text(stringResource(destination.label)) },
                     onClick = {

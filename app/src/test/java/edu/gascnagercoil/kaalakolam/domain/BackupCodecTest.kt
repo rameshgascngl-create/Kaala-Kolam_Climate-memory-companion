@@ -35,6 +35,6 @@ class BackupCodecTest {
 
     @Test
     fun fnvKnownVectorMatches() {
-        assertEquals(0x4f9f2cab, BackupCodec.fnv1a32("hello".encodeToByteArray()).toUInt().toLong())
+        assertEquals(0x4f9f2cabL, BackupCodec.fnv1a32("hello".encodeToByteArray()).toUInt().toLong())
     }
 }
