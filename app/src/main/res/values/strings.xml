@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Kaala Kolam</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_learn">Learn</string>
+    <string name="nav_elders">Elders</string>
+    <string name="nav_class">Class</string>
+    <string name="nav_council">Council</string>
+    <string name="nav_predict">Predict</string>
+    <string name="nav_more">More</string>
+    <string name="about">About</string>
+    <string name="language_toggle">தமிழ்</string>
+    <string name="theme">Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="home_title">Climate memories, evidence and decisions</string>
+    <string name="home_body">Ask your elders. Test the evidence. Decide together.</string>
+    <string name="about_purpose_title">Purpose</string>
+    <string name="about_purpose">Kaala Kolam is a fully offline bilingual climate-education app for learning, memory interviews, classroom comparison, council decisions and calibration practice.</string>
+    <string name="about_storage_title">Stored on this device</string>
+    <string name="about_storage">App progress and entries are stored only on this device. Nothing is sent anywhere.</string>
+    <string name="about_version">Version 2.0.0</string>
+    <string name="about_credit">Department of Zoology, GASC, Nagercoil / Created by R. Ramesh</string>
+    <string name="about_sources_title">Sources</string>
+    <string name="about_sources">M1 shows no scientific figures. Every figure added in later milestones must have a named source on this screen.</string>
+    <string name="about_limits_title">Limits</string>
+    <string name="about_limits">The council is a toy model. Testimony is evidence about experience, not a measurement. Tamil is under human review.</string>
+    <string name="contact_placeholder">CONTACT PLACEHOLDER — replace before publishing</string>
+    <string name="reset_data">Reset data</string>
+    <string name="reset_confirm_title">Reset all app data?</string>
+    <string name="reset_confirm_body">This removes the locally stored Kaala Kolam state on this device.</string>
+    <string name="backup_data">Backup code</string>
+    <string name="restore_data">Restore from code</string>
+    <string name="copy">Copy</string>
+    <string name="copied">Copied</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="restore_invalid">That backup code is not valid.</string>
+    <string name="restore_confirm_title">Replace current data?</string>
+    <string name="restore_confirm_body">The validated backup will replace the current local state.</string>
+    <string name="backup_explanation">Backup codes contain your local app state. Keep them private if your entries contain personal information.</string>
+    <string name="content_review_note">Tamil translations for the fields marked below have not yet been approved.</string>
+</resources>
