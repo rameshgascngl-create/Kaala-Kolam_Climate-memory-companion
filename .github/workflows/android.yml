@@ -39,27 +39,24 @@ jobs:
       - name: Lint, unit test, and assemble debug
         run: ./gradlew --no-daemon lintDebug testDebugUnitTest assembleDebug
 
-      - name: Assert merged manifest requests no permissions
+      - name: Lint and bundle release QA
+        run: ./gradlew --no-daemon lintRelease bundleRelease
+
+      - name: Assert merged manifests request no permissions
         shell: bash
         run: |
           set -euo pipefail
           mapfile -t manifests < <(find app/build/intermediates -type f -name AndroidManifest.xml | grep -E '/(merged_manifest|merged_manifests)/' | sort)
-          if [ "${#manifests[@]}" -eq 0 ]; then
-            echo "No merged debug manifest was produced" >&2
+          if [ "${#manifests[@]}" -lt 2 ]; then
+            printf 'Expected debug and release merged manifests; found %s\n' "${#manifests[@]}" >&2
+            printf '%s\n' "${manifests[@]}" >&2
             exit 1
           fi
-          chosen=""
-          for candidate in "${manifests[@]}"; do
-            if [[ "$candidate" == *"/debug/"* || "$candidate" == *"Debug"* ]]; then
-              chosen="$candidate"
-              break
-            fi
+          printf 'Merged manifests:\n'
+          printf '  %s\n' "${manifests[@]}"
+          for manifest in "${manifests[@]}"; do
+            python3 tools/assert_merged_manifest.py "$manifest"
           done
-          if [ -z "$chosen" ]; then
-            chosen="${manifests[0]}"
-          fi
-          echo "Merged manifest: $chosen"
-          python3 tools/assert_merged_manifest.py "$chosen"
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
@@ -73,6 +70,15 @@ jobs:
         with:
           name: KaalaKolam-native-v2-lint
           path: app/build/reports/lint-results-debug.html
+          if-no-files-found: error
+
+      - name: Upload release QA evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-native-v2-release-qa
+          path: |
+            app/build/outputs/bundle/release/app-release.aab
+            app/build/reports/lint-results-release.html
           if-no-files-found: error
 
       - name: Upload unit-test reports

@@ -4,6 +4,17 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
 }
 
+val kkStoreFile = providers.environmentVariable("KK_STORE_FILE").orNull
+val kkStorePassword = providers.environmentVariable("KK_STORE_PASSWORD").orNull
+val kkKeyAlias = providers.environmentVariable("KK_KEY_ALIAS").orNull
+val kkKeyPassword = providers.environmentVariable("KK_KEY_PASSWORD").orNull
+val hasReleaseSigning = listOf(
+    kkStoreFile,
+    kkStorePassword,
+    kkKeyAlias,
+    kkKeyPassword,
+).all { !it.isNullOrBlank() }
+
 android {
     namespace = "edu.gascnagercoil.kaalakolam"
     compileSdk = 36
@@ -21,12 +32,26 @@ android {
         buildConfig = true
     }
 
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = file(kkStoreFile!!)
+                storePassword = kkStorePassword
+                keyAlias = kkKeyAlias
+                keyPassword = kkKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
         }
         release {
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
