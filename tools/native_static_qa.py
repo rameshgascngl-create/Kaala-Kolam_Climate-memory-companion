@@ -113,11 +113,15 @@ if gaps.get("countsByKind") != expected_kinds:
 
 app_ui = (JAVA / "edu/gascnagercoil/kaalakolam/ui/KaalaKolamApp.kt").read_text(encoding="utf-8")
 screens = (JAVA / "edu/gascnagercoil/kaalakolam/ui/Screens.kt").read_text(encoding="utf-8")
-for kind in expected_kinds:
-    if f'kind = "{kind}"' not in app_ui:
-        fail(f"gap kind not wired to UI: {kind}")
+if gaps.get("count", 0) > 0:
+    for kind in expected_kinds:
+        if expected_kinds[kind] and f'kind = "{kind}"' not in app_ui:
+            fail(f"non-empty gap kind not wired to UI: {kind}")
+else:
+    if "GapListScreen(" in app_ui:
+        fail("zero-gap build must not route production screens through GapListScreen")
 if "items(gaps" not in screens or "text = manifest.uiLabel" not in screens:
-    fail("gap renderer does not render the manifest label for every gap item")
+    fail("gap renderer does not retain the manifest-label contract for future gaps")
 
 def string_keys(path: Path) -> set[str]:
     root = ET.parse(path).getroot()
@@ -149,7 +153,7 @@ print("PASS: no android.webkit/WebView/WebViewAssetLoader runtime code")
 print("PASS: no HTML or JavaScript under app/src/main")
 print("PASS: Android identifiers and release shrinker configuration")
 print("PASS: gaps.json has zero untranslated long-form entries; future-gap chip contract retained")
-print("PASS: all four gap kinds are wired and each item renders manifest.uiLabel")
+print("PASS: zero-gap production routes use native workflows; future-gap renderer retains manifest.uiLabel")
 content_tamil = subprocess.run([sys.executable, str(ROOT / "tools" / "test_tamil_content.py")], text=True, capture_output=True)
 if content_tamil.returncode:
     fail(content_tamil.stdout + content_tamil.stderr)
