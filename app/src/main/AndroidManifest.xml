@@ -2,7 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Deliberately no permissions: the app is fully offline and collects no data. -->
+    <!--
+        The app requests no permissions. AndroidX Core contributes this signature-only
+        compatibility permission through its library manifest even when the application
+        never registers a RECEIVER_NOT_EXPORTED dynamic receiver, so remove both merged
+        nodes explicitly to keep the packaged APK permission-free.
+    -->
+    <permission
+        android:name="${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+        tools:node="remove" />
+    <uses-permission
+        android:name="${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+        tools:node="remove" />
 
     <application
         android:allowBackup="false"
