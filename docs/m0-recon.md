@@ -162,4 +162,18 @@ Eight of the 77 word-list entries retain the source draft flag; the native UI mu
 | UTF-8 / U+FFFD / mojibake checks | PASS |
 | Local Git clone | BLOCKED — DNS resolution in container |
 
-M0 is complete only after the generated JSON assets are committed to `native-v2` and their remote hashes/counts are rechecked. M1 must not start before that checkpoint is green.
+## Remote checkpoint
+
+GitHub Actions run **37192429989** executed the committed extractor on `native-v2` and completed successfully. Its steps for audited-source verification, Playwright installation, extraction, content tests, SHA-256 listing, commit and push all concluded **success**.
+
+The generated asset commit is:
+
+```text
+b1cb63dc127223633326e02a13bab96750569b27  M0: commit extracted native content assets
+```
+
+A remote API re-read of `app/src/main/assets/content/manifest.json` at that branch head returned the exact audited source SHA-256, 361881-byte source size, and counts recorded above. The temporary extraction workflow removed itself in the generated-assets commit; a remote fetch of `.github/workflows/m0-content-extraction.yml` now returns 404.
+
+`native-v2` is **6 commits ahead of main and 0 behind** at this checkpoint. The comparison contains only the M0 extractor/tests/report and the 13 generated JSON assets.
+
+**M0 STATUS: PASS**, with one environmental limitation retained as **BLOCKED**: local `git clone` cannot resolve `github.com`. This does not affect the GitHub-hosted M0 evidence. Per the milestone rule, M1 has not started.
