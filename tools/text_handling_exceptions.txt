@@ -1,0 +1,3 @@
+# Exact source exceptions for non-visible/collection operations.
+# Format: relative-path | literal | reason
+app/src/main/java/edu/gascnagercoil/kaalakolam/domain/AppState.kt | .take(256) | caps a sequence collection, never truncates visible text

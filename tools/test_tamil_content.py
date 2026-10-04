@@ -51,10 +51,18 @@ def numbers(text: str) -> collections.Counter[str]:
     return collections.Counter(NUMBER.findall(text))
 
 def allowed_latin_word(word: str) -> bool:
-    if word in ALLOW:
-        return True
-    # Hyphenated Tamil suffixes are outside this regex; punctuation is not part of the token.
-    return False
+    return word in ALLOW
+
+def numeric_unit_or_allowlisted(text: str) -> bool:
+    tokens = LATIN.findall(text)
+    for token in tokens:
+        if token in ALLOW:
+            continue
+        if token in {"C", "K", "W", "m"}:
+            continue
+        return False
+    residue = LATIN.sub("", text)
+    return not re.search(r"[^0-9\s.,+−±%°/²³µ₂()\-–—]", residue)
 
 payloads = {}
 for path in sorted(CONTENT.glob("*.json")):
@@ -73,8 +81,8 @@ for name, payload in payloads.items():
             fail(f"{path}: empty English in bilingual object")
         if not isinstance(ta, str) or not ta.strip():
             fail(f"{path}: empty Tamil in bilingual object")
-        if not TAMIL.search(ta) and ta not in ALLOW:
-            fail(f"{path}: Tamil value has no Tamil letters: {ta!r}")
+        if not TAMIL.search(ta) and ta not in ALLOW and not numeric_unit_or_allowlisted(ta):
+            fail(f"{path}: Tamil value has no Tamil letters or permitted numeric/unit content: {ta!r}")
         en_nums, ta_nums = numbers(en), numbers(ta)
         if en_nums.get("500,000") and ta_nums.get("5") and "இலட்சம்" in ta and ("km³" in en or "km3" in en):
             en_nums["500,000"] -= 1

@@ -56,6 +56,8 @@ import androidx.compose.ui.unit.sp
 import edu.gascnagercoil.kaalakolam.R
 import edu.gascnagercoil.kaalakolam.content.GapManifest
 import edu.gascnagercoil.kaalakolam.domain.AppState
+import edu.gascnagercoil.kaalakolam.text.TextSafety
+import java.util.Locale
 import edu.gascnagercoil.kaalakolam.ui.theme.PrototypeTheme
 import edu.gascnagercoil.kaalakolam.ui.theme.PrototypeTokens
 import kotlin.math.cos
@@ -808,7 +810,7 @@ fun AboutScreen(
                     OutlinedTextField(
                         value = restoreText,
                         onValueChange = {
-                            restoreText = it.take(65_536)
+                            restoreText = TextSafety.graphemePrefix(it, 65_536, Locale.ROOT)
                             invalidRestore = false
                         },
                         modifier = Modifier.fillMaxWidth(),

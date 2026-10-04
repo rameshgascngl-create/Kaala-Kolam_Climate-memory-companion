@@ -3,6 +3,7 @@ package edu.gascnagercoil.kaalakolam.domain
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.util.Locale
 
 object BackupCodec {
     private const val PREFIX = "KB1"
@@ -28,7 +29,7 @@ object BackupCodec {
         val parts = trimmed.split('.')
         require(parts.size == 3 && parts[0] == PREFIX) { "Backup code prefix is invalid." }
         val payload = base64UrlDecode(parts[1])
-        val supplied = parts[2].lowercase()
+        val supplied = parts[2].lowercase(Locale.ROOT)
         require(supplied.matches(Regex("[0-9a-f]{8}"))) { "Backup checksum is invalid." }
         val actual = fnv1a32(payload).toUInt().toString(16).padStart(8, '0')
         require(actual == supplied) { "Backup checksum does not match." }
