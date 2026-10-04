@@ -107,7 +107,7 @@ private fun WfParagraph(text: String, muted: Boolean = false, bottom: Int = 13) 
 @Composable
 private fun WfCard(
     modifier: Modifier = Modifier,
-    content: @Composable Column.() -> Unit,
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     val p = PrototypeTheme.palette
     Column(
