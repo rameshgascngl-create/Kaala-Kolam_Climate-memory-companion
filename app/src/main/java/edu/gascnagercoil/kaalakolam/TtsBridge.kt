@@ -92,7 +92,10 @@ class TtsBridge(
     }
 
     private fun speak(id: String, text: String, langTag: String, rate: Float) {
-        if (text.isBlank()) return
+        if (text.isBlank()) {
+            emit(id, "error", "blank-text")
+            return
+        }
         ensureEngine()
         val job = Runnable { doSpeak(id, text, langTag, rate) }
         if (ready) job.run() else {

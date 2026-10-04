@@ -1,20 +1,10 @@
 /* Kaala Kolam: Android TextToSpeech fallback.
-   Injected at document start only for the appassets origin. It activates only when the WebView
-   speech API is missing or reports no voices. */
+   Injected at document start only for the appassets origin. When the native bridge is present,
+   speech is always routed through Android TextToSpeech so late-loading WebView voices cannot
+   leave the page with incompatible SpeechSynthesisVoice objects. */
 (function () {
   'use strict';
   if (window.__kkTtsFallback || typeof AndroidTTS === 'undefined') return;
-
-  var nativeSynth = window.speechSynthesis;
-  var nativeUtterance = window.SpeechSynthesisUtterance;
-  var needsFallback = false;
-  try {
-    needsFallback = !nativeSynth || typeof nativeUtterance === 'undefined' ||
-      typeof nativeSynth.getVoices !== 'function' || nativeSynth.getVoices().length === 0;
-  } catch (e) {
-    needsFallback = true;
-  }
-  if (!needsFallback) return;
   window.__kkTtsFallback = true;
 
   var pending = {};
@@ -87,19 +77,17 @@
   Object.defineProperty(synth, 'speaking', { get: function () { return speaking; } });
 
   try {
-    Object.defineProperty(window, 'speechSynthesis', { value: synth, configurable: true });
+    Object.defineProperty(window, 'speechSynthesis', { value: synth, configurable: true, writable: true });
   } catch (e) {
-    try {
-      window.speechSynthesis = synth;
-    } catch (ignored) {
-      if (nativeSynth) {
-        ['getVoices','speak','cancel','pause','resume','addEventListener','removeEventListener'].forEach(function (name) {
-          try { nativeSynth[name] = synth[name]; } catch (ignoredMethod) {}
-        });
-      }
-    }
+    try { window.speechSynthesis = synth; } catch (ignored) {}
   }
-  if (typeof nativeUtterance === 'undefined') {
+
+  /* Always pair the bridge voices with the bridge utterance type. A native WebView constructor
+     can reject the plain bridge voice object assigned by the page, which was the original bug. */
+  try {
+    Object.defineProperty(window, 'SpeechSynthesisUtterance',
+      { value: Utterance, configurable: true, writable: true });
+  } catch (e) {
     window.SpeechSynthesisUtterance = Utterance;
   }
 })();
