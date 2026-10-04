@@ -20,7 +20,7 @@ Offline Android shell for the finished single-file `Kaala_Kolam_Climate_Memory_C
 
 ## Toolchain
 
-The project pins **Android Gradle Plugin 9.4.0** and **Gradle 9.8.0**. AGP 9.x uses built-in Kotlin support, so the obsolete `org.jetbrains.kotlin.android` plugin is not applied. API 36 is used because Google Play requires Android 16 / API 36 or higher for new apps and updates from 31 August 2026.
+The project pins **Android Gradle Plugin 9.4.0** and **Gradle 9.6.0**. AGP 9.x uses built-in Kotlin support, so the obsolete `org.jetbrains.kotlin.android` plugin is not applied. API 36 is used because Google Play requires Android 16 / API 36 or higher for new apps and updates from 31 August 2026.
 
 Use JDK 17 or later and install Android SDK Platform 36 plus the corresponding build tools.
 
@@ -129,4 +129,4 @@ Do not change the `appassets.androidplatform.net` origin. It is intentionally st
 - `docs/minimum-functionality.md`
 - `docs/playstore-icon-512.png`
 
-Before Play submission, replace the privacy URL placeholder in `app/src/main/res/values/strings.xml`, publish `docs/privacy-policy.html`, add a real developer/grievance contact email to that page, and complete the device tests in `docs/test-report.md`.
+Before Play submission, enable **Settings > Pages > Deploy from branch `main`, folder `/docs`**, add the real developer/grievance contact e-mail and publication date to `docs/privacy-policy.html`, generate and back up the upload keystore, add release secrets, complete Tamil review, verify emergency numbers/scientific figures, and complete the device tests in `docs/test-report.md`.

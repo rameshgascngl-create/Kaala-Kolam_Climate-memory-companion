@@ -1,0 +1,1 @@
+Kaala Kolam is for educational use and is not an official weather-warning or emergency service. For current warnings and instructions, follow the India Meteorological Department (IMD) and the relevant State Disaster Management Authority. Emergency telephone numbers and district-specific instructions should be verified for your own district before use.
