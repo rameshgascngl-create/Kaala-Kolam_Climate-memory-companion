@@ -107,8 +107,6 @@ def render(html: str) -> str:
 // Source generator: tools/extract_tokens.py. Do not introduce Material tonal substitutes here.
 package edu.gascnagercoil.kaalakolam.ui.theme
 
-import android.graphics.Paint
-import android.graphics.Typeface
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme

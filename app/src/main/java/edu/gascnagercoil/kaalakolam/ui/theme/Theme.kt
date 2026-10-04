@@ -2,8 +2,6 @@
 // Source generator: tools/extract_tokens.py. Do not introduce Material tonal substitutes here.
 package edu.gascnagercoil.kaalakolam.ui.theme
 
-import android.graphics.Paint
-import android.graphics.Typeface
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -79,24 +77,13 @@ private fun scheme(p: PrototypePalette, dark: Boolean) =
     )
 
 private val BundledTamilFont = FontFamily(Font(R.font.noto_sans_tamil))
-private const val TamilGlyphProbe = "ஃஅஆஇஈஉஊஎஏஐஒஓஔகஙசஜஞடணதநனபமயரறலளழவஷஸஹாிீுூெேைொோௌ்ௗ"
-
-private fun systemSansHasTamilCoverage(): Boolean {
-    val paint = Paint().apply {
-        typeface = Typeface.create("sans-serif", Typeface.NORMAL)
-    }
-    return TamilGlyphProbe.codePoints().allMatch { codePoint ->
-        paint.hasGlyph(String(Character.toChars(codePoint)))
-    }
-}
-
 @Composable
 private fun prototypeTypography(): Typography {
     val isTamil = LocalConfiguration.current.locales[0].language == "ta"
     val bodyFamily = remember(isTamil) {
-        if (isTamil && !systemSansHasTamilCoverage()) BundledTamilFont else FontFamily.SansSerif
+        if (isTamil) BundledTamilFont else FontFamily.SansSerif
     }
-    val displayFamily = if (isTamil) bodyFamily else FontFamily.Serif
+    val displayFamily = if (isTamil) BundledTamilFont else FontFamily.Serif
     val localeList = if (isTamil) LocaleList("ta") else LocaleList("en")
     return Typography(
         headlineLarge=TextStyle(fontFamily=displayFamily,localeList=localeList,fontWeight=FontWeight.SemiBold,fontSize=30.4.sp,lineHeight=36.48.sp),
