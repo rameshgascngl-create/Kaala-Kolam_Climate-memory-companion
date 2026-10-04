@@ -11,30 +11,56 @@ permissions:
 
 jobs:
   signed-release:
-    if: >-
-      ${{ secrets.KK_KEYSTORE_BASE64 != '' &&
-          secrets.KK_STORE_PASSWORD != '' &&
-          secrets.KK_KEY_ALIAS != '' &&
-          secrets.KK_KEY_PASSWORD != '' }}
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check signing configuration
+        id: signing
+        shell: bash
+        env:
+          KK_KEYSTORE_BASE64: ${{ secrets.KK_KEYSTORE_BASE64 }}
+          KK_STORE_PASSWORD: ${{ secrets.KK_STORE_PASSWORD }}
+          KK_KEY_ALIAS: ${{ secrets.KK_KEY_ALIAS }}
+          KK_KEY_PASSWORD: ${{ secrets.KK_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          set +x
+
+          missing=0
+          for name in KK_KEYSTORE_BASE64 KK_STORE_PASSWORD KK_KEY_ALIAS KK_KEY_PASSWORD; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::notice::Signing secret $name is not configured."
+              missing=1
+            fi
+          done
+
+          if [[ "$missing" -eq 0 ]]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Check out source
+        if: steps.signing.outputs.configured == 'true'
         uses: actions/checkout@v5
 
       - name: Set up JDK 17
+        if: steps.signing.outputs.configured == 'true'
         uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
 
       - name: Validate Gradle wrapper
+        if: steps.signing.outputs.configured == 'true'
         uses: gradle/actions/wrapper-validation@v4
 
       - name: Set up Gradle
+        if: steps.signing.outputs.configured == 'true'
         uses: gradle/actions/setup-gradle@v4
 
       - name: Restore release keystore
+        if: steps.signing.outputs.configured == 'true'
         shell: bash
         env:
           KK_KEYSTORE_BASE64: ${{ secrets.KK_KEYSTORE_BASE64 }}
@@ -47,6 +73,7 @@ jobs:
           echo "KK_STORE_FILE=$key_path" >> "$GITHUB_ENV"
 
       - name: Build signed release bundle
+        if: steps.signing.outputs.configured == 'true'
         env:
           KK_STORE_PASSWORD: ${{ secrets.KK_STORE_PASSWORD }}
           KK_KEY_ALIAS: ${{ secrets.KK_KEY_ALIAS }}
@@ -54,8 +81,14 @@ jobs:
         run: ./gradlew --no-daemon lintRelease bundleRelease
 
       - name: Upload release bundle
+        if: steps.signing.outputs.configured == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: KaalaKolam-native-v2-release-aab
           path: app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: error
+
+      - name: Report unsigned release state
+        if: steps.signing.outputs.configured != 'true'
+        run: |
+          echo "::notice::Signed release was skipped because one or more KK_* signing secrets are not configured."
