@@ -1,0 +1,605 @@
+{
+  "source": "Kaala_Kolam_Climate_Memory_Companion.html",
+  "captureCount": 72,
+  "states": [
+    "home",
+    "learn",
+    "elders",
+    "class",
+    "council",
+    "predict",
+    "learn-topic",
+    "learn-game",
+    "learn-words"
+  ],
+  "viewports": [
+    "390x844",
+    "320x568"
+  ],
+  "languages": [
+    "en",
+    "ta"
+  ],
+  "themes": [
+    "dark",
+    "light"
+  ],
+  "captures": [
+    {
+      "state": "home",
+      "viewport": "390x844",
+      "language": "en",
+      "theme": "dark",
+      "path": "tests/golden-web/390x844/en/dark/home.png",
+      "sha256": "07cf00d8dcfc1adb9eac2c17ce8a13cee1f1af748770aace7c8c403836973ce6"
+    },
+    {
+      "state": "learn",
+      "viewport": "390x844",
+      "language": "en",
+      "theme": "dark",
+      "path": "tests/golden-web/390x844/en/dark/learn.png",
+      "sha256": "b3155ca5b62c5014254beb069a53a3907c8efb2b0a48befa1d285258e015c0cb"
+    },
+    {
+      "state": "elders",
+      "viewport": "390x844",
+      "language": "en",
+      "theme": "dark",
+      "path": "tests/golden-web/390x844/en/dark/elders.png",
+      "sha256": "3b2f6003535cf854f87dd52366b7d646627fc47d225758164f11a072b5871e40"
+    },
+    {
+      "state": "class",
+      "viewport": "390x844",
+      "language": "en",
+      "theme": "dark",
+      "path": "tests/golden-web/390x844/en/dark/class.png",
+      "sha256": "70d5807a6abbf023e62ec5e7e1d5b5be66fb1cf8a171558a2f13482a49d87ac1"
+    },
+    {
+      "state": "council",
+      "viewport": "390x844",
+      "language": "en",
+      "theme": "dark",
+      "path": "tests/golden-web/390x844/en/dark/council.png",
+      "sha256": "4c7d9fc0e58707662d82fa1397278e76c7d2b017dc4e71a24f2e3f9432a5f573"
+    },
+    {
+      "state": "predict",
+      "viewport": "390x844",
+      "language": "en",
+      "theme": "dark",
+      "path": "tests/golden-web/390x844/en/dark/predict.png",
+      "sha256": "d1511eb41ca6c8579fec84f2cba7b60746ab94dfe9301569214ac3e72d368b70"
+    },
+    {
+      "state": "learn-topic",
+      "viewport": "390x844",
+      "language": "en",
+      "theme": "dark",
+      "path": "tests/golden-web/390x844/en/dark/learn-topic.png",
+      "sha256": "3de84ed1e9b61871fd3435cd2800869878ed0bcdd8c70853ec3ea84da067e3bb"
+    },
+    {
+      "state": "learn-game",
+      "viewport": "390x844",
+      "language": "en",
+      "theme": "dark",
+      "path": "tests/golden-web/390x844/en/dark/learn-game.png",
+      "sha256": "fecef5de3e5a478905c0430bc679217777df7ec17fd6a0c1907ba2f70721e95c"
+    },
+    {
+      "state": "learn-words",
+      "viewport": "390x844",
+      "language": "en",
+      "theme": "dark",
+      "path": "tests/golden-web/390x844/en/dark/learn-words.png",
+      "sha256": "5678ad4aa01acd0708b8b5777f53c482b6ef3383e0737d44b882467278998219"
+    },
+    {
+      "state": "home",
+      "viewport": "390x844",
+      "language": "en",
+      "theme": "light",
+      "path": "tests/golden-web/390x844/en/light/home.png",
+      "sha256": "291cacd4e8d17bf1b0864c8d1b130b831fa5f9173910e97d5d3e0c90a00a4729"
+    },
+    {
+      "state": "learn",
+      "viewport": "390x844",
+      "language": "en",
+      "theme": "light",
+      "path": "tests/golden-web/390x844/en/light/learn.png",
+      "sha256": "444fdc03335e221927de50c4e8a5d7c01091db2ad23fbcd9aa7ed392c9ce31fd"
+    },
+    {
+      "state": "elders",
+      "viewport": "390x844",
+      "language": "en",
+      "theme": "light",
+      "path": "tests/golden-web/390x844/en/light/elders.png",
+      "sha256": "4810b0f70371ae01fd66650ca7dbcb1ee90dc6ab1de2513d14453026495d46f1"
+    },
+    {
+      "state": "class",
+      "viewport": "390x844",
+      "language": "en",
+      "theme": "light",
+      "path": "tests/golden-web/390x844/en/light/class.png",
+      "sha256": "32f39132602efae504b835a06c529cc1936c77f6cc82c47e81747181d163e603"
+    },
+    {
+      "state": "council",
+      "viewport": "390x844",
+      "language": "en",
+      "theme": "light",
+      "path": "tests/golden-web/390x844/en/light/council.png",
+      "sha256": "ceb13a7f4ae558226e780f6b5385383276d834c2b174469a5b2293f1024c7c62"
+    },
+    {
+      "state": "predict",
+      "viewport": "390x844",
+      "language": "en",
+      "theme": "light",
+      "path": "tests/golden-web/390x844/en/light/predict.png",
+      "sha256": "3f9e8da1fe62b26328ed30a8d229c8d582678aaff0a11289a6e808209ee473f0"
+    },
+    {
+      "state": "learn-topic",
+      "viewport": "390x844",
+      "language": "en",
+      "theme": "light",
+      "path": "tests/golden-web/390x844/en/light/learn-topic.png",
+      "sha256": "0ddf29fad4ceeb7e7be14f60b1e79e1d84cc91fa25e6cdc7642bb6a707b06daa"
+    },
+    {
+      "state": "learn-game",
+      "viewport": "390x844",
+      "language": "en",
+      "theme": "light",
+      "path": "tests/golden-web/390x844/en/light/learn-game.png",
+      "sha256": "b909c77facb9cee212c1c76668c4c1eb5d294c252c9b00e25ea0b5496e1543d2"
+    },
+    {
+      "state": "learn-words",
+      "viewport": "390x844",
+      "language": "en",
+      "theme": "light",
+      "path": "tests/golden-web/390x844/en/light/learn-words.png",
+      "sha256": "ca356c67e30f288eb915f1e03cd3844b964594559f8501ba679f895dc1ce47a7"
+    },
+    {
+      "state": "home",
+      "viewport": "390x844",
+      "language": "ta",
+      "theme": "dark",
+      "path": "tests/golden-web/390x844/ta/dark/home.png",
+      "sha256": "2202d338d25339a3261b2b96d5ff265855e29215d6dd9922bb5658511d44fb7d"
+    },
+    {
+      "state": "learn",
+      "viewport": "390x844",
+      "language": "ta",
+      "theme": "dark",
+      "path": "tests/golden-web/390x844/ta/dark/learn.png",
+      "sha256": "1f3c037aedc2112e3bcdfcc94ab37e74f6b04315d3d46c24369a96653b74f498"
+    },
+    {
+      "state": "elders",
+      "viewport": "390x844",
+      "language": "ta",
+      "theme": "dark",
+      "path": "tests/golden-web/390x844/ta/dark/elders.png",
+      "sha256": "ba5301def4bb392dcf74aed700fdb090fa56e21f0776ef21246fa5a309505df2"
+    },
+    {
+      "state": "class",
+      "viewport": "390x844",
+      "language": "ta",
+      "theme": "dark",
+      "path": "tests/golden-web/390x844/ta/dark/class.png",
+      "sha256": "0d5bb68bf616cff6449a092f819c45416504ed2dda51fba2dcb20aff046b1a46"
+    },
+    {
+      "state": "council",
+      "viewport": "390x844",
+      "language": "ta",
+      "theme": "dark",
+      "path": "tests/golden-web/390x844/ta/dark/council.png",
+      "sha256": "efcf523632278b886f13bcb605feca49c167f98a7130df7cf7802f2c9fe0a67b"
+    },
+    {
+      "state": "predict",
+      "viewport": "390x844",
+      "language": "ta",
+      "theme": "dark",
+      "path": "tests/golden-web/390x844/ta/dark/predict.png",
+      "sha256": "2dde6faa717c836dba57bf2f98272fc50be80f07f24f7c1f0417ddb4cda7d511"
+    },
+    {
+      "state": "learn-topic",
+      "viewport": "390x844",
+      "language": "ta",
+      "theme": "dark",
+      "path": "tests/golden-web/390x844/ta/dark/learn-topic.png",
+      "sha256": "5914a2f51060174e6ec980587f19230a55fab59e6f24c6b762e8457d284eaf85"
+    },
+    {
+      "state": "learn-game",
+      "viewport": "390x844",
+      "language": "ta",
+      "theme": "dark",
+      "path": "tests/golden-web/390x844/ta/dark/learn-game.png",
+      "sha256": "e015905a9a9608bae218deda71352a664f2400cf80f7e0bdd09043c84018cc97"
+    },
+    {
+      "state": "learn-words",
+      "viewport": "390x844",
+      "language": "ta",
+      "theme": "dark",
+      "path": "tests/golden-web/390x844/ta/dark/learn-words.png",
+      "sha256": "6bdc55f5a498c60303eff42e9e22db711a9968e5626e02afeaad90ecb76d5d4b"
+    },
+    {
+      "state": "home",
+      "viewport": "390x844",
+      "language": "ta",
+      "theme": "light",
+      "path": "tests/golden-web/390x844/ta/light/home.png",
+      "sha256": "5b7eda92c22c2aa589b7c9b04695d277639df9ea2f89a0dd4ace3f49d1a75e11"
+    },
+    {
+      "state": "learn",
+      "viewport": "390x844",
+      "language": "ta",
+      "theme": "light",
+      "path": "tests/golden-web/390x844/ta/light/learn.png",
+      "sha256": "b58cc0ac058b5e7ac5b896f8eb91e8843e8b12349d6b22be03d892f1c6253dd8"
+    },
+    {
+      "state": "elders",
+      "viewport": "390x844",
+      "language": "ta",
+      "theme": "light",
+      "path": "tests/golden-web/390x844/ta/light/elders.png",
+      "sha256": "2aa3af8cc57e369b6f546aafa84b85da819a64ad70e400c1b93adf9852dfed64"
+    },
+    {
+      "state": "class",
+      "viewport": "390x844",
+      "language": "ta",
+      "theme": "light",
+      "path": "tests/golden-web/390x844/ta/light/class.png",
+      "sha256": "190e2211a7cf7dde36eeeff0a35fb3c250f0767cce6bd5d804b4ef94831fc855"
+    },
+    {
+      "state": "council",
+      "viewport": "390x844",
+      "language": "ta",
+      "theme": "light",
+      "path": "tests/golden-web/390x844/ta/light/council.png",
+      "sha256": "8e8770abf63786f60c345b05d9b2207c0a5ae4fe02b6a0d2955ff354a1b5f7f7"
+    },
+    {
+      "state": "predict",
+      "viewport": "390x844",
+      "language": "ta",
+      "theme": "light",
+      "path": "tests/golden-web/390x844/ta/light/predict.png",
+      "sha256": "b87a852dd17ce59385d5a1efd986df768177b79f28045c1ac8c0ba6ff0b50d27"
+    },
+    {
+      "state": "learn-topic",
+      "viewport": "390x844",
+      "language": "ta",
+      "theme": "light",
+      "path": "tests/golden-web/390x844/ta/light/learn-topic.png",
+      "sha256": "ee186afeff100dca814d92ca3b3ebeef13106e6e5a0d420cda9c3d61b463cc7d"
+    },
+    {
+      "state": "learn-game",
+      "viewport": "390x844",
+      "language": "ta",
+      "theme": "light",
+      "path": "tests/golden-web/390x844/ta/light/learn-game.png",
+      "sha256": "c4ecf72eb519c00d2afde336c0afe2864ca3ecbd438ff5525e518be44c65e21e"
+    },
+    {
+      "state": "learn-words",
+      "viewport": "390x844",
+      "language": "ta",
+      "theme": "light",
+      "path": "tests/golden-web/390x844/ta/light/learn-words.png",
+      "sha256": "f58a82419b5e72474cdde50114a5e333d7453dd43e7da3ff947e2d88ba0752bb"
+    },
+    {
+      "state": "home",
+      "viewport": "320x568",
+      "language": "en",
+      "theme": "dark",
+      "path": "tests/golden-web/320x568/en/dark/home.png",
+      "sha256": "149c4491ff2dbfae2fc990f9e3a658da154446b594a430933f89505b8eeae810"
+    },
+    {
+      "state": "learn",
+      "viewport": "320x568",
+      "language": "en",
+      "theme": "dark",
+      "path": "tests/golden-web/320x568/en/dark/learn.png",
+      "sha256": "15eefa17c36dadf2850b8ec325e95ecb7f7aae06c1304b0304223c21067b8e25"
+    },
+    {
+      "state": "elders",
+      "viewport": "320x568",
+      "language": "en",
+      "theme": "dark",
+      "path": "tests/golden-web/320x568/en/dark/elders.png",
+      "sha256": "5e98b5d9fb066949c5e277f970aa964ebefcbd0c7c48c8049d3b4208b6254b07"
+    },
+    {
+      "state": "class",
+      "viewport": "320x568",
+      "language": "en",
+      "theme": "dark",
+      "path": "tests/golden-web/320x568/en/dark/class.png",
+      "sha256": "ed30df06775c3f27a800239fa18a566a7d77260a55886096ac3f3e55a4283425"
+    },
+    {
+      "state": "council",
+      "viewport": "320x568",
+      "language": "en",
+      "theme": "dark",
+      "path": "tests/golden-web/320x568/en/dark/council.png",
+      "sha256": "ec35bfbbc74afb1ea1cb06e7847268ba47cc78c4e9a16f8dd05301c4c9f03cb7"
+    },
+    {
+      "state": "predict",
+      "viewport": "320x568",
+      "language": "en",
+      "theme": "dark",
+      "path": "tests/golden-web/320x568/en/dark/predict.png",
+      "sha256": "5c661809109550b8bd455b4da212c8635afbc037949df0e7da8049aff8c28663"
+    },
+    {
+      "state": "learn-topic",
+      "viewport": "320x568",
+      "language": "en",
+      "theme": "dark",
+      "path": "tests/golden-web/320x568/en/dark/learn-topic.png",
+      "sha256": "fdc2e5570908e94ae1b14912da6e9d92c8209ae429d007db648cc29e7313cfac"
+    },
+    {
+      "state": "learn-game",
+      "viewport": "320x568",
+      "language": "en",
+      "theme": "dark",
+      "path": "tests/golden-web/320x568/en/dark/learn-game.png",
+      "sha256": "d102579fb8ea61bcd1e66816d182916d1f6d6ceb127da7593a0a5c9d554f575a"
+    },
+    {
+      "state": "learn-words",
+      "viewport": "320x568",
+      "language": "en",
+      "theme": "dark",
+      "path": "tests/golden-web/320x568/en/dark/learn-words.png",
+      "sha256": "0795cc82cb2eec59b2fda1b37a608979f27351586fd113d8ac5b048f45f6a2fa"
+    },
+    {
+      "state": "home",
+      "viewport": "320x568",
+      "language": "en",
+      "theme": "light",
+      "path": "tests/golden-web/320x568/en/light/home.png",
+      "sha256": "9a9be04332643cbb455f08832faa30f8e5a18a7d09ab2327798b0615b9d14b0f"
+    },
+    {
+      "state": "learn",
+      "viewport": "320x568",
+      "language": "en",
+      "theme": "light",
+      "path": "tests/golden-web/320x568/en/light/learn.png",
+      "sha256": "46d6347d8377c31c1d619fcdb4d08862920f23565f927d86e62e59c963e709a5"
+    },
+    {
+      "state": "elders",
+      "viewport": "320x568",
+      "language": "en",
+      "theme": "light",
+      "path": "tests/golden-web/320x568/en/light/elders.png",
+      "sha256": "249b2df17e0bf7bb15ae3f1b489bf60fd006312a07ecc60535bf920866926eac"
+    },
+    {
+      "state": "class",
+      "viewport": "320x568",
+      "language": "en",
+      "theme": "light",
+      "path": "tests/golden-web/320x568/en/light/class.png",
+      "sha256": "cc60b22226869ebc313995a587c56f03002a1a74b42bb36264afe5e4c6642646"
+    },
+    {
+      "state": "council",
+      "viewport": "320x568",
+      "language": "en",
+      "theme": "light",
+      "path": "tests/golden-web/320x568/en/light/council.png",
+      "sha256": "32a2081710453d770cc9f5ad04747011ae8f6ee2f7a995385ac51e35fa20f339"
+    },
+    {
+      "state": "predict",
+      "viewport": "320x568",
+      "language": "en",
+      "theme": "light",
+      "path": "tests/golden-web/320x568/en/light/predict.png",
+      "sha256": "34c5aa0e30c56a051a021e1dc3bc4cef8cc62029479fa011404f8c05ed20520a"
+    },
+    {
+      "state": "learn-topic",
+      "viewport": "320x568",
+      "language": "en",
+      "theme": "light",
+      "path": "tests/golden-web/320x568/en/light/learn-topic.png",
+      "sha256": "c6d448b740a09e7f175b714855652883b2155d4a945d9fd02881430e6ef4cb68"
+    },
+    {
+      "state": "learn-game",
+      "viewport": "320x568",
+      "language": "en",
+      "theme": "light",
+      "path": "tests/golden-web/320x568/en/light/learn-game.png",
+      "sha256": "1f7cc67fad532ad22d7a3da5bdc13a03d4a6fb845f225f8b39b7bb601c11177b"
+    },
+    {
+      "state": "learn-words",
+      "viewport": "320x568",
+      "language": "en",
+      "theme": "light",
+      "path": "tests/golden-web/320x568/en/light/learn-words.png",
+      "sha256": "d2e4a7f4c92f849f51729d3c780343a105fb71e921a4739f43ab424bf18d939f"
+    },
+    {
+      "state": "home",
+      "viewport": "320x568",
+      "language": "ta",
+      "theme": "dark",
+      "path": "tests/golden-web/320x568/ta/dark/home.png",
+      "sha256": "73274e6e9aab6d36f4fddab167ef96ed86ad3c494af952d3985503c97e93a956"
+    },
+    {
+      "state": "learn",
+      "viewport": "320x568",
+      "language": "ta",
+      "theme": "dark",
+      "path": "tests/golden-web/320x568/ta/dark/learn.png",
+      "sha256": "f5931a105e9b5de41409f9913eacf7c590a9bce4889bb2d4864f6f0ae6497cd3"
+    },
+    {
+      "state": "elders",
+      "viewport": "320x568",
+      "language": "ta",
+      "theme": "dark",
+      "path": "tests/golden-web/320x568/ta/dark/elders.png",
+      "sha256": "f34e4a7e998d21fdb9d87553a94fff45e291598054c12ce94d7d32f6f07bb737"
+    },
+    {
+      "state": "class",
+      "viewport": "320x568",
+      "language": "ta",
+      "theme": "dark",
+      "path": "tests/golden-web/320x568/ta/dark/class.png",
+      "sha256": "66a2c15a0d2b76c39049902a11f85183c7bc07968cd3aee2043d269b2ea864ef"
+    },
+    {
+      "state": "council",
+      "viewport": "320x568",
+      "language": "ta",
+      "theme": "dark",
+      "path": "tests/golden-web/320x568/ta/dark/council.png",
+      "sha256": "6b367a8126a13f57c7909deb28bd9638ea79af3c1823187fcc8e0d8e6cbc3487"
+    },
+    {
+      "state": "predict",
+      "viewport": "320x568",
+      "language": "ta",
+      "theme": "dark",
+      "path": "tests/golden-web/320x568/ta/dark/predict.png",
+      "sha256": "ec08481c416b32c4290a7d3b29a3a26ccffd6b47de303c03a3bed718f4b60bf7"
+    },
+    {
+      "state": "learn-topic",
+      "viewport": "320x568",
+      "language": "ta",
+      "theme": "dark",
+      "path": "tests/golden-web/320x568/ta/dark/learn-topic.png",
+      "sha256": "04e54bdac283b8856d3276cddaf38927ddb081f36b63108e239fb35a2dbc1ff0"
+    },
+    {
+      "state": "learn-game",
+      "viewport": "320x568",
+      "language": "ta",
+      "theme": "dark",
+      "path": "tests/golden-web/320x568/ta/dark/learn-game.png",
+      "sha256": "72b40ebef7dfdcba6a7004c39ea4fa3bf7ce6eb3b199ca94bccfeeb3c0a8790b"
+    },
+    {
+      "state": "learn-words",
+      "viewport": "320x568",
+      "language": "ta",
+      "theme": "dark",
+      "path": "tests/golden-web/320x568/ta/dark/learn-words.png",
+      "sha256": "e2484366d27c65927491347a966b3afca16e418aaea6229d7a56cb1bfc290e1c"
+    },
+    {
+      "state": "home",
+      "viewport": "320x568",
+      "language": "ta",
+      "theme": "light",
+      "path": "tests/golden-web/320x568/ta/light/home.png",
+      "sha256": "cb38a2c7446d9f31fbaae6c8e54ca8e4eef3edbc5da05ddd5b5c446fd493d9fc"
+    },
+    {
+      "state": "learn",
+      "viewport": "320x568",
+      "language": "ta",
+      "theme": "light",
+      "path": "tests/golden-web/320x568/ta/light/learn.png",
+      "sha256": "347bc1c851407fb42514691de99ee129ee0b29ac1cd8f08473712340bcc5a749"
+    },
+    {
+      "state": "elders",
+      "viewport": "320x568",
+      "language": "ta",
+      "theme": "light",
+      "path": "tests/golden-web/320x568/ta/light/elders.png",
+      "sha256": "7c0755abfcfcab74eb7d1c4a748a469b997482c06a9702c3c0037a3a93cc8e73"
+    },
+    {
+      "state": "class",
+      "viewport": "320x568",
+      "language": "ta",
+      "theme": "light",
+      "path": "tests/golden-web/320x568/ta/light/class.png",
+      "sha256": "5399acbf15e41200efdd0075b9162cc2b54182e8490060beade602043aafad50"
+    },
+    {
+      "state": "council",
+      "viewport": "320x568",
+      "language": "ta",
+      "theme": "light",
+      "path": "tests/golden-web/320x568/ta/light/council.png",
+      "sha256": "c6f68fa3884ca019d3a037712f38c0a69e42da05ef9a15d3d53f8de6071433b3"
+    },
+    {
+      "state": "predict",
+      "viewport": "320x568",
+      "language": "ta",
+      "theme": "light",
+      "path": "tests/golden-web/320x568/ta/light/predict.png",
+      "sha256": "31897831982d95c193dfa96b9516808fd30641f5ea885f44d89045629e10006b"
+    },
+    {
+      "state": "learn-topic",
+      "viewport": "320x568",
+      "language": "ta",
+      "theme": "light",
+      "path": "tests/golden-web/320x568/ta/light/learn-topic.png",
+      "sha256": "00345de1aca93dcc16b25ada6dd05e2488417b7b2294d36e9f16aeb3a8df06b0"
+    },
+    {
+      "state": "learn-game",
+      "viewport": "320x568",
+      "language": "ta",
+      "theme": "light",
+      "path": "tests/golden-web/320x568/ta/light/learn-game.png",
+      "sha256": "c65c227aa8d876e9ff581b3812ed95f26ea9906eefd52ae0393cec2b42949f64"
+    },
+    {
+      "state": "learn-words",
+      "viewport": "320x568",
+      "language": "ta",
+      "theme": "light",
+      "path": "tests/golden-web/320x568/ta/light/learn-words.png",
+      "sha256": "49cdcc8fd7bafbe126d89afe6fe67de69d2fc28176828a448e89dd20535d5cb6"
+    }
+  ]
+}
