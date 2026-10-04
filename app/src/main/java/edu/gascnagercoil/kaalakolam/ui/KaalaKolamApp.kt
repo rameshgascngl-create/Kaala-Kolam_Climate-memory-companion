@@ -203,6 +203,87 @@ fun KaalaKolamApp(
     }
 }
 
+/**
+ * Navigation-free visual harness used by the JVM renderer.
+ *
+ * It intentionally shares the exact production chrome and screen composables
+ * while avoiding NavHost owners that do not exist in layoutlib/Paparazzi.
+ * This is not a mock of the visuals: only navigation behaviour is bypassed.
+ */
+@Composable
+fun KaalaKolamVisualFixture(
+    uiState: AppUiState,
+    visualState: String,
+) {
+    val lang = uiState.appState.language
+    val primaryRoute = when (visualState) {
+        "learn-topic", "learn-game", "learn-words" -> Destination.LEARN.route
+        else -> visualState
+    }
+    Scaffold(
+        containerColor = PrototypeTheme.palette.ground,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        topBar = {
+            PrototypeTopBar(
+                lang = lang,
+                zoom = 0,
+                onZoom = {},
+                onLanguage = {},
+                onTheme = {},
+                onAbout = {},
+            )
+        },
+        bottomBar = {
+            PrototypeTabs(
+                lang = lang,
+                currentRoute = primaryRoute,
+                onNavigate = {},
+            )
+        },
+    ) { padding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+        ) {
+            when (visualState) {
+                Destination.HOME.route -> HomeScreen(
+                    appState = uiState.appState,
+                    onNavigate = {},
+                )
+                Destination.LEARN.route,
+                "learn-topic",
+                "learn-game",
+                "learn-words",
+                -> GapListScreen(
+                    title = localized(lang, "Learn", "கற்க"),
+                    manifest = uiState.gaps,
+                    kind = "deepDive",
+                )
+                Destination.ELDERS.route -> GapListScreen(
+                    title = localized(lang, "Elder interviews", "மூத்தோர் நேர்காணல்"),
+                    manifest = uiState.gaps,
+                    kind = "eldersCrossCheck",
+                )
+                Destination.CLASS.route -> PlaceholderScreen(
+                    title = localized(lang, "Class", "வகுப்பு"),
+                )
+                Destination.COUNCIL.route -> GapListScreen(
+                    title = localized(lang, "Council", "ஊர்சபை"),
+                    manifest = uiState.gaps,
+                    kind = "councilDescription",
+                )
+                Destination.PREDICT.route -> GapListScreen(
+                    title = localized(lang, "Predict", "கணிப்பு"),
+                    manifest = uiState.gaps,
+                    kind = "predictExplanation",
+                )
+                else -> error("Unknown visual state: $visualState")
+            }
+        }
+    }
+}
+
 @Composable
 private fun PrototypeTopBar(
     lang: String,
