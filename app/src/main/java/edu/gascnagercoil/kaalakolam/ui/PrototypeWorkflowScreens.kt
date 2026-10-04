@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -49,7 +51,7 @@ private fun wfText(lang: String, en: String, ta: String): String = if (lang == "
 private val pagePadding = Modifier.padding(start = 16.dp, end = 16.dp, top = 18.dp, bottom = 28.dp)
 
 @Composable
-private fun WorkflowPage(content: @Composable Column.() -> Unit) {
+private fun WorkflowPage(content: @Composable ColumnScope.() -> Unit) {
     val p = PrototypeTheme.palette
     LazyColumn(
         modifier = Modifier.fillMaxSize().background(p.ground),
