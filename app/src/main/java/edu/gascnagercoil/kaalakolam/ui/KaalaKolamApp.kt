@@ -169,35 +169,19 @@ fun KaalaKolamApp(
                     )
                 }
                 composable(Destination.LEARN.route) {
-                    GapListScreen(
-                        title = localized(lang, "Learn", "கற்க"),
-                        manifest = uiState.gaps,
-                        kind = "deepDive",
-                    )
+                    LearnPrototypeScreen(lang = lang)
                 }
                 composable(Destination.ELDERS.route) {
-                    GapListScreen(
-                        title = localized(lang, "Elder interviews", "மூத்தோர் நேர்காணல்"),
-                        manifest = uiState.gaps,
-                        kind = "eldersCrossCheck",
-                    )
+                    ElderPrototypeScreen(lang = lang)
                 }
                 composable(Destination.CLASS.route) {
-                    PlaceholderScreen(title = localized(lang, "Class", "வகுப்பு"))
+                    ClassPoolPrototypeScreen(lang = lang)
                 }
                 composable(Destination.COUNCIL.route) {
-                    GapListScreen(
-                        title = localized(lang, "Council", "ஊர்சபை"),
-                        manifest = uiState.gaps,
-                        kind = "councilDescription",
-                    )
+                    CouncilPrototypeScreen(lang = lang)
                 }
                 composable(Destination.PREDICT.route) {
-                    GapListScreen(
-                        title = localized(lang, "Predict", "கணிப்பு"),
-                        manifest = uiState.gaps,
-                        kind = "predictExplanation",
-                    )
+                    PredictPrototypeScreen(lang = lang)
                 }
                 composable(ABOUT_ROUTE) {
                     AboutScreen(
@@ -261,34 +245,15 @@ fun KaalaKolamVisualFixture(
                     appState = uiState.appState,
                     onNavigate = {},
                 )
-                Destination.LEARN.route,
-                "learn-topic",
-                "learn-deep",
-                "learn-game",
-                "learn-words",
-                -> GapListScreen(
-                    title = localized(lang, "Learn", "கற்க"),
-                    manifest = uiState.gaps,
-                    kind = "deepDive",
-                )
-                Destination.ELDERS.route -> GapListScreen(
-                    title = localized(lang, "Elder interviews", "மூத்தோர் நேர்காணல்"),
-                    manifest = uiState.gaps,
-                    kind = "eldersCrossCheck",
-                )
-                Destination.CLASS.route -> PlaceholderScreen(
-                    title = localized(lang, "Class", "வகுப்பு"),
-                )
-                Destination.COUNCIL.route -> GapListScreen(
-                    title = localized(lang, "Council", "ஊர்சபை"),
-                    manifest = uiState.gaps,
-                    kind = "councilDescription",
-                )
-                Destination.PREDICT.route -> GapListScreen(
-                    title = localized(lang, "Predict", "கணிப்பு"),
-                    manifest = uiState.gaps,
-                    kind = "predictExplanation",
-                )
+                Destination.LEARN.route -> LearnPrototypeScreen(lang = lang, initialMode = "home")
+                "learn-topic" -> LearnPrototypeScreen(lang = lang, initialMode = "topic")
+                "learn-deep" -> LearnPrototypeScreen(lang = lang, initialMode = "deep")
+                "learn-game" -> LearnPrototypeScreen(lang = lang, initialMode = "game")
+                "learn-words" -> LearnPrototypeScreen(lang = lang, initialMode = "words")
+                Destination.ELDERS.route -> ElderPrototypeScreen(lang = lang)
+                Destination.CLASS.route -> ClassPoolPrototypeScreen(lang = lang)
+                Destination.COUNCIL.route -> CouncilPrototypeScreen(lang = lang)
+                Destination.PREDICT.route -> PredictPrototypeScreen(lang = lang)
                 else -> error("Unknown visual state: $visualState")
             }
         }
