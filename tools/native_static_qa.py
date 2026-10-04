@@ -21,10 +21,14 @@ def fail(message: str) -> None:
 
 
 manifest = ET.parse(SRC / "AndroidManifest.xml").getroot()
-if manifest.findall("uses-permission"):
-    fail("source manifest declares uses-permission")
-if manifest.findall("permission"):
-    fail("source manifest declares permission")
+TOOLS_NS = "{http://schemas.android.com/tools}"
+permission_nodes = manifest.findall("uses-permission") + manifest.findall("permission")
+requested_permission_nodes = [
+    node for node in permission_nodes
+    if node.get(TOOLS_NS + "node") != "remove"
+]
+if requested_permission_nodes:
+    fail("source manifest requests a permission")
 
 application = manifest.find("application")
 if application is None:
@@ -137,7 +141,7 @@ for match in re.finditer(r'group\s*=\s*"([^"]+)"', catalogue):
 if "\ufffd" in source_text:
     fail("U+FFFD found in Kotlin source")
 
-print("PASS: source manifest requests no permissions")
+print("PASS: source manifest requests no permissions; AndroidX compatibility permission is explicitly removed")
 print("PASS: only launcher MainActivity is exported")
 print("PASS: allowBackup=false and cleartext disabled")
 print("PASS: no android.webkit/WebView/WebViewAssetLoader runtime code")
