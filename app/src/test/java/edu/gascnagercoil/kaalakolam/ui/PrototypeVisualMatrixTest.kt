@@ -3,6 +3,8 @@ package edu.gascnagercoil.kaalakolam.ui
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
+import app.cash.paparazzi.Snapshot
+import app.cash.paparazzi.SnapshotHandler
 import com.android.resources.Density
 import com.android.resources.NightMode
 import edu.gascnagercoil.kaalakolam.content.GapEntry
@@ -10,6 +12,7 @@ import edu.gascnagercoil.kaalakolam.content.GapManifest
 import edu.gascnagercoil.kaalakolam.domain.AppState
 import edu.gascnagercoil.kaalakolam.domain.ThemeMode
 import edu.gascnagercoil.kaalakolam.ui.theme.KaalaKolamTheme
+import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
 import org.junit.Rule
@@ -60,11 +63,28 @@ class PrototypeVisualMatrixTest(
             softButtons = false,
         ),
         showSystemUi = false,
-        onNewFrame = { image ->
-            output.parentFile.mkdirs()
-            ImageIO.write(image, "png", output)
-        },
+        snapshotHandler = FileSnapshotHandler(output),
     )
+
+    private class FileSnapshotHandler(
+        private val output: File,
+    ) : SnapshotHandler {
+        override fun newFrameHandler(
+            snapshot: Snapshot,
+            frameCount: Int,
+            fps: Int,
+        ): SnapshotHandler.FrameHandler =
+            object : SnapshotHandler.FrameHandler {
+                override fun handle(image: BufferedImage) {
+                    output.parentFile?.mkdirs()
+                    ImageIO.write(image, "png", output)
+                }
+
+                override fun close() = Unit
+            }
+
+        override fun close() = Unit
+    }
 
     @Test
     fun capturePrototypeState() {
