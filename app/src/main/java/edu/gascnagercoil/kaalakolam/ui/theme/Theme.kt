@@ -77,6 +77,7 @@ private fun scheme(p: PrototypePalette, dark: Boolean) =
     )
 
 private val BundledTamilFont = FontFamily(Font(R.font.noto_sans_tamil))
+
 @Composable
 private fun prototypeTypography(): Typography {
     val isTamil = LocalConfiguration.current.locales[0].language == "ta"
