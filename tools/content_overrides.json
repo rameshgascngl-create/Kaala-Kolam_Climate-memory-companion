@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "status": "APPROVED_SOURCE_OVERRIDES",
+  "note": "Human-approved terminology corrections applied by tools/extract_content.py. Generated JSON must never be hand-edited.",
+  "replacements": [
+    {"from": "ஆல்கா", "to": "நுண்பாசி", "reason": "Approved Tamil terminology."},
+    {"from": "கார்பன் டையாக்சைடு", "to": "கார்பன் டை ஆக்சைடு", "reason": "Approved Tamil terminology."},
+    {"from": "தரைக் காற்று", "to": "நிலக்காற்று", "reason": "Approved Tamil terminology."},
+    {"from": "கடல் காற்று", "to": "கடற்காற்று", "reason": "Approved Tamil terminology."},
+    {"from": "பனிப்பாறை", "to": "பனியாறு", "reason": "Approved Tamil terminology."},
+    {"from": "குளிர்சாதனம்", "to": "குளிரூட்டி", "reason": "Approved Tamil terminology."},
+    {"from": "சதுப்புநிலக் காடுகள்", "to": "அலையாத்திக் காடுகள்", "reason": "Approved Tamil terminology."},
+    {"from": "தழுவல்", "to": "தகவமைப்பு", "reason": "Approved Tamil terminology."},
+    {"from": "காப்பகம்", "to": "பாதுகாப்பு மையம்", "reason": "The school-teacher council role means an emergency shelter/safety centre, not an archive."}
+  ],
+  "bannedTerms": [
+    "ஆல்கா",
+    "கார்பன் டையாக்சைடு",
+    "தரைக் காற்று",
+    "கடல் காற்று",
+    "பனிப்பாறை",
+    "குளிர்சாதனம்",
+    "சதுப்புநிலக் காடுகள்",
+    "தழுவல்",
+    "அழுத்தம்",
+    "காப்பகம்"
+  ],
+  "bannedPatterns": {
+    "அழுத்தம்": "(?<![\\u0B80-\\u0BFF])அழுத்தம்(?![\\u0B80-\\u0BFF])"
+  },
+  "allowRules": [
+    {
+      "term": "அழுத்தம்",
+      "path": "words[16][2]",
+      "pattern": "(?<![\\u0B80-\\u0BFF])அழுத்தம்(?![\\u0B80-\\u0BFF])",
+      "exactValue": "காற்று பரப்பின் மேல் செலுத்தும் அழுத்தம்.",
+      "reason": "This is generic physical pressure in the definition of air pressure. The headword itself remains the approved meteorological term காற்றழுத்தம்."
+    }
+  ]
+}
