@@ -41,4 +41,8 @@
     <string name="restore_confirm_body">The validated backup will replace the current local state.</string>
     <string name="backup_explanation">Backup codes contain your local app state. Keep them private if your entries contain personal information.</string>
     <string name="content_review_note">Tamil content on this screen remains a DRAFT pending owner review.</string>
+
+    <string name="tts_missing_title">Tamil voice not installed</string>
+    <string name="tts_missing_body">Tamil narration is unavailable on this device. Install Tamil text-to-speech data before using narration.</string>
+    <string name="tts_install">Install voice data</string>
 </resources>

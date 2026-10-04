@@ -52,6 +52,7 @@ import androidx.navigation.compose.rememberNavController
 import edu.gascnagercoil.kaalakolam.R
 import edu.gascnagercoil.kaalakolam.domain.AppState
 import edu.gascnagercoil.kaalakolam.domain.ThemeMode
+import edu.gascnagercoil.kaalakolam.speech.rememberSpeechController
 import edu.gascnagercoil.kaalakolam.ui.theme.PrototypeTheme
 
 private const val ABOUT_ROUTE = "about"
@@ -90,6 +91,8 @@ fun KaalaKolamApp(
     val entry by navController.currentBackStackEntryAsState()
     val currentRoute = entry?.destination?.route ?: Destination.HOME.route
     val lang = uiState.appState.language
+    // Owns TTS lifecycle and the once-per-session missing-Tamil-voice dialog.
+    rememberSpeechController()
     var zoom by remember { mutableIntStateOf(0) }
     val baseDensity = LocalDensity.current
     val fontScale = listOf(1f, 1.2f, 1.42f)[zoom]
