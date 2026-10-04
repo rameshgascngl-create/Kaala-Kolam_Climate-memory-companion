@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- The app is always dark-grounded; the page has its own light/dark switch inside. -->
+    <!-- The base theme is dark; MainActivity mirrors the page light/dark choice at runtime. -->
     <style name="Theme.KaalaKolam" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">@color/turmeric</item>
         <item name="colorOnPrimary">@color/ground</item>
