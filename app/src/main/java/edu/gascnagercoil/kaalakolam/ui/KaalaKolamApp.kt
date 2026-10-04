@@ -38,6 +38,8 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
@@ -408,13 +410,31 @@ private fun PrototypeTabs(
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp),
                     )
                 }
-                Text(
+                PrototypeTabLabel(
                     text = localized(lang, destination.en, destination.ta),
                     color = if (selected) p.turmeric else p.faint,
-                    fontSize = 12.sp,
-                    maxLines = 1,
                 )
             }
         }
     }
+}
+
+
+@Composable
+internal fun PrototypeTabLabel(
+    text: String,
+    color: androidx.compose.ui.graphics.Color,
+    onTextLayout: (TextLayoutResult) -> Unit = {},
+) {
+    val compact = LocalConfiguration.current.screenWidthDp <= 360
+    Text(
+        text = text,
+        color = color,
+        fontSize = if (compact) 8.5.sp else 10.5.sp,
+        lineHeight = if (compact) 10.5.sp else 13.sp,
+        maxLines = 2,
+        softWrap = true,
+        textAlign = TextAlign.Center,
+        onTextLayout = onTextLayout,
+    )
 }
