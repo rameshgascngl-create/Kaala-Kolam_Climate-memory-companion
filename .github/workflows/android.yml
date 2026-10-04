@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   verify:
@@ -111,6 +111,9 @@ jobs:
           python -m pip install --disable-pip-version-check playwright==1.55.0
           python -m playwright install --with-deps chromium
 
+      - name: Regenerate prototype visual tokens
+        run: python3 tools/extract_tokens.py
+
       - name: Capture HTML prototype golden matrix
         run: python3 tools/capture_golden_web.py
 
@@ -126,6 +129,21 @@ jobs:
               raise SystemExit(f"Expected 72 golden PNGs; manifest={count}, files={len(files)}")
           print("GOLDEN_WEB_MATRIX_PASS 72/72")
           PY
+
+      - name: Store generated visual contract on native-v2
+        if: github.event_name == 'push' && github.ref == 'refs/heads/native-v2'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/src/main/java/edu/gascnagercoil/kaalakolam/ui/theme/Theme.kt tests/golden-web
+          if git diff --cached --quiet; then
+            echo "Generated Theme.kt and golden-web references are already current."
+          else
+            git commit -m "test: store generated visual contract [skip ci]"
+            git push origin HEAD:native-v2
+          fi
 
       - name: Upload golden web references
         uses: actions/upload-artifact@v4
