@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -106,6 +108,7 @@ fun HomeScreen(
                     ),
                     color = p.flour,
                     style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier.widthIn(max = 285.dp),
                 )
                 MemoryStripeHero(lang)
                 Text(
@@ -454,6 +457,7 @@ private fun MemoryStripeHero(lang: String) {
         modifier = Modifier
             .fillMaxWidth()
             .height(78.dp)
+            .clip(RoundedCornerShape(10.dp))
             .semantics {
                 contentDescription = localized(
                     lang,

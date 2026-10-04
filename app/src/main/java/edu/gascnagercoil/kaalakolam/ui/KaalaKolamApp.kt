@@ -3,12 +3,14 @@ package edu.gascnagercoil.kaalakolam.ui
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -35,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
@@ -306,6 +309,7 @@ private fun PrototypeTopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .background(p.ground2)
             .drawBehind {
                 drawLine(
                     color = p.line,
@@ -330,6 +334,8 @@ private fun PrototypeTopBar(
                 fontFamily = MaterialTheme.typography.titleLarge.fontFamily,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 18.4.sp,
+                maxLines = 1,
+                softWrap = false,
             )
             if (!compact) {
                 Text(
@@ -399,6 +405,7 @@ private fun PrototypeTabs(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .background(p.ground2)
             .drawBehind {
                 drawLine(
                     color = p.line,
@@ -417,22 +424,20 @@ private fun PrototypeTabs(
                 modifier = Modifier
                     .weight(1f)
                     .heightIn(min = 56.dp)
-                    .clickable { onNavigate(destination) }
-                    .padding(vertical = 4.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Surface(
-                    shape = RoundedCornerShape(12.dp),
-                    color = if (selected) p.ground3 else p.ground2,
-                ) {
-                    Icon(
-                        imageVector = PrototypeIcons.get(destination.icon),
-                        contentDescription = localized(lang, destination.en, destination.ta),
-                        tint = if (selected) p.turmeric else p.faint,
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp),
+                    .background(
+                        if (selected) p.ground3 else Color.Transparent,
+                        RoundedCornerShape(12.dp),
                     )
-                }
+                    .clickable { onNavigate(destination) },
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
+            ) {
+                Icon(
+                    imageVector = PrototypeIcons.get(destination.icon),
+                    contentDescription = localized(lang, destination.en, destination.ta),
+                    tint = if (selected) p.turmeric else p.faint,
+                    modifier = Modifier.size(24.dp),
+                )
                 PrototypeTabLabel(
                     text = localized(lang, destination.en, destination.ta),
                     color = if (selected) p.turmeric else p.faint,
@@ -449,12 +454,11 @@ internal fun PrototypeTabLabel(
     color: androidx.compose.ui.graphics.Color,
     onTextLayout: (TextLayoutResult) -> Unit = {},
 ) {
-    val compact = LocalConfiguration.current.screenWidthDp <= 360
     Text(
         text = text,
         color = color,
-        fontSize = if (compact) 8.5.sp else 10.5.sp,
-        lineHeight = if (compact) 10.5.sp else 13.sp,
+        fontSize = 12.sp,
+        lineHeight = 18.6.sp,
         maxLines = 2,
         softWrap = true,
         textAlign = TextAlign.Center,
