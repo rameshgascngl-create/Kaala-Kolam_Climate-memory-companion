@@ -45,4 +45,12 @@
     <string name="tts_missing_title">Tamil voice not installed</string>
     <string name="tts_missing_body">Tamil narration is unavailable on this device. Install Tamil text-to-speech data before using narration.</string>
     <string name="tts_install">Install voice data</string>
+
+    <string name="access_text_size">Change text size</string>
+    <string name="access_switch_english">Switch to English</string>
+    <string name="access_switch_tamil">Switch to Tamil</string>
+    <string name="access_toggle_theme">Toggle light and dark theme</string>
+    <string name="access_memory_stripes">Memory stripes showing climate change over time</string>
+    <string name="access_kolam_progress">Kolam learning progress: %1$d of 5 petals complete</string>
+    <string name="access_baseline_chart">Chart showing three generations treating different climate levels as normal</string>
 </resources>

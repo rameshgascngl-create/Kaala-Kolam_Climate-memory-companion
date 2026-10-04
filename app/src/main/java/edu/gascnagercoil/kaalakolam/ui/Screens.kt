@@ -49,6 +49,8 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -105,7 +107,7 @@ fun HomeScreen(
                     color = p.flour,
                     style = MaterialTheme.typography.headlineLarge,
                 )
-                MemoryStripeHero()
+                MemoryStripeHero(lang)
                 Text(
                     text = localized(
                         lang,
@@ -181,6 +183,7 @@ fun HomeScreen(
                 ) {
                     KolamProgress(
                         done = done,
+                        lang = lang,
                         modifier = Modifier.size(154.dp),
                     )
                     Column(
@@ -351,7 +354,7 @@ private fun EntryOption(
         ) {
             Icon(
                 imageVector = PrototypeIcons.get(icon),
-                contentDescription = null,
+                contentDescription = title,
                 tint = p.turmeric,
                 modifier = Modifier.size(30.dp),
             )
@@ -446,11 +449,18 @@ private fun PrototypeFooter(lang: String) {
 }
 
 @Composable
-private fun MemoryStripeHero() {
+private fun MemoryStripeHero(lang: String) {
     Canvas(
         modifier = Modifier
             .fillMaxWidth()
-            .height(78.dp),
+            .height(78.dp)
+            .semantics {
+                contentDescription = localized(
+                    lang,
+                    "Memory stripes showing climate change over time",
+                    "காலப்போக்கில் காலநிலை மாற்றத்தைக் காட்டும் நினைவுக் கோடுகள்",
+                )
+            },
     ) {
         val random = Mulberry32(7)
         val colours = PrototypeTokens.ScaleColours
@@ -502,10 +512,19 @@ private class Mulberry32(seed: Int) {
 @Composable
 private fun KolamProgress(
     done: List<Boolean>,
+    lang: String,
     modifier: Modifier = Modifier,
 ) {
     val p = PrototypeTheme.palette
-    Canvas(modifier = modifier) {
+    Canvas(
+        modifier = modifier.semantics {
+            contentDescription = localized(
+                lang,
+                "Kolam learning progress: " + done.count { it } + " of 5 petals complete",
+                "கோலக் கற்றல் முன்னேற்றம்: 5 இதழ்களில் " + done.count { it } + " நிறைவு",
+            )
+        },
+    ) {
         val scale = min(size.width, size.height) / 224f
         val center = Offset(size.width / 2f, size.height / 2f)
         val dash = PathEffect.dashPathEffect(floatArrayOf(3f * scale, 6f * scale))
@@ -584,7 +603,14 @@ private fun BaselineChart(lang: String) {
     Canvas(
         modifier = Modifier
             .fillMaxWidth()
-            .height(168.dp),
+            .height(168.dp)
+            .semantics {
+                contentDescription = localized(
+                    lang,
+                    "Chart showing three generations treating different climate levels as normal",
+                    "மூன்று தலைமுறைகள் வெவ்வேறு காலநிலை நிலைகளை இயல்பாகக் கருதுவதைக் காட்டும் வரைபடம்",
+                )
+            },
     ) {
         val random = Mulberry32(11)
         val points = (0..60).map { index ->

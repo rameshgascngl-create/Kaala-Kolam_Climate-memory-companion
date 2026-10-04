@@ -46,4 +46,12 @@
     <string name="tts_missing_title">தமிழ் குரல் நிறுவப்படவில்லை</string>
     <string name="tts_missing_body">இந்தச் சாதனத்தில் தமிழ் குரல் வாசிப்பு கிடைக்கவில்லை. குரல் விளக்கத்தைப் பயன்படுத்த முன் தமிழ் உரை-குரல் தரவை நிறுவுங்கள்.</string>
     <string name="tts_install">குரல் தரவை நிறுவு</string>
+
+    <string name="access_text_size">எழுத்தளவை மாற்று</string>
+    <string name="access_switch_english">ஆங்கிலத்திற்கு மாறு</string>
+    <string name="access_switch_tamil">தமிழுக்கு மாறு</string>
+    <string name="access_toggle_theme">ஒளி மற்றும் இருள் தோற்றத்தை மாற்று</string>
+    <string name="access_memory_stripes">காலப்போக்கில் காலநிலை மாற்றத்தைக் காட்டும் நினைவுக் கோடுகள்</string>
+    <string name="access_kolam_progress">கோலக் கற்றல் முன்னேற்றம்: 5 இதழ்களில் %1$d நிறைவு</string>
+    <string name="access_baseline_chart">மூன்று தலைமுறைகள் வெவ்வேறு காலநிலை நிலைகளை இயல்பாகக் கருதுவதைக் காட்டும் வரைபடம்</string>
 </resources>

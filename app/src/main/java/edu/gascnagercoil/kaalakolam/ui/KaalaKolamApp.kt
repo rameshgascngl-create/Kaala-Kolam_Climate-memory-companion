@@ -37,6 +37,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.TextAlign
@@ -341,19 +343,38 @@ private fun PrototypeTopBar(
                 )
             }
         }
-        HeaderTool(text = listOf("Aa", "Aa+", "Aa++")[zoom], onClick = onZoom)
-        HeaderTool(text = if (lang == "ta") "EN" else "தமிழ்", onClick = onLanguage)
-        HeaderTool(text = "◐", onClick = onTheme)
+        HeaderTool(
+            text = listOf("Aa", "Aa+", "Aa++")[zoom],
+            contentDescription = stringResource(R.string.access_text_size),
+            onClick = onZoom,
+        )
+        HeaderTool(
+            text = if (lang == "ta") "EN" else "தமிழ்",
+            contentDescription = stringResource(
+                if (lang == "ta") R.string.access_switch_english else R.string.access_switch_tamil,
+            ),
+            onClick = onLanguage,
+        )
+        HeaderTool(
+            text = "◐",
+            contentDescription = stringResource(R.string.access_toggle_theme),
+            onClick = onTheme,
+        )
     }
 }
 
 @Composable
-private fun HeaderTool(text: String, onClick: () -> Unit) {
+private fun HeaderTool(
+    text: String,
+    contentDescription: String,
+    onClick: () -> Unit,
+) {
     val p = PrototypeTheme.palette
     Surface(
         modifier = Modifier
             .heightIn(min = 44.dp)
             .widthIn(min = 44.dp)
+            .semantics { this.contentDescription = contentDescription }
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(12.dp),
         color = p.ground2,
@@ -407,7 +428,7 @@ private fun PrototypeTabs(
                 ) {
                     Icon(
                         imageVector = PrototypeIcons.get(destination.icon),
-                        contentDescription = null,
+                        contentDescription = localized(lang, destination.en, destination.ta),
                         tint = if (selected) p.turmeric else p.faint,
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp),
                     )

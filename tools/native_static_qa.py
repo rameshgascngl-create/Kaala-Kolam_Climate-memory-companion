@@ -155,6 +155,11 @@ if content_tamil.returncode:
     fail(content_tamil.stdout + content_tamil.stderr)
 print(content_tamil.stdout.strip())
 
+accessibility = subprocess.run([sys.executable, str(ROOT / "tools" / "test_accessibility_policy.py")], text=True, capture_output=True)
+if accessibility.returncode:
+    fail(accessibility.stdout + accessibility.stderr)
+print(accessibility.stdout.strip())
+
 speech_policy = subprocess.run([sys.executable, str(ROOT / "tools" / "test_speech_policy.py")], text=True, capture_output=True)
 if speech_policy.returncode:
     fail(speech_policy.stdout + speech_policy.stderr)
