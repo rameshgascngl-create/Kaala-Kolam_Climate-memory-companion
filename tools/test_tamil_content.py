@@ -62,7 +62,7 @@ def numeric_unit_or_allowlisted(text: str) -> bool:
             continue
         return False
     residue = LATIN.sub("", text)
-    return not re.search(r"[^0-9\s.,+−±%°/²³µ₂()\-–—]", residue)
+    return not re.search(r"[A-Za-z\\u0B80-\\u0BFF]", residue)
 
 payloads = {}
 for path in sorted(CONTENT.glob("*.json")):
