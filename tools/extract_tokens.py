@@ -127,6 +127,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import edu.gascnagercoil.kaalakolam.R
@@ -201,17 +202,18 @@ private fun prototypeTypography(): Typography {{
         if (isTamil && !systemSansHasTamilCoverage()) BundledTamilFont else FontFamily.SansSerif
     }}
     val displayFamily = if (isTamil) bodyFamily else FontFamily.Serif
+    val localeList = if (isTamil) LocaleList("ta") else LocaleList("en")
     return Typography(
-        headlineLarge=TextStyle(fontFamily=displayFamily,fontWeight=FontWeight.SemiBold,fontSize=30.4.sp,lineHeight=36.48.sp),
-        headlineMedium=TextStyle(fontFamily=displayFamily,fontWeight=FontWeight.SemiBold,fontSize=21.6.sp,lineHeight=25.92.sp),
-        headlineSmall=TextStyle(fontFamily=displayFamily,fontWeight=FontWeight.SemiBold,fontSize=17.28.sp,lineHeight=20.74.sp),
-        titleLarge=TextStyle(fontFamily=displayFamily,fontWeight=FontWeight.SemiBold,fontSize=18.4.sp,lineHeight=22.08.sp),
-        titleMedium=TextStyle(fontFamily=displayFamily,fontWeight=FontWeight.SemiBold,fontSize=17.28.sp,lineHeight=20.74.sp),
-        bodyLarge=TextStyle(fontFamily=bodyFamily,fontSize=16.sp,lineHeight=24.8.sp),
-        bodyMedium=TextStyle(fontFamily=bodyFamily,fontSize=14.4.sp,lineHeight=22.32.sp),
-        bodySmall=TextStyle(fontFamily=bodyFamily,fontSize=12.8.sp,lineHeight=19.84.sp),
-        labelMedium=TextStyle(fontFamily=bodyFamily,fontSize=12.48.sp,lineHeight=16.sp),
-        labelSmall=TextStyle(fontFamily=bodyFamily,fontSize=12.sp,lineHeight=14.4.sp),
+        headlineLarge=TextStyle(fontFamily=displayFamily,localeList=localeList,fontWeight=FontWeight.SemiBold,fontSize=30.4.sp,lineHeight=36.48.sp),
+        headlineMedium=TextStyle(fontFamily=displayFamily,localeList=localeList,fontWeight=FontWeight.SemiBold,fontSize=21.6.sp,lineHeight=25.92.sp),
+        headlineSmall=TextStyle(fontFamily=displayFamily,localeList=localeList,fontWeight=FontWeight.SemiBold,fontSize=17.28.sp,lineHeight=20.74.sp),
+        titleLarge=TextStyle(fontFamily=displayFamily,localeList=localeList,fontWeight=FontWeight.SemiBold,fontSize=18.4.sp,lineHeight=22.08.sp),
+        titleMedium=TextStyle(fontFamily=displayFamily,localeList=localeList,fontWeight=FontWeight.SemiBold,fontSize=17.28.sp,lineHeight=20.74.sp),
+        bodyLarge=TextStyle(fontFamily=bodyFamily,localeList=localeList,fontSize=16.sp,lineHeight=24.8.sp),
+        bodyMedium=TextStyle(fontFamily=bodyFamily,localeList=localeList,fontSize=14.4.sp,lineHeight=22.32.sp),
+        bodySmall=TextStyle(fontFamily=bodyFamily,localeList=localeList,fontSize=12.8.sp,lineHeight=19.84.sp),
+        labelMedium=TextStyle(fontFamily=bodyFamily,localeList=localeList,fontSize=12.48.sp,lineHeight=16.sp),
+        labelSmall=TextStyle(fontFamily=bodyFamily,localeList=localeList,fontSize=12.sp,lineHeight=14.4.sp),
     )
 }}
 private val PrototypeShapes = Shapes(

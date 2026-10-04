@@ -155,6 +155,11 @@ if content_tamil.returncode:
     fail(content_tamil.stdout + content_tamil.stderr)
 print(content_tamil.stdout.strip())
 
+locale_contract = subprocess.run([sys.executable, str(ROOT / "tools" / "test_locale_contract.py")], text=True, capture_output=True)
+if locale_contract.returncode:
+    fail(locale_contract.stdout + locale_contract.stderr)
+print(locale_contract.stdout.strip())
+
 text_handling = subprocess.run([sys.executable, str(ROOT / "tools" / "test_text_handling.py")], text=True, capture_output=True)
 if text_handling.returncode:
     fail(text_handling.stdout + text_handling.stderr)
