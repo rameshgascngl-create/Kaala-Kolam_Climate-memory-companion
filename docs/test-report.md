@@ -66,3 +66,26 @@ Input A is the authoritative content and logic source because a genuine correcte
 **M0 STATUS: PASS**, with local Git clone retained as an environmental **BLOCKED** item.
 
 M1 has not started.
+
+## M0.5 — content gaps and Tamil terminology policy
+
+| Check | Status | Evidence |
+|---|---|---|
+| Generated assets changed only through extractor override policy | **PASS** | `tools/content_overrides.json` is read by `tools/extract_content.py`; regenerated output used for verification |
+| School-teacher `காப்பகம்` correction | **PASS** | generated `council.json` contains `பள்ளியே ஒரே பாதுகாப்பு மையம்...` and no `காப்பகம்` |
+| Standalone generic `அழுத்தம்` decision | **PASS** | explicit Tamil-range word-boundary allow rule limited to `words[16][2]` and exact gloss `காற்று பரப்பின் மேல் செலுத்தும் அழுத்தம்.` |
+| Banned-term grep | **PASS** | no hits for the other nine banned forms; boundary-aware grep has exactly one standalone `அழுத்தம்` hit in `words.json` |
+| English-only long-form inventory | **PASS** | generated `gaps.json`: 24 deep-dive + 7 Council + 30 Elders + 16 Predict = 77 |
+| Gap enforcement | **PASS** | test derives actual long-form untranslated fields and requires exact equality with `gaps.json` |
+| Native gap label contract | **PASS (metadata only)** | `gaps.json` records exact `uiLabel` = `English only`; M1 UI has not started |
+| Tamil draft separation | **PASS** | `docs/tamil-drafts-DRAFT.json`: `status=DRAFT`, `shippedWithApp=false`, 77 entries, all `taDraft=null` |
+| Machine-translated Tamil in shipped assets | **PASS** | none generated; owner-review queue remains separate |
+| Content test suite | **PASS** | `python tools/test_content_asset.py` → 8 tests, `OK` |
+| Remote content commit | **PASS** | `15e1355c72c70f69228950534ded5cb27922d949` |
+| Remote byte-for-byte re-read | **PASS** | all six M0.5 content/policy files matched the locally tested versions exactly |
+| Commit authorship | **PASS** | author and committer: `Ramesh R <rameshgascngl@gmail.com>` |
+| History rewrite | **PASS — none used** | pre-M0.5 HEAD is direct parent; compare reports ahead 1, behind 0; ref update used `force=false` |
+
+See `docs/m0.5-report.md` for commands and output excerpts.
+
+**M0.5 STATUS: PASS. M1 has not started.**
