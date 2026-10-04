@@ -30,24 +30,13 @@ import org.junit.runners.Parameterized
  */
 @RunWith(Parameterized::class)
 class PrototypeVisualMatrixTest(
-    private val state: String,
     private val width: Int,
     private val height: Int,
     private val language: String,
     private val theme: String,
 ) {
-    private val route: String = when (state) {
-        "home" -> "home"
-        "learn", "learn-topic", "learn-game", "learn-words" -> "learn"
-        "elders" -> "elders"
-        "class" -> "class"
-        "council" -> "council"
-        "predict" -> "predict"
-        else -> error("Unknown state: $state")
-    }
-
-    private val output = File(
-        "build/visual-native/$width" + "x$height/$language/$theme/$state.png",
+    private val outputRoot = File(
+        "build/visual-native/$width" + "x$height/$language/$theme",
     )
 
     @get:Rule
@@ -63,18 +52,20 @@ class PrototypeVisualMatrixTest(
             softButtons = false,
         ),
         showSystemUi = false,
-        snapshotHandler = FileSnapshotHandler(output),
+        snapshotHandler = FileSnapshotHandler(outputRoot),
     )
 
     private class FileSnapshotHandler(
-        private val output: File,
+        private val outputRoot: File,
     ) : SnapshotHandler {
         override fun newFrameHandler(
             snapshot: Snapshot,
             frameCount: Int,
             fps: Int,
-        ): SnapshotHandler.FrameHandler =
-            object : SnapshotHandler.FrameHandler {
+        ): SnapshotHandler.FrameHandler {
+            val name = requireNotNull(snapshot.name) { "Matrix snapshots must be named" }
+            val output = File(outputRoot, "$name.png")
+            return object : SnapshotHandler.FrameHandler {
                 override fun handle(image: BufferedImage) {
                     output.parentFile?.mkdirs()
                     ImageIO.write(image, "png", output)
@@ -82,48 +73,62 @@ class PrototypeVisualMatrixTest(
 
                 override fun close() = Unit
             }
+        }
 
         override fun close() = Unit
     }
 
     @Test
-    fun capturePrototypeState() {
+    fun capturePrototypeMatrixForDeviceState() {
         val mode = if (theme == "dark") ThemeMode.DARK else ThemeMode.LIGHT
-        paparazzi.snapshot(name = "$state-$width" + "x$height-$language-$theme") {
-            KaalaKolamTheme(mode) {
-                KaalaKolamApp(
-                    uiState = AppUiState(
-                        appState = AppState(language = language, themeMode = mode),
-                        gaps = testGapManifest(),
-                    ),
-                    widthSizeClass = WindowWidthSizeClass.Compact,
-                    onLanguageChange = {},
-                    onThemeChange = {},
-                    onBackup = { "" },
-                    onValidateBackup = { null },
-                    onRestore = {},
-                    onReset = {},
-                    initialRoute = route,
-                )
+        states.forEach { state ->
+            paparazzi.snapshot(name = state) {
+                KaalaKolamTheme(mode) {
+                    KaalaKolamApp(
+                        uiState = AppUiState(
+                            appState = AppState(language = language, themeMode = mode),
+                            gaps = testGapManifest(),
+                        ),
+                        widthSizeClass = WindowWidthSizeClass.Compact,
+                        onLanguageChange = {},
+                        onThemeChange = {},
+                        onBackup = { "" },
+                        onValidateBackup = { null },
+                        onRestore = {},
+                        onReset = {},
+                        initialRoute = routeFor(state),
+                    )
+                }
             }
         }
     }
 
     companion object {
+        private val states = listOf(
+            "home",
+            "learn",
+            "elders",
+            "class",
+            "council",
+            "predict",
+            "learn-topic",
+            "learn-game",
+            "learn-words",
+        )
+
+        private fun routeFor(state: String): String = when (state) {
+            "home" -> "home"
+            "learn", "learn-topic", "learn-game", "learn-words" -> "learn"
+            "elders" -> "elders"
+            "class" -> "class"
+            "council" -> "council"
+            "predict" -> "predict"
+            else -> error("Unknown state: $state")
+        }
+
         @JvmStatic
-        @Parameterized.Parameters(name = "{0}-{1}x{2}-{3}-{4}")
+        @Parameterized.Parameters(name = "{0}x{1}-{2}-{3}")
         fun parameters(): List<Array<Any>> {
-            val states = listOf(
-                "home",
-                "learn",
-                "elders",
-                "class",
-                "council",
-                "predict",
-                "learn-topic",
-                "learn-game",
-                "learn-words",
-            )
             val sizes = listOf(390 to 844, 320 to 568)
             val languages = listOf("en", "ta")
             val themes = listOf("dark", "light")
@@ -131,9 +136,7 @@ class PrototypeVisualMatrixTest(
                 sizes.forEach { (width, height) ->
                     languages.forEach { language ->
                         themes.forEach { theme ->
-                            states.forEach { state ->
-                                add(arrayOf(state, width, height, language, theme))
-                            }
+                            add(arrayOf(width, height, language, theme))
                         }
                     }
                 }
