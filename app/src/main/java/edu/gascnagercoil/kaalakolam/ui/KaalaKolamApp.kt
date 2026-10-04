@@ -35,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -211,6 +212,7 @@ private fun PrototypeTopBar(
     onAbout: () -> Unit,
 ) {
     val p = PrototypeTheme.palette
+    val compact = LocalConfiguration.current.screenWidthDp <= 480
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -240,16 +242,18 @@ private fun PrototypeTopBar(
                 fontSize = 18.4.sp,
                 maxLines = 1,
             )
-            Text(
-                localized(
-                    lang,
-                    "Ask your elders. Test the evidence. Decide together.",
-                    "மூத்தோரிடம் கேளுங்கள். சான்றைச் சோதியுங்கள். இணைந்து முடிவெடுங்கள்.",
-                ),
-                color = p.faint,
-                fontSize = 11.84.sp,
-                maxLines = 1,
-            )
+            if (!compact) {
+                Text(
+                    localized(
+                        lang,
+                        "Ask your elders. Test the evidence. Decide together.",
+                        "மூத்தோரிடம் கேளுங்கள். சான்றைச் சோதியுங்கள். இணைந்து முடிவெடுங்கள்.",
+                    ),
+                    color = p.faint,
+                    fontSize = 11.84.sp,
+                    maxLines = 1,
+                )
+            }
         }
         HeaderTool(text = listOf("Aa", "Aa+", "Aa++")[zoom], onClick = onZoom)
         HeaderTool(text = if (lang == "ta") "EN" else "தமிழ்", onClick = onLanguage)
