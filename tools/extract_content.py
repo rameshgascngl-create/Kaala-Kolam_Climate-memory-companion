@@ -58,6 +58,8 @@ def load_overrides(path: Path) -> dict[str, Any]:
         raise SystemExit("OVERRIDE_FAIL: bannedTerms must be a list")
     if not isinstance(payload.get("allowRules"), list):
         raise SystemExit("OVERRIDE_FAIL: allowRules must be a list")
+    if not isinstance(payload.get("pathReplacements", []), list):
+        raise SystemExit("OVERRIDE_FAIL: pathReplacements must be a list")
     return payload
 
 
@@ -72,6 +74,39 @@ def apply_replacements(value: Any, replacements: list[dict[str, str]]) -> Any:
         return {k: apply_replacements(v, replacements) for k, v in value.items()}
     return value
 
+
+
+def apply_path_replacements(value: Any, rules: list[dict[str, str]]) -> Any:
+    by_path: dict[str, list[dict[str, str]]] = {}
+    for rule in rules:
+        by_path.setdefault(rule["path"], []).append(rule)
+
+    def visit(node: Any, path: str = "") -> Any:
+        if isinstance(node, str):
+            result = node
+            for rule in by_path.get(path, []):
+                if rule["from"] not in result:
+                    raise SystemExit(
+                        f"OVERRIDE_FAIL: path replacement source not found at {path}: {rule['from']!r}"
+                    )
+                result = result.replace(rule["from"], rule["to"])
+            return result
+        if isinstance(node, list):
+            return [visit(child, f"{path}[{index}]") for index, child in enumerate(node)]
+        if isinstance(node, dict):
+            return {
+                key: visit(child, f"{path}.{key}" if path else key)
+                for key, child in node.items()
+            }
+        return node
+
+    result = visit(value)
+    for rule in rules:
+        target = rule["path"]
+        # Each rule must have been applied exactly at its declared path.
+        if not any(path == target and rule["to"] in text for path, text in walk_strings(result)):
+            raise SystemExit(f"OVERRIDE_FAIL: path replacement not observed at {target}")
+    return result
 
 def walk_strings(value: Any, path: str = "") -> Iterable[tuple[str, str]]:
     if isinstance(value, str):
@@ -307,6 +342,7 @@ def main() -> int:
 
     overrides = load_overrides(args.overrides)
     data = apply_replacements(data, overrides["replacements"])
+    data = apply_path_replacements(data, overrides.get("pathReplacements", []))
 
     bilingual_errors = validate_bilingual(data)
     if bilingual_errors:

@@ -3,15 +3,76 @@
   "status": "APPROVED_SOURCE_OVERRIDES",
   "note": "Human-approved terminology corrections applied by tools/extract_content.py. Generated JSON must never be hand-edited.",
   "replacements": [
-    {"from": "ஆல்கா", "to": "நுண்பாசி", "reason": "Approved Tamil terminology."},
-    {"from": "கார்பன் டையாக்சைடு", "to": "கார்பன் டை ஆக்சைடு", "reason": "Approved Tamil terminology."},
-    {"from": "தரைக் காற்று", "to": "நிலக்காற்று", "reason": "Approved Tamil terminology."},
-    {"from": "கடல் காற்று", "to": "கடற்காற்று", "reason": "Approved Tamil terminology."},
-    {"from": "பனிப்பாறை", "to": "பனியாறு", "reason": "Approved Tamil terminology."},
-    {"from": "குளிர்சாதனம்", "to": "குளிரூட்டி", "reason": "Approved Tamil terminology."},
-    {"from": "சதுப்புநிலக் காடுகள்", "to": "அலையாத்திக் காடுகள்", "reason": "Approved Tamil terminology."},
-    {"from": "தழுவல்", "to": "தகவமைப்பு", "reason": "Approved Tamil terminology."},
-    {"from": "காப்பகம்", "to": "பாதுகாப்பு மையம்", "reason": "The school-teacher council role means an emergency shelter/safety centre, not an archive."}
+    {
+      "from": "ஆல்கா",
+      "to": "நுண்பாசி",
+      "reason": "Approved Tamil terminology."
+    },
+    {
+      "from": "கார்பன் டையாக்சைடு",
+      "to": "கார்பன் டை ஆக்சைடு",
+      "reason": "Approved Tamil terminology."
+    },
+    {
+      "from": "தரைக் காற்று",
+      "to": "நிலக்காற்று",
+      "reason": "Approved Tamil terminology."
+    },
+    {
+      "from": "கடல் காற்று",
+      "to": "கடற்காற்று",
+      "reason": "Approved Tamil terminology."
+    },
+    {
+      "from": "பனிப்பாறை",
+      "to": "பனியாறு",
+      "reason": "Approved Tamil terminology."
+    },
+    {
+      "from": "குளிர்சாதனம்",
+      "to": "குளிரூட்டி",
+      "reason": "Approved Tamil terminology."
+    },
+    {
+      "from": "சதுப்புநிலக் காடுகள்",
+      "to": "அலையாத்திக் காடுகள்",
+      "reason": "Approved Tamil terminology."
+    },
+    {
+      "from": "தழுவல்",
+      "to": "தகவமைப்பு",
+      "reason": "Approved Tamil terminology."
+    },
+    {
+      "from": "காப்பகம்",
+      "to": "பாதுகாப்பு மையம்",
+      "reason": "The school-teacher council role means an emergency shelter/safety centre, not an archive."
+    },
+    {
+      "from": "காப்பகத்துக்குச்",
+      "to": "பாதுகாப்பு மையத்துக்குச்",
+      "reason": "Cyclone/warning instruction means an emergency safety centre; approved by owner for both occurrences."
+    },
+    {
+      "from": "கார்பன் டையாக்சைடின்",
+      "to": "கார்பன் டை ஆக்சைடின்",
+      "reason": "Inflected form of the approved carbon dioxide spelling."
+    },
+    {
+      "from": "கார்பன் டையாக்சைடை",
+      "to": "கார்பன் டை ஆக்சைடை",
+      "reason": "Inflected form of the approved carbon dioxide spelling."
+    },
+    {
+      "from": "கார்பன் டையாக்சைடைக்",
+      "to": "கார்பன் டை ஆக்சைடைக்",
+      "reason": "Inflected form of the approved carbon dioxide spelling."
+    },
+    {
+      "from": "கார்பன் டையாக்சைடில்",
+      "to": "கார்பன் டை ஆக்சைடில்",
+      "reason": "Inflected form of the approved carbon dioxide spelling."
+    }
   ],
   "bannedTerms": [
     "ஆல்கா",
@@ -26,15 +87,73 @@
     "காப்பகம்"
   ],
   "bannedPatterns": {
-    "அழுத்தம்": "(?<![\\u0B80-\\u0BFF])அழுத்தம்(?![\\u0B80-\\u0BFF])"
+    "ஆல்கா": "(?<![\\u0B80-\\u0BFF])ஆல்க[\\u0B80-\\u0BFF]*",
+    "கார்பன் டையாக்சைடு": "(?<![\\u0B80-\\u0BFF])கார்பன் டையாக்சை[\\u0B80-\\u0BFF]*",
+    "தரைக் காற்று": "(?<![\\u0B80-\\u0BFF])தரைக் காற்ற[\\u0B80-\\u0BFF]*",
+    "கடல் காற்று": "(?<![\\u0B80-\\u0BFF])கடல் காற்ற[\\u0B80-\\u0BFF]*",
+    "பனிப்பாறை": "(?<![\\u0B80-\\u0BFF])பனிப்பாற[\\u0B80-\\u0BFF]*",
+    "குளிர்சாதனம்": "(?<![\\u0B80-\\u0BFF])குளிர்சாதன[\\u0B80-\\u0BFF]*",
+    "சதுப்புநிலக் காடுகள்": "(?<![\\u0B80-\\u0BFF])சதுப்புநிலக் காட[\\u0B80-\\u0BFF]*",
+    "தழுவல்": "(?<![\\u0B80-\\u0BFF])தழுவ[\\u0B80-\\u0BFF]*",
+    "அழுத்தம்": "(?<![\\u0B80-\\u0BFF])அழுத்த[\\u0B80-\\u0BFF]*",
+    "காப்பகம்": "(?<![\\u0B80-\\u0BFF])காப்பக[\\u0B80-\\u0BFF]*"
   },
   "allowRules": [
     {
       "term": "அழுத்தம்",
       "path": "words[16][2]",
-      "pattern": "(?<![\\u0B80-\\u0BFF])அழுத்தம்(?![\\u0B80-\\u0BFF])",
+      "pattern": "(?<![\\u0B80-\\u0BFF])அழுத்த[\\u0B80-\\u0BFF]*",
       "exactValue": "காற்று பரப்பின் மேல் செலுத்தும் அழுத்தம்.",
-      "reason": "This is generic physical pressure in the definition of air pressure. The headword itself remains the approved meteorological term காற்றழுத்தம்."
+      "reason": "Generic physical pressure in the definition of air pressure; the headword remains காற்றழுத்தம்."
+    },
+    {
+      "term": "அழுத்தம்",
+      "path": "topics[17].a.ta",
+      "pattern": "(?<![\\u0B80-\\u0BFF])அழுத்த[\\u0B80-\\u0BFF]*",
+      "exactValue": "பசுமைக்குடில் வாயுக்கள் சிறைப்பிடிக்கும் கூடுதல் வெப்பத்தில் சுமார் 90%-ஐ பெருங்கடல்கள் உறிஞ்சியுள்ளன. கடல் வெப்ப அலைகள் பவளங்கள், மீன்கள், கடற்புற்கள் ஆகியவற்றை அழுத்துகின்றன. வெப்பம் விரைவில் கடந்தால் வெளுத்த பவளங்கள் மீளலாம்; நீண்ட அல்லது மீண்டும் மீண்டும் வரும் வெப்பம் அவற்றைக் கொன்றுவிடும். மன்னார் வளைகுடா உட்பட பவளப்பாறைகள் பல மீன்களுக்குத் தங்குமிடம் தந்து கடற்கரையையும் காக்கின்றன.",
+      "reason": "Here அழுத்துகின்றன is the ordinary verb ‘stress/put pressure on’, not meteorological pressure terminology."
+    },
+    {
+      "term": "காப்பகம்",
+      "path": "topics[23].a.ta",
+      "pattern": "(?<![\\u0B80-\\u0BFF])காப்பக[\\u0B80-\\u0BFF]*",
+      "exactValue": "இரண்டு பணிகள் உள்ளன. தணிப்பு என்பது பசுமைக்குடில் வாயுக்களைக் குறைப்பது: தூய்மையான மின்சாரம், திறன்மிக்க கருவிகள், பொதுப் போக்குவரத்து, குறைந்த கழிவு, காடுகளைப் பாதுகாத்தல். தகவமைப்பு என்பது ஏற்கெனவே நடக்கும் மாற்றங்களின் தீங்கைக் குறைப்பது: முன்னெச்சரிக்கை, நிழல் மற்றும் குளிர்ச்சிக் காப்பகங்கள், வடிகால், பாதுகாப்பான வீடுகள், வறட்சிக்குத் தயாரான வேளாண்மை. தனிப்பட்ட செயல்கள் உதவுகின்றன, பழக்கங்களைப் பரப்புகின்றன; ஆனால் பெரிய மாற்றத்துக்கு அரசுகளும் தொழில்துறையும் சமூகங்களும் தேவை. எந்தச் செயலுக்கும் நல்ல சோதனை: இது பலருக்கு, குறிப்பாக மிகவும் பாதிக்கப்படக்கூடியவர்களுக்கு உதவுகிறதா, தீங்கை வேறொருவர் மேல் மாற்றாமல் இருக்கிறதா?",
+      "reason": "Owner asked to leave the heat-shelter wording unchanged pending a terminology decision; tracked in docs/owner-decisions.md."
+    },
+    {
+      "term": "காப்பகம்",
+      "path": "clips.act.steps[2].c.ta",
+      "pattern": "(?<![\\u0B80-\\u0BFF])காப்பக[\\u0B80-\\u0BFF]*",
+      "exactValue": "மக்களைக் காக்க: முன்னெச்சரிக்கை, நிழல் மற்றும் குளிர்ச்சிக் காப்பகங்கள், நல்ல வடிகால், பாதுகாப்பான வீடுகள், வறட்சிக்குத் தயாரான வேளாண்மை.",
+      "reason": "Owner asked to leave the heat-shelter wording unchanged pending a terminology decision; tracked in docs/owner-decisions.md."
+    },
+    {
+      "term": "குளிர்சாதனம்",
+      "path": "words[53][2]",
+      "pattern": "(?<![\\u0B80-\\u0BFF])குளிர்சாதன[\\u0B80-\\u0BFF]*",
+      "exactValue": "பழைய குளிர்சாதனப் பெட்டி, ஸ்ப்ரேக்களில் இருந்த, ஓசோனை அழிக்கும் வேதிப்பொருள்.",
+      "reason": "குளிர்சாதனப் பெட்டி means refrigerator. The terminology ban applies to குளிர்சாதனம் used to mean air conditioner, not refrigerator."
+    },
+    {
+      "term": "குளிர்சாதனம்",
+      "path": "clips.ozone.steps[1].c.ta",
+      "pattern": "(?<![\\u0B80-\\u0BFF])குளிர்சாதன[\\u0B80-\\u0BFF]*",
+      "exactValue": "பழைய குளிர்சாதனப் பெட்டிகள், ஸ்ப்ரேக்களிலிருந்து வந்த CFC எனப்படும் வேதிப்பொருள்கள் மேலே சென்று ஓசோனை உடைத்தன.",
+      "reason": "குளிர்சாதனப் பெட்டிகள் means refrigerators. The terminology ban applies to air-conditioner usage, not refrigerators."
+    }
+  ],
+  "pathReplacements": [
+    {
+      "path": "topics[3].a.ta",
+      "from": "அதிக அழுத்தப் பகுதியிலிருந்து குறைந்த அழுத்தப் பகுதியை நோக்கிக் காற்று வீசுகிறது. நிலம், கடல், காற்று சமமின்றி வெப்பமடைவதால் இந்த அழுத்த வேறுபாடுகள் உண்டாகின்றன.",
+      "to": "அதிக காற்றழுத்தப் பகுதியிலிருந்து குறைந்த காற்றழுத்தப் பகுதியை நோக்கிக் காற்று வீசுகிறது. நிலம், கடல், காற்று சமமின்றி வெப்பமடைவதால் இந்த காற்றழுத்த வேறுபாடுகள் உண்டாகின்றன.",
+      "reason": "These are atmospheric-pressure references; use the approved meteorological term காற்றழுத்தம்."
+    },
+    {
+      "path": "topics[13].a.ta",
+      "from": "குறைந்த அழுத்தத்தாலும்",
+      "to": "குறைந்த காற்றழுத்தத்தாலும்",
+      "reason": "Storm surge is partly driven by low atmospheric pressure; use the approved meteorological term காற்றழுத்தம்."
     }
   ]
 }

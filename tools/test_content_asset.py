@@ -75,6 +75,14 @@ def is_english_only(value):
     return False
 
 
+def canonical_source_path(asset_name, path):
+    if asset_name == "topics-2.json" and path.startswith("topics["):
+        close = path.index("]")
+        index = int(path[len("topics["):close]) + 12
+        return f"topics[{index}]" + path[close + 1:]
+    return path
+
+
 class ContentAssetTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -105,29 +113,30 @@ class ContentAssetTest(unittest.TestCase):
         merged = {name: payload for name, payload in self.payloads.items() if name not in ("manifest.json", "gaps.json")}
         self.assertEqual([], bilingual_errors(merged))
 
-    def test_banned_tamil_terms_absent_except_explicit_generic_pressure_allow(self):
+    def test_banned_tamil_stems_absent_except_explicit_allow_rules(self):
         patterns = self.overrides.get("bannedPatterns", {})
         allow_rules = self.overrides.get("allowRules", [])
+        self.assertEqual(set(self.overrides["bannedTerms"]), set(patterns))
+        self.assertTrue(all("\\u0B80-\\u0BFF" in pattern for pattern in patterns.values()))
+
         allowed_hits = []
         violations = []
         for asset_name, payload in self.payloads.items():
             if asset_name in ("manifest.json", "gaps.json"):
                 continue
             for path, text in walk_strings(payload):
+                logical_path = canonical_source_path(asset_name, path)
                 for term in self.overrides["bannedTerms"]:
-                    pattern = re.compile(patterns.get(term, re.escape(term)))
+                    pattern = re.compile(patterns[term])
                     if not pattern.search(text):
                         continue
-                    logical_path = path
-                    if asset_name == "words.json" and path.startswith("words"):
-                        logical_path = path
                     matched_rule = next(
                         (
                             rule for rule in allow_rules
                             if rule.get("term") == term
                             and rule.get("path") == logical_path
                             and rule.get("exactValue") == text
-                            and re.search(rule.get("pattern", re.escape(term)), text)
+                            and re.search(rule.get("pattern", patterns[term]), text)
                         ),
                         None,
                     )
@@ -136,10 +145,26 @@ class ContentAssetTest(unittest.TestCase):
                     else:
                         violations.append((asset_name, logical_path, term, text))
         self.assertEqual([], violations)
-        self.assertEqual(
-            [("அழுத்தம்", "words[16][2]", "காற்று பரப்பின் மேல் செலுத்தும் அழுத்தம்.")],
-            allowed_hits,
-        )
+        expected = sorted((rule["term"], rule["path"], rule["exactValue"]) for rule in allow_rules)
+        self.assertEqual(expected, sorted(allowed_hits))
+
+    def test_cyclone_shelter_inflections_use_safety_centre(self):
+        cyclone_topic = self.topics[8]["k"]["ta"]
+        cyclone_clip = self.all_clips["cyclone"]["steps"][5]["c"]["ta"]
+        for text in (cyclone_topic, cyclone_clip):
+            self.assertIn("பாதுகாப்பு மையத்துக்குச்", text)
+            self.assertNotIn("காப்பகத்துக்குச்", text)
+
+    def test_heat_shelter_wording_is_intentionally_pending_owner_decision(self):
+        topic = self.topics[23]["a"]["ta"]
+        clip = self.all_clips["act"]["steps"][2]["c"]["ta"]
+        self.assertIn("குளிர்ச்சிக் காப்பகங்கள்", topic)
+        self.assertIn("குளிர்ச்சிக் காப்பகங்கள்", clip)
+
+    def test_refrigerator_wording_is_explicitly_allowed(self):
+        self.assertIn("குளிர்சாதனப் பெட்டி", self.payloads["words.json"]["words"][53][2])
+        self.assertIn("குளிர்சாதனப் பெட்டிகள்", self.all_clips["ozone"]["steps"][1]["c"]["ta"] )
+
 
     def test_long_form_gap_inventory_is_exact(self):
         actual = []
