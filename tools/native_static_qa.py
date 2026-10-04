@@ -150,6 +150,11 @@ print("PASS: no HTML or JavaScript under app/src/main")
 print("PASS: Android identifiers and release shrinker configuration")
 print("PASS: gaps.json has zero untranslated long-form entries; future-gap chip contract retained")
 print("PASS: all four gap kinds are wired and each item renders manifest.uiLabel")
+content_tamil = subprocess.run([sys.executable, str(ROOT / "tools" / "test_tamil_content.py")], text=True, capture_output=True)
+if content_tamil.returncode:
+    fail(content_tamil.stdout + content_tamil.stderr)
+print(content_tamil.stdout.strip())
+
 parity = subprocess.run([sys.executable, str(ROOT / "tools" / "test_string_parity.py")], text=True, capture_output=True)
 if parity.returncode:
     fail(parity.stdout + parity.stderr)
