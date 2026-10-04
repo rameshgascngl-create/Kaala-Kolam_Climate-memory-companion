@@ -1,6 +1,7 @@
 package edu.gascnagercoil.kaalakolam.content
 
 import android.content.Context
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 class ContentRepository(context: Context) {
