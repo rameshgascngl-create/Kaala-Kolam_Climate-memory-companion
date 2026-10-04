@@ -1,0 +1,58 @@
+name: Release bundle
+
+on:
+  push:
+    tags: ['v*.*.*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    env:
+      KK_KEYSTORE_BASE64: ${{ secrets.KK_KEYSTORE_BASE64 }}
+      KK_STORE_PASSWORD: ${{ secrets.KK_STORE_PASSWORD }}
+      KK_KEY_ALIAS: ${{ secrets.KK_KEY_ALIAS }}
+      KK_KEY_PASSWORD: ${{ secrets.KK_KEY_PASSWORD }}
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Validate Gradle wrapper
+        uses: gradle/actions/wrapper-validation@v4
+
+      - name: Set up Gradle cache
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Run static QA
+        run: python3 scripts/static_qa.py
+
+      - name: Restore release keystore when all signing secrets exist
+        if: ${{ env.KK_KEYSTORE_BASE64 != '' && env.KK_STORE_PASSWORD != '' && env.KK_KEY_ALIAS != '' && env.KK_KEY_PASSWORD != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '%s' "$KK_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/kaalakolam-release.jks"
+          chmod 600 "$RUNNER_TEMP/kaalakolam-release.jks"
+
+      - name: Build release bundle
+        shell: bash
+        env:
+          KK_STORE_FILE: ${{ runner.temp }}/kaalakolam-release.jks
+        run: ./gradlew --no-daemon bundleRelease
+
+      - name: Upload release AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-release-aab
+          path: app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error

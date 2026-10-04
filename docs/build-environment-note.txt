@@ -1,0 +1,4 @@
+Build attempt status: BLOCKED in this workspace.
+Reason: no Android SDK/emulator/device is installed, and the shell cannot resolve services.gradle.org.
+Observed Gradle wrapper failure: java.net.UnknownHostException: services.gradle.org while requesting gradle-9.8.0-bin.zip.
+Therefore app-debug.apk, app-release.aab, Android lint, aapt permission dump, emulator/device QA and Play pre-launch checks were not generated/run here.

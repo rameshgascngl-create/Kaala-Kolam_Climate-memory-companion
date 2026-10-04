@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Kaala Kolam (காலக்கோலம்)</string>
+    <string name="toolbar_title">Kaala Kolam (காலக்கோலம்)</string>
+    <string name="menu_about">செயலியைப் பற்றி</string>
+    <string name="menu_share">செயலியைப் பகிர்</string>
+    <string name="menu_tts_settings">குரல் வாசிப்பு அமைப்புகள்</string>
+    <string name="menu_privacy">தனியுரிமைக் கொள்கை</string>
+    <string name="share_text">காலக்கோலம் (Kaala Kolam): வானிலை, காலநிலையை முதியோரிடமிருந்தும் அறிவியலிலிருந்தும் கற்கும், இணையமின்றி இயங்கும் இருமொழிச் செயலி. விலங்கியல் துறை, அரசு கலை மற்றும் அறிவியல் கல்லூரி, நாகர்கோவில்.</string>
+    <string name="tts_missing_title">தமிழ் குரல் இல்லை</string>
+    <string name="tts_missing_message">இந்தச் சாதனத்தில் தமிழ் குரல் நிறுவப்படவில்லை; அதனால் குரல் வாசிப்பு தமிழில் பேச முடியாது. உரையிலிருந்து பேச்சு அமைப்புகளைத் திறந்து தமிழ் குரல் தரவை நிறுவுங்கள்.</string>
+    <string name="tts_open_settings">அமைப்புகளைத் திற</string>
+    <string name="close">மூடு</string>
+    <string name="about_title">செயலியைப் பற்றி</string>
+    <string name="about_version">பதிப்பு %1$s</string>
+    <string name="about_name">காலக்கோலம் · Kaala Kolam</string>
+    <string name="about_credit">Department of Zoology, GASC, Nagercoil / Created by R. Ramesh</string>
+    <string name="about_offline">இந்தச் செயலி முழுவதும் இணையமின்றி இயங்கும். எந்தத் தனிப்பட்ட தகவலையும் சேகரிக்காது. உங்கள் நேர்காணல்கள், கணிப்புகள், முன்னேற்றம் இந்தச் சாதனத்தில் மட்டுமே இருக்கும்.</string>
+    <string name="about_disclaimer">இது கல்விப் பயன்பாட்டுக்கு மட்டும்; அதிகாரப்பூர்வ எச்சரிக்கை சேவை அல்ல. வானிலை எச்சரிக்கைகளுக்கு இந்திய வானிலை ஆய்வு மையம் (IMD), மாநிலப் பேரிடர் மேலாண்மை ஆணையத்தின் அறிவுரைகளைப் பின்பற்றுங்கள். அவசர எண்களை உங்கள் மாவட்டத்துக்குச் சரிபார்த்துக்கொள்ளுங்கள்.</string>
+    <string name="btn_privacy">தனியுரிமைக் கொள்கை</string>
+    <string name="btn_share">பகிர்</string>
+    <string name="btn_tts">குரல் வாசிப்பு அமைப்புகள்</string>
+    <string name="privacy_url">https://rameshgascngl-create.github.io/Kaala-Kolam_Climate-memory-companion/privacy-policy.html</string>
+</resources>

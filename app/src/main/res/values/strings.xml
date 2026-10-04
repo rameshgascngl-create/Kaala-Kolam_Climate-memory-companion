@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Kaala Kolam (காலக்கோலம்)</string>
+    <string name="toolbar_title">Kaala Kolam (காலக்கோலம்)</string>
+    <string name="menu_about">About and credits</string>
+    <string name="menu_share">Share this app</string>
+    <string name="menu_tts_settings">Text-to-speech settings</string>
+    <string name="menu_privacy">Privacy policy</string>
+    <string name="share_text">Kaala Kolam (காலக்கோலம்): a bilingual, fully offline app for learning weather and climate from elders and from science. Department of Zoology, GASC, Nagercoil.</string>
+    <string name="privacy_url">https://rameshgascngl-create.github.io/Kaala-Kolam_Climate-memory-companion/privacy-policy.html</string>
+    <string name="tts_missing_title">No Tamil voice found</string>
+    <string name="tts_missing_message">This device has no Tamil text-to-speech voice installed, so read-aloud cannot speak Tamil. Open the text-to-speech settings and install the Tamil voice data.</string>
+    <string name="tts_open_settings">Open settings</string>
+    <string name="close">Close</string>
+    <string name="about_title">About and credits</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_name">Kaala Kolam · காலக்கோலம்</string>
+    <string name="about_credit">Department of Zoology, GASC, Nagercoil / Created by R. Ramesh</string>
+    <string name="about_offline">Works fully offline, collects no data. Your interviews, predictions and progress stay on this device only.</string>
+    <string name="about_disclaimer">Educational use only. This is not an official warning service. For weather warnings follow the India Meteorological Department (IMD) and your State Disaster Management Authority. Please check the emergency numbers for your own district.</string>
+    <string name="btn_privacy">Privacy policy</string>
+    <string name="btn_share">Share</string>
+    <string name="btn_tts">Text-to-speech settings</string>
+</resources>

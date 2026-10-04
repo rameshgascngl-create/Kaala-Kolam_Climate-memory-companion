@@ -1,0 +1,3 @@
+# Minimum Functionality note
+
+Kaala Kolam is not a network website packaged as an app. The finished educational content is bundled locally and works without the `INTERNET` permission. The Android application also provides native platform functionality: Android 12+ SplashScreen integration; adaptive, monochrome and legacy launcher icons; a native About and credits screen; native text sharing with `ACTION_SEND`; origin-restricted Android TextToSpeech fallback with a native Tamil-voice settings prompt; Android Back-button integration with the app's Home state; edge-to-edge system-bar integration; render-process recovery; and an origin-locked `WebViewAssetLoader` implementation that never uses `file://`.

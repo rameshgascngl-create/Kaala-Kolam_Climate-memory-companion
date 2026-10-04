@@ -1,0 +1,13 @@
+--- Kaala_Kolam_Climate_Memory_Companion.html
++++ app/src/main/assets/www/index.html
+@@ -1799,6 +1799,10 @@
+   $('#themeBtn').addEventListener('click',()=>{S.theme=S.theme==='dark'?'light':'dark';save();chrome()});
+   render();
+ }
++/* ===== Android shell hooks (used only by the native wrapper) ===== */
++window.__appIsHome=function(){return S.view==='home'};
++window.__appGoHome=function(){if(S.view!=='home')go('home')};
++
+ boot();
+ })();
+ </script>
