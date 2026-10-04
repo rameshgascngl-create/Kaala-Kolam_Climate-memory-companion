@@ -24,10 +24,10 @@ EXPECTED = {
     "games": 2,
 }
 EXPECTED_GAPS = {
-    "deepDive": 24,
-    "councilDescription": 7,
-    "eldersCrossCheck": 30,
-    "predictExplanation": 16,
+    "deepDive": 0,
+    "councilDescription": 0,
+    "eldersCrossCheck": 0,
+    "predictExplanation": 0,
 }
 
 
@@ -189,17 +189,21 @@ class ContentAssetTest(unittest.TestCase):
         declared_payload = self.payloads["gaps.json"]
         declared = [(item["logicalPath"], item["kind"]) for item in declared_payload["gaps"]]
         self.assertEqual(actual, declared)
-        self.assertEqual(77, declared_payload["count"])
+        self.assertEqual([], actual)
+        self.assertEqual([], declared)
+        self.assertEqual(0, declared_payload["count"])
         self.assertEqual(EXPECTED_GAPS, declared_payload["countsByKind"])
         self.assertEqual("English only", declared_payload["uiLabel"])
 
-    def test_draft_review_queue_is_separate_and_not_translated(self):
+    def test_merged_tamil_remains_owner_unreviewed_draft(self):
         self.assertEqual("DRAFT", self.draft["status"])
-        self.assertFalse(self.draft["shippedWithApp"])
+        self.assertTrue(self.draft["shippedWithApp"])
         self.assertEqual(77, self.draft["count"])
         self.assertEqual(77, len(self.draft["entries"]))
-        self.assertTrue(all(item["taDraft"] is None for item in self.draft["entries"]))
-        self.assertTrue(all(item["reviewState"] == "NEEDS_OWNER_TRANSLATION" for item in self.draft["entries"]))
+        self.assertTrue(all(item["taDraft"] for item in self.draft["entries"]))
+        self.assertTrue(all(item["status"] == "DRAFT" for item in self.draft["entries"]))
+        self.assertTrue(all(item["reviewState"] == "NEEDS_OWNER_REVIEW" for item in self.draft["entries"]))
+        self.assertEqual({item["key"]: item["ta"] for item in self.overrides["draftTamil"]}, {item["key"]: item["taDraft"] for item in self.draft["entries"]})
         self.assertNotIn("tamil-drafts-DRAFT.json", self.texts)
 
     def test_teacher_role_uses_approved_safety_centre_term(self):

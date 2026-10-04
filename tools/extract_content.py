@@ -20,10 +20,10 @@ EXPECTED_V1_SHA256 = "ae7b87a4f90fd990806f68cf6db1d3a0903d9cf6b5ef75c9be2c5392e6
 DEFAULT_OVERRIDES = Path(__file__).with_name("content_overrides.json")
 DEFAULT_DRAFT_REVIEW = Path(__file__).resolve().parents[1] / "docs" / "tamil-drafts-DRAFT.json"
 EXPECTED_GAP_COUNTS = {
-    "deepDive": 24,
-    "councilDescription": 7,
-    "eldersCrossCheck": 30,
-    "predictExplanation": 16,
+    "deepDive": 0,
+    "councilDescription": 0,
+    "eldersCrossCheck": 0,
+    "predictExplanation": 0,
 }
 TABLE_EXPOSURE = r"""
 window.__KK_EXTRACT__ = {
@@ -60,8 +60,45 @@ def load_overrides(path: Path) -> dict[str, Any]:
         raise SystemExit("OVERRIDE_FAIL: allowRules must be a list")
     if not isinstance(payload.get("pathReplacements", []), list):
         raise SystemExit("OVERRIDE_FAIL: pathReplacements must be a list")
+    if not isinstance(payload.get("draftTamil", []), list):
+        raise SystemExit("OVERRIDE_FAIL: draftTamil must be a list")
     return payload
 
+
+
+def apply_draft_tamil(data: dict[str, Any], entries: list[dict[str, Any]]) -> dict[str, Any]:
+    collections = {
+        "deepDive": data["topics"],
+        "councilDescription": data["councilOptions"],
+        "eldersCrossCheck": data["elderQuestions"],
+        "predictExplanation": data["predictions"],
+    }
+    seen: set[str] = set()
+    for entry in entries:
+        key, kind, item_id, field = entry.get("key"), entry.get("class"), entry.get("id"), entry.get("field")
+        english, tamil = entry.get("en"), entry.get("ta")
+        if not all(isinstance(v, str) and v for v in (key, kind, item_id, field, english, tamil)):
+            raise SystemExit(f"DRAFT_FAIL: malformed draft entry {entry!r}")
+        if entry.get("status") != "DRAFT" or entry.get("reviewState") != "NEEDS_OWNER_REVIEW":
+            raise SystemExit(f"DRAFT_FAIL: review state is not DRAFT for {key}")
+        if key in seen:
+            raise SystemExit(f"DRAFT_FAIL: duplicate key {key}")
+        seen.add(key)
+        if kind not in collections:
+            raise SystemExit(f"DRAFT_FAIL: unknown class {kind!r} for {key}")
+        target = next((item for item in collections[kind] if item.get("id") == item_id), None)
+        if target is None:
+            raise SystemExit(f"DRAFT_FAIL: id {item_id!r} not found for {key}")
+        current = target.get(field)
+        current_en = current.get("en") if isinstance(current, dict) else current
+        if current_en != english:
+            raise SystemExit(f"DRAFT_FAIL: English source mismatch for {key}")
+        if not re.search(r"[\u0B80-\u0BFF]", tamil):
+            raise SystemExit(f"DRAFT_FAIL: Tamil letters missing for {key}")
+        target[field] = {"en": english, "ta": tamil}
+    if len(seen) != 77:
+        raise SystemExit(f"DRAFT_FAIL: expected 77 unique entries, found {len(seen)}")
+    return data
 
 def apply_replacements(value: Any, replacements: list[dict[str, str]]) -> Any:
     if isinstance(value, str):
@@ -268,14 +305,6 @@ def build_gaps(data: dict[str, Any]) -> dict[str, Any]:
         kind: sum(1 for item in gaps if item["kind"] == kind)
         for kind in EXPECTED_GAP_COUNTS
     }
-    if counts != EXPECTED_GAP_COUNTS or len(gaps) != 77:
-        raise SystemExit(
-            "GAP_COUNT_FAIL expected="
-            + json.dumps(EXPECTED_GAP_COUNTS, sort_keys=True)
-            + " actual="
-            + json.dumps(counts, sort_keys=True)
-            + f" total={len(gaps)}"
-        )
     return {
         "schemaVersion": 1,
         "status": "REVIEW_REQUIRED",
@@ -343,6 +372,7 @@ def main() -> int:
     overrides = load_overrides(args.overrides)
     data = apply_replacements(data, overrides["replacements"])
     data = apply_path_replacements(data, overrides.get("pathReplacements", []))
+    data = apply_draft_tamil(data, overrides.get("draftTamil", []))
 
     bilingual_errors = validate_bilingual(data)
     if bilingual_errors:
@@ -353,6 +383,8 @@ def main() -> int:
         raise SystemExit("BANNED_TERM_FAIL:\n" + "\n".join(banned_errors[:50]))
 
     gaps = build_gaps(data)
+    if gaps["count"] != 0 or gaps["countsByKind"] != EXPECTED_GAP_COUNTS:
+        raise SystemExit("GAP_COUNT_FAIL expected=0 actual=" + str(gaps["count"]) + " kinds=" + json.dumps(gaps["countsByKind"], sort_keys=True))
     counts = count_payload(data)
     source = {
         "label": args.source_label,
@@ -389,22 +421,17 @@ def main() -> int:
     for name, payload in assets.items():
         output_hashes[name] = write_json(args.output_dir / name, payload)
 
+    draft_entries = overrides.get("draftTamil", [])
     draft_review = {
         "schemaVersion": 1,
         "status": "DRAFT",
-        "shippedWithApp": False,
-        "notice": "Human-review worksheet only. No machine-translated Tamil has been generated or shipped.",
+        "shippedWithApp": True,
+        "notice": "These Tamil strings are shipped as DRAFT and require owner review; none is described as reviewed.",
         "source": source,
-        "count": gaps["count"],
+        "count": len(draft_entries),
         "entries": [
-            {
-                "logicalPath": item["logicalPath"],
-                "kind": item["kind"],
-                "en": item["en"],
-                "taDraft": None,
-                "reviewState": "NEEDS_OWNER_TRANSLATION",
-            }
-            for item in gaps["gaps"]
+            {"key": item["key"], "kind": item["class"], "id": item["id"], "field": item["field"], "en": item["en"], "taDraft": item["ta"], "status": "DRAFT", "reviewState": "NEEDS_OWNER_REVIEW"}
+            for item in draft_entries
         ],
     }
     draft_hash = write_json(args.draft_review_output, draft_review)

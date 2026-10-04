@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "status": "APPROVED_SOURCE_OVERRIDES",
-  "note": "Human-approved terminology corrections applied by tools/extract_content.py. Generated JSON must never be hand-edited.",
+  "status": "MIXED_APPROVED_TERMS_AND_DRAFT_TAMIL",
+  "note": "Approved terminology corrections plus owner-unreviewed Tamil drafts. Generated JSON must never be hand-edited; every draft entry remains DRAFT until owner review.",
   "replacements": [
     {
       "from": "ஆல்கா",
@@ -155,5 +155,784 @@
       "to": "குறைந்த காற்றழுத்தத்தாலும்",
       "reason": "Storm surge is partly driven by low atmospheric pressure; use the approved meteorological term காற்றழுத்தம்."
     }
-  ]
+  ],
+  "draftTamil": [
+    {
+      "key": "TOP.sun.d",
+      "class": "deepDive",
+      "id": "sun",
+      "field": "d",
+      "en": "The energy received per unit area depends on the angle of the Sun’s rays. Earth’s axial tilt of about 23.4° drives the seasons. The orbit is slightly elliptical, but distance from the Sun is not the cause of seasons. Land and ocean respond differently because water has a very high heat capacity.",
+      "ta": "ஒரு அலகு பரப்பில் கிடைக்கும் ஆற்றல், சூரியக் கதிர்கள் விழும் கோணத்தைப் பொறுத்தது. பூமியின் அச்சு சுமார் 23.4° சாய்ந்திருப்பதால் பருவகாலங்கள் உருவாகின்றன. சுற்றுப்பாதை சற்று நீள்வட்டமாக இருந்தாலும், பருவங்களுக்குக் காரணம் சூரியனிலிருந்து உள்ள தொலைவு அல்ல. நீருக்கு வெப்பக் கொள்ளளவு மிக அதிகம் என்பதால், நிலமும் கடலும் வெப்பத்துக்கு வெவ்வேறு விதமாகப் பதிலளிக்கின்றன.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "TOP.water.d",
+      "class": "deepDive",
+      "id": "water",
+      "field": "d",
+      "en": "Evaporation, transpiration, condensation, precipitation and runoff cycle roughly 500,000 km³ of water through the atmosphere each year. Latent heat released by condensation powers storms. Water-holding capacity of air rises about 7% per °C (Clausius–Clapeyron relation).",
+      "ta": "ஆவியாதல், தாவர ஆவிப்போக்கு, ஒடுக்கம், மழைப்பொழிவு, வழிந்தோடும் நீர் ஆகியவற்றின் சுழற்சியில் ஆண்டுதோறும் சுமார் 5 இலட்சம் கிமீ³ நீர் வளிமண்டலம் வழியாகச் செல்கிறது. ஒடுக்கத்தின்போது வெளிப்படும் உள்ளுறை வெப்பம் புயல்களுக்கு ஆற்றல் தருகிறது. காற்றின் நீர் தாங்கும் திறன் ஒவ்வொரு °C உயர்வுக்கும் சுமார் 7% அதிகரிக்கிறது (கிளாசியஸ்–கிளாப்பைரான் தொடர்பு).",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "TOP.cloud.d",
+      "class": "deepDive",
+      "id": "cloud",
+      "field": "d",
+      "en": "Cloud droplets of about 10 µm grow by condensation and by collision and coalescence. In colder clouds the ice-crystal (Bergeron) process matters. Aerosols act as cloud condensation nuclei and influence droplet size.",
+      "ta": "சுமார் 10 µm அளவுள்ள மேகத் துளிகள், ஒடுக்கத்தாலும், துளிகள் மோதி இணைவதாலும் பெரிதாகின்றன. குளிர்ந்த மேகங்களில் பனிப்படிகச் செயல்முறை (பெர்ஜெரான் செயல்முறை) முக்கியமானது. காற்றில் மிதக்கும் நுண்துகள்கள் (ஏரோசால்கள்) மேக ஒடுக்கக் கருக்களாகச் செயல்பட்டு, துளிகளின் அளவைப் பாதிக்கின்றன.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "TOP.wind.d",
+      "class": "deepDive",
+      "id": "wind",
+      "field": "d",
+      "en": "Away from the equator, large-scale flow is close to geostrophic balance between the pressure-gradient and Coriolis forces. Near the equator the Coriolis effect is weak, which is why tropical cyclones rarely form within about 5° of it.",
+      "ta": "நிலநடுக்கோட்டிலிருந்து விலகிய பகுதிகளில், பெரிய அளவிலான காற்றோட்டம், காற்றழுத்தச் சரிவு விசைக்கும் கோரியோலிஸ் விசைக்கும் இடையிலான சமநிலைக்கு (புவிசுழல் சமநிலை) நெருக்கமாக இருக்கும். நிலநடுக்கோட்டுக்கு அருகில் கோரியோலிஸ் விளைவு பலவீனமாக இருப்பதால், அதிலிருந்து சுமார் 5° தொலைவுக்குள் வெப்பமண்டலப் புயல்கள் அரிதாகவே உருவாகின்றன.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "TOP.humid.d",
+      "class": "deepDive",
+      "id": "humid",
+      "field": "d",
+      "en": "Relative humidity depends on temperature, so dew point or wet-bulb temperature is a better guide to heat stress. A wet-bulb temperature of 35 °C was long cited as the theoretical limit of human survival, and newer experiments suggest harm begins at lower values, especially for older people.",
+      "ta": "ஒப்பு ஈரப்பதம் வெப்பநிலையைப் பொறுத்தது; எனவே வெப்பத்தால் ஏற்படும் பாதிப்பை அறிய பனிநிலை அல்லது ஈரக்குமிழ் வெப்பநிலையே சிறந்த வழிகாட்டி. 35 °C ஈரக்குமிழ் வெப்பநிலை மனிதர் உயிர் வாழ்வதன் கோட்பாட்டு எல்லை என நீண்டகாலமாகக் குறிப்பிடப்பட்டது; புதிய சோதனைகள், குறிப்பாக முதியோருக்கு, இதைவிடக் குறைந்த மதிப்புகளிலேயே பாதிப்பு தொடங்குகிறது எனக் காட்டுகின்றன.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "TOP.storm.d",
+      "class": "deepDive",
+      "id": "storm",
+      "field": "d",
+      "en": "Charge separation involves collisions between graupel and ice crystals in the mixed-phase region of the cloud. A flash briefly heats the air to around 30,000 K. The 30-minute rule exists because lightning can strike well away from the rain core.",
+      "ta": "மேகத்தின் கலப்பு நிலைப் பகுதியில் மென்பனிக் குருணைகளும் (கிராப்பல்) பனிப்படிகங்களும் மோதுவதால் மின்னூட்டப் பிரிப்பு நிகழ்கிறது. ஒரு மின்னல் கீற்று காற்றை ஒரு கணம் சுமார் 30,000 K வரை சூடாக்குகிறது. மின்னல் மழைப்பகுதியிலிருந்து வெகு தொலைவிலும் தாக்கக்கூடும் என்பதால் “30 நிமிட விதி” உள்ளது.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "TOP.breeze.d",
+      "class": "deepDive",
+      "id": "breeze",
+      "field": "d",
+      "en": "Water’s specific heat is about four times that of dry soil, and mixing in the upper ocean spreads heat through a deep layer. Sea-breeze fronts can trigger afternoon thunderstorms inland.",
+      "ta": "நீரின் தன்வெப்பம் உலர்ந்த மண்ணைவிடச் சுமார் நான்கு மடங்கு; மேலும், கடலின் மேல் அடுக்கில் நிகழும் கலப்பு வெப்பத்தை ஆழமான அடுக்கு வரை பரப்புகிறது. கடற்காற்று முகப்புகள் உள்நிலப் பகுதிகளில் பிற்பகல் இடிமழையைத் தூண்டக்கூடும்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "TOP.monsoon.d",
+      "class": "deepDive",
+      "id": "monsoon",
+      "field": "d",
+      "en": "The monsoon is a seasonal reversal of low-level winds linked to the northward movement of the tropical rain belt (ITCZ), land–sea thermal contrast and heating of the Tibetan Plateau. Year-to-year variation is influenced by ENSO and the Indian Ocean Dipole. Observed trends include weaker June–September totals over parts of India and more frequent extreme-rain events.",
+      "ta": "பருவக்காற்று என்பது தாழ்மட்டக் காற்றுகள் பருவத்துக்கேற்பத் திசை மாறுவதாகும்; இது வெப்பமண்டல மழைப்பட்டை (ITCZ) வடக்கு நோக்கி நகர்வது, நிலம்–கடல் வெப்ப வேறுபாடு, திபெத்தியப் பீடபூமி வெப்பமடைவது ஆகியவற்றோடு தொடர்புடையது. ஆண்டுக்கு ஆண்டு மாறுபாடு ENSO (எல் நினோ–தெற்கு அலைவு), இந்தியப் பெருங்கடல் இருமுனை ஆகியவற்றால் பாதிக்கப்படுகிறது. இந்தியாவின் சில பகுதிகளில் ஜூன்–செப்டம்பர் மொத்த மழை குறைவதும், அதிகனமழை நிகழ்வுகள் அடிக்கடி நடப்பதும் கவனிக்கப்பட்ட போக்குகள்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "TOP.cyclone.d",
+      "class": "deepDive",
+      "id": "cyclone",
+      "field": "d",
+      "en": "Intensity depends on sea-surface temperature, ocean heat content, low vertical wind shear and mid-level moisture. IMD classes by maximum sustained wind: depression 17–27 knots, deep depression 28–33, cyclonic storm 34–47, severe cyclonic storm 48–63, very severe 64–89, extremely severe 90–119, super cyclonic storm 120 knots or more.",
+      "ta": "புயலின் வலிமை கடல் மேற்பரப்பு வெப்பநிலை, கடலின் வெப்ப உள்ளடக்கம், குறைவான செங்குத்துக் காற்றுத் திருப்பம், நடுமட்ட ஈரப்பதம் ஆகியவற்றைப் பொறுத்தது. அதிகபட்சத் தொடர் காற்றின் வேகத்தின் அடிப்படையில் IMD வகைப்படுத்துகிறது: காற்றழுத்தத் தாழ்வு 17–27 முடிச்சு (நாட்), ஆழ்ந்த காற்றழுத்தத் தாழ்வு 28–33, புயல் 34–47, கடும் புயல் 48–63, மிகக் கடும் புயல் 64–89, அதிதீவிரப் புயல் 90–119, மிகப்பெரும் புயல் 120 முடிச்சு அல்லது அதற்கு மேல்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "TOP.enso.d",
+      "class": "deepDive",
+      "id": "enso",
+      "field": "d",
+      "en": "ENSO is tracked with the Oceanic Niño Index, a three-month mean sea-surface temperature anomaly in the Niño 3.4 region, with thresholds of ±0.5 °C. The Indian Ocean Dipole can strengthen or offset ENSO’s influence on Indian rainfall.",
+      "ta": "நினோ 3.4 பகுதியில் கடல் மேற்பரப்பு வெப்பநிலையின் மூன்று மாத சராசரி விலகலான கடல்சார் நினோ குறியீட்டின் (ONI) மூலம் ENSO கண்காணிக்கப்படுகிறது; வரம்புகள் ±0.5 °C. இந்தியப் பெருங்கடல் இருமுனை, இந்திய மழையின் மீது ENSO-வின் தாக்கத்தை வலுப்படுத்தவோ ஈடுகட்டவோ கூடும்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "TOP.heat.d",
+      "class": "deepDive",
+      "id": "heat",
+      "field": "d",
+      "en": "IMD heatwave departures are 4.5–6.4 °C above normal, and severe heatwave is more than 6.4 °C above normal. Absolute thresholds also apply, for example 45 °C or more. Heat illness risk depends on temperature, humidity, radiation, wind and individual health, so thresholds are guides rather than guarantees.",
+      "ta": "IMD-யின் வரையறையில் இயல்பைவிட 4.5–6.4 °C அதிக வெப்பம் வெப்ப அலை; 6.4 °C-க்கு மேல் இருந்தால் கடும் வெப்ப அலை. 45 °C அல்லது அதற்கு மேல் போன்ற முழுமை வரம்புகளும் பொருந்தும். வெப்பத்தால் ஏற்படும் நோய் அபாயம் வெப்பநிலை, ஈரப்பதம், கதிர்வீச்சு, காற்று, தனிநபர் உடல்நலம் ஆகியவற்றைப் பொறுத்தது; எனவே இந்த வரம்புகள் வழிகாட்டிகளே, உத்தரவாதங்கள் அல்ல.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "TOP.flood.d",
+      "class": "deepDive",
+      "id": "flood",
+      "field": "d",
+      "en": "Risk is commonly framed as hazard × exposure × vulnerability. Urban flooding is driven by short, intense rainfall that exceeds drainage capacity, by sealed surfaces, and by lost natural storage in wetlands and tanks.",
+      "ta": "அபாயம் என்பது பொதுவாக ஆபத்து × வெளிப்பாடு × பாதிக்கப்படும் தன்மை என வகுக்கப்படுகிறது. நகர்ப்புற வெள்ளம், வடிகால் திறனைத் தாண்டும் குறுகிய, கடும் மழையாலும், நீர் உட்புகாத மேற்பரப்புகளாலும், ஈரநிலங்களும் ஏரிகளும் போன்ற இயற்கை நீர்த்தேக்கங்கள் இழக்கப்படுவதாலும் ஏற்படுகிறது.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "TOP.drought.d",
+      "class": "deepDive",
+      "id": "drought",
+      "field": "d",
+      "en": "Indices such as SPI (precipitation), SPEI (which includes evapotranspiration) and soil-moisture anomalies track drought. Meteorological drought in India is typically flagged when seasonal rainfall is more than 25% below normal.",
+      "ta": "SPI (மழைப்பொழிவு), SPEI (ஆவியாதலும் தாவர ஆவிப்போக்கும் உள்ளடங்கியது), மண் ஈரப்பத விலகல்கள் போன்ற குறியீடுகள் வறட்சியைக் கண்காணிக்கின்றன. இந்தியாவில் பருவகால மழை இயல்பைவிட 25%-க்கு மேல் குறைந்தால் வானிலையியல் வறட்சி எனக் குறிக்கப்படுவது வழக்கம்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "TOP.surge.d",
+      "class": "deepDive",
+      "id": "surge",
+      "field": "d",
+      "en": "In deep water a tsunami travels at about 700–800 km/h with wavelengths of tens to hundreds of kilometres. Storm surge is a wind-driven rise of the sea surface, and its height adds to the astronomical tide to give the storm tide.",
+      "ta": "ஆழமான நீரில் சுனாமி மணிக்குச் சுமார் 700–800 கிமீ வேகத்தில் பயணிக்கிறது; அலைநீளம் பத்துகள் முதல் நூறுகள் கிமீ வரை இருக்கும். புயல் கடல் எழுச்சி என்பது காற்றால் ஏற்படும் கடல் மேற்பரப்பு உயர்வு; அதன் உயரம் வானியல் சார்ந்த அலைமட்டத்துடன் சேர்ந்து “புயல் அலைமட்டம்” ஆகிறது.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "TOP.gh.d",
+      "class": "deepDive",
+      "id": "gh",
+      "field": "d",
+      "en": "Doubling CO₂ gives a radiative forcing of about 4 W/m². Equilibrium climate sensitivity, the long-run warming for doubled CO₂, is assessed as likely between 2.5 and 4 °C with a best estimate of 3 °C (IPCC AR6).",
+      "ta": "CO₂ இரட்டிப்பாகும்போது சுமார் 4 W/m² கதிர்வீச்சு விசை உண்டாகிறது. CO₂ இரட்டிப்பானால் நீண்டகாலத்தில் ஏற்படும் வெப்ப உயர்வான சமநிலைக் காலநிலை உணர்திறன் 2.5 முதல் 4 °C-க்குள் இருக்க வாய்ப்புள்ளதாகவும், சிறந்த மதிப்பீடு 3 °C எனவும் மதிப்பிடப்பட்டுள்ளது (IPCC AR6).",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "TOP.warm.d",
+      "class": "deepDive",
+      "id": "warm",
+      "field": "d",
+      "en": "Evidence includes CO₂ rising from about 280 ppm before industry to above 420 ppm, the isotopic signature of fossil carbon, ocean heat uptake, shrinking ice, and the fingerprint of tropospheric warming with stratospheric cooling, which a brighter Sun would not produce.",
+      "ta": "சான்றுகளில் அடங்குபவை: தொழில்துறைக்கு முன் சுமார் 280 ppm ஆக இருந்த CO₂ இப்போது 420 ppm-ஐத் தாண்டியிருப்பது, புதைபடிவக் கார்பனின் ஐசோடோப்புக் கையொப்பம், கடல் வெப்பம் உறிஞ்சப்படுதல், சுருங்கும் பனி, கீழ் வளிமண்டல வெப்பமாதலும் அடுக்கு மண்டலக் குளிர்ச்சியும் சேர்ந்த அடையாளம் ஆகியவை; பிரகாசமான சூரியன் இந்த அடையாளத்தை ஏற்படுத்தாது.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "TOP.sea.d",
+      "class": "deepDive",
+      "id": "sea",
+      "field": "d",
+      "en": "Observed global mean rise accelerated from about 1.3 mm per year (1901–1971) to 1.9 (1971–2006) and 3.7 mm per year (2006–2018), according to IPCC AR6.",
+      "ta": "உலகளாவிய சராசரி கடல்மட்ட உயர்வு ஆண்டுக்குச் சுமார் 1.3 மிமீ (1901–1971) என்பதிலிருந்து 1.9 மிமீ (1971–2006) ஆகவும், பின்னர் 3.7 மிமீ (2006–2018) ஆகவும் வேகமடைந்துள்ளது என IPCC AR6 கூறுகிறது.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "TOP.coral.d",
+      "class": "deepDive",
+      "id": "coral",
+      "field": "d",
+      "en": "Bleaching is expected when sea temperature exceeds the local summer maximum by about 1 °C for several weeks, tracked as degree heating weeks. Rising CO₂ also acidifies seawater, which makes it harder for shell-building and reef-building organisms to form their skeletons.",
+      "ta": "கடல் வெப்பநிலை உள்ளூர்க் கோடை உச்சத்தைவிடச் சுமார் 1 °C அதிகமாகப் பல வாரங்கள் நீடிக்கும்போது வெளுப்பு எதிர்பார்க்கப்படுகிறது; இது “டிகிரி வெப்பமாதல் வாரங்கள்” என்று கண்காணிக்கப்படுகிறது. அதிகரிக்கும் CO₂ கடல்நீரையும் அமிலமாக்குகிறது; இதனால் ஓடு கட்டும், பவளப்பாறை கட்டும் உயிரினங்கள் தம் எலும்புக்கூடுகளை உருவாக்குவது கடினமாகிறது.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "TOP.ice.d",
+      "class": "deepDive",
+      "id": "ice",
+      "field": "d",
+      "en": "Ice-albedo feedback amplifies Arctic warming. Glacier retreat first increases river flow and later reduces it once the ice store is depleted, so water planning must account for a peak followed by decline.",
+      "ta": "பனி-ஒளிர்வு (ஆல்பிடோ) பின்னூட்டம் ஆர்க்டிக் வெப்பமாதலைப் பெருக்குகிறது. பனியாறுகள் பின்வாங்கும்போது முதலில் ஆற்றுநீர் ஓட்டம் அதிகரிக்கிறது; பனிக் கையிருப்பு தீர்ந்த பிறகு குறைகிறது. எனவே நீர்த் திட்டமிடல், உச்சமும் அதன்பின் சரிவும் இருக்கும் என்பதைக் கணக்கில் கொள்ள வேண்டும்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "TOP.ozone.d",
+      "class": "deepDive",
+      "id": "ozone",
+      "field": "d",
+      "en": "Assessments by WMO and UNEP project the ozone layer returning to 1980 values around 2040 over most of the world, around 2045 over the Arctic and around 2066 over Antarctica.",
+      "ta": "WMO மற்றும் UNEP மதிப்பீடுகளின்படி ஓசோன் படலம், உலகின் பெரும்பாலான பகுதிகளில் சுமார் 2040-இலும், ஆர்க்டிக்கில் சுமார் 2045-இலும், அண்டார்டிகாவில் சுமார் 2066-இலும் 1980 அளவுக்குத் திரும்பும் எனக் கணிக்கப்படுகிறது.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "TOP.city.d",
+      "class": "deepDive",
+      "id": "city",
+      "field": "d",
+      "en": "Urban heat-island intensity is largest at night under calm, clear skies. It is distinct from greenhouse-driven warming and adds to it for city residents.",
+      "ta": "நகர வெப்பத் தீவின் தீவிரம், அமைதியான, தெளிவான வானத்தின் கீழ் இரவில் அதிகமாக இருக்கும். இது பசுமைக்குடில் வாயுக்களால் ஏற்படும் வெப்பமாதலிலிருந்து வேறுபட்டது; நகரவாசிகளுக்கு அதனுடன் கூடுதலாகச் சேர்கிறது.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "TOP.carbon.d",
+      "class": "deepDive",
+      "id": "carbon",
+      "field": "d",
+      "en": "Fossil fuels and industry account for roughly nine-tenths of recent anthropogenic CO₂ emissions and land-use change for about one-tenth. About 45 to 50 percent of emitted CO₂ stays in the air, and the rest is taken up by land and ocean sinks, which could weaken in a warmer world.",
+      "ta": "புதைபடிவ எரிபொருட்களும் தொழில்துறையும் சமீபத்திய மனிதச் செயல்பாட்டு CO₂ உமிழ்வில் பத்தில் ஒன்பது பங்கையும், நிலப் பயன்பாட்டு மாற்றம் பத்தில் ஒரு பங்கையும் உண்டாக்குகின்றன. வெளியிடப்படும் CO₂-வில் சுமார் 45 முதல் 50 சதவீதம் காற்றிலேயே தங்குகிறது; மீதியை நிலமும் கடலும் ஆகிய கார்பன் உறிஞ்சிகள் எடுத்துக்கொள்கின்றன; வெப்பமான உலகில் இவை பலவீனமடையக்கூடும்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "TOP.warn.d",
+      "class": "deepDive",
+      "id": "warn",
+      "field": "d",
+      "en": "Short-range forecasts rely on numerical models that solve atmospheric equations on a grid and assimilate observations from satellites, radars and stations. Skill falls with lead time because the atmosphere is chaotic. Nowcasts for the next 0 to 3 hours are the most reliable guide for thunderstorms.",
+      "ta": "குறுகிய கால முன்னறிவிப்புகள், வளிமண்டலச் சமன்பாடுகளை வலைப்பின்னலில் தீர்த்து, செயற்கைக்கோள்கள், ரேடார்கள், வானிலை நிலையங்களின் கண்காணிப்புகளையும் உள்வாங்கும் எண்ணியல் மாதிரிகளைச் சார்ந்தவை. வளிமண்டலம் குழப்பமானது என்பதால் முன்கணிக்கும் நேரம் நீளும்போது துல்லியம் குறைகிறது. அடுத்த 0 முதல் 3 மணி நேரத்துக்கான உடனடி முன்னறிவிப்புகள் இடிமழைக்கு மிகவும் நம்பகமான வழிகாட்டி.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "TOP.act.d",
+      "class": "deepDive",
+      "id": "act",
+      "field": "d",
+      "en": "Pathways limiting warming to 1.5 °C require global CO₂ emissions to fall by about 45% from 2010 levels by 2030 and reach net zero around 2050 (IPCC SR1.5). Maladaptation occurs when an action raises long-term risk or shifts harm to another group or place.",
+      "ta": "வெப்பமாதலை 1.5 °C-க்குள் கட்டுப்படுத்தும் பாதைகளுக்கு, உலகளாவிய CO₂ உமிழ்வு 2030-க்குள் 2010 அளவிலிருந்து சுமார் 45% குறைந்து, சுமார் 2050-இல் நிகரப் பூஜ்யத்தை எட்ட வேண்டும் (IPCC SR1.5). ஒரு செயல் நீண்டகால அபாயத்தை உயர்த்தும்போது அல்லது பாதிப்பை வேறொரு குழுவுக்கோ இடத்துக்கோ மாற்றும்போது “தவறான தகவமைப்பு” ஏற்படுகிறது.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "OPT.warn.de",
+      "class": "councilDescription",
+      "id": "warn",
+      "field": "de",
+      "en": "Warnings reach boats and fields. Needs phones, sirens and practice.",
+      "ta": "எச்சரிக்கைகள் படகுகளையும் வயல்களையும் சென்றடைகின்றன. இதற்கு தொலைபேசிகள், ஒலிப்பான்கள் (சைரன்), பயிற்சி ஆகியவை தேவை.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "OPT.shelter.de",
+      "class": "councilDescription",
+      "id": "shelter",
+      "field": "de",
+      "en": "A safe building plus volunteers to carry those who cannot walk.",
+      "ta": "பாதுகாப்பான கட்டடமும், நடக்க முடியாதவர்களைச் சுமந்து செல்லும் தன்னார்வலர்களும்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "OPT.retrofit.de",
+      "class": "councilDescription",
+      "id": "retrofit",
+      "field": "de",
+      "en": "Slow and costly per house, but protects those with the least.",
+      "ta": "ஒவ்வொரு வீட்டுக்கும் மெதுவானதும் செலவு மிக்கதும்; ஆனால் மிகக் குறைவாக உள்ளவர்களைப் பாதுகாக்கிறது.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "OPT.drains.de",
+      "class": "councilDescription",
+      "id": "drains",
+      "field": "de",
+      "en": "Water leaves faster, so fewer homes and fields stay flooded.",
+      "ta": "நீர் விரைவாக வெளியேறுவதால், குறைவான வீடுகளும் வயல்களுமே வெள்ளத்தில் நிற்கின்றன.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "OPT.mangrove.de",
+      "class": "councilDescription",
+      "id": "mangrove",
+      "field": "de",
+      "en": "Softens waves and floods and shelters fish. Takes years to work.",
+      "ta": "அலைகளையும் வெள்ளத்தையும் மென்மையாக்கி, மீன்களுக்குப் புகலிடம் தருகிறது. பலன் தர ஆண்டுகள் ஆகும்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "OPT.income.de",
+      "class": "councilDescription",
+      "id": "income",
+      "field": "de",
+      "en": "Families recover faster, so one bad season does not become a crisis.",
+      "ta": "குடும்பங்கள் விரைவாக மீள்கின்றன; எனவே ஒரு மோசமான பருவம் நெருக்கடியாக மாறுவதில்லை.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "OPT.clean.de",
+      "class": "councilDescription",
+      "id": "clean",
+      "field": "de",
+      "en": "Cuts emissions and bills. One village cannot change the global hazard, so the effect here is tiny. It only matters if many places act.",
+      "ta": "உமிழ்வையும் கட்டணத்தையும் குறைக்கிறது. ஒரு கிராமத்தால் உலகளாவிய ஆபத்தை மாற்ற முடியாது; அதனால் இங்கு விளைவு மிகச் சிறியது. பல இடங்கள் செயல்பட்டால்தான் இது முக்கியமாகிறது.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.heat.sci",
+      "class": "eldersCrossCheck",
+      "id": "heat",
+      "field": "sci",
+      "en": "India’s average surface temperature rose by roughly 0.7 °C between 1901 and 2018, and heatwaves have become more frequent in many regions (MoES 2020 assessment).",
+      "ta": "இந்தியாவின் சராசரி மேற்பரப்பு வெப்பநிலை 1901 முதல் 2018 வரை சுமார் 0.7 °C உயர்ந்துள்ளது; பல பகுதிகளில் வெப்ப அலைகள் அடிக்கடி வருகின்றன (MoES 2020 மதிப்பீடு).",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.heat.conf",
+      "class": "eldersCrossCheck",
+      "id": "heat",
+      "field": "conf",
+      "en": "Cities add their own heat. Childhood summers are often remembered outdoors, while today’s heat may be felt indoors.",
+      "ta": "நகரங்கள் தங்களுக்கே உரிய வெப்பத்தைச் சேர்க்கின்றன. சிறுவயதுக் கோடைகள் பெரும்பாலும் வெளியிடங்களில் கழிந்ததாக நினைவில் இருக்கும்; இன்றைய வெப்பம் வீட்டுக்குள் உணரப்படலாம்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.heat.check",
+      "class": "eldersCrossCheck",
+      "id": "heat",
+      "field": "check",
+      "en": "Ask three people of different ages. Then compare with the IMD record for your nearest station.",
+      "ta": "வெவ்வேறு வயதுடைய மூவரிடம் கேளுங்கள். பின்னர் உங்களுக்கு அருகிலுள்ள நிலையத்தின் IMD பதிவுடன் ஒப்பிடுங்கள்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.nights.sci",
+      "class": "eldersCrossCheck",
+      "id": "nights",
+      "field": "sci",
+      "en": "Night-time temperatures have been rising in many regions, and warmer air can hold more moisture, which makes heat feel stickier.",
+      "ta": "பல பகுதிகளில் இரவு வெப்பநிலை உயர்ந்து வருகிறது; வெப்பமான காற்று அதிக ஈரப்பதத்தைத் தாங்கும் என்பதால் புழுக்கம் அதிகமாக உணரப்படுகிறது.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.nights.conf",
+      "class": "eldersCrossCheck",
+      "id": "nights",
+      "field": "conf",
+      "en": "Concrete roofs hold heat after dark in a way thatched roofs did not. City heat-island effects add to the change.",
+      "ta": "கான்கிரீட் கூரைகள் இருட்டிய பின்னும் வெப்பத்தைத் தக்கவைக்கின்றன; கூரை வேய்ந்த வீடுகள் அப்படி வைத்திருக்கவில்லை. நகர வெப்பத் தீவு விளைவுகளும் இந்த மாற்றத்தில் சேர்கின்றன.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.nights.check",
+      "class": "eldersCrossCheck",
+      "id": "nights",
+      "field": "check",
+      "en": "Compare how your house type and the buildings around it have changed since childhood.",
+      "ta": "சிறுவயது முதல் உங்கள் வீட்டு வகையும் சுற்றியுள்ள கட்டடங்களும் எவ்வாறு மாறியுள்ளன என்பதை ஒப்பிடுங்கள்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.monsoon.sci",
+      "class": "eldersCrossCheck",
+      "id": "monsoon",
+      "field": "sci",
+      "en": "Studies report weaker June–September rainfall over parts of India since the mid-20th century, with more erratic spells. Tamil Nadu depends heavily on the October–December north-east monsoon, which swings strongly between years.",
+      "ta": "20ஆம் நூற்றாண்டின் நடுப்பகுதி முதல் இந்தியாவின் சில பகுதிகளில் ஜூன்–செப்டம்பர் மழை குறைந்திருப்பதாகவும், ஒழுங்கற்ற இடைவெளிகள் அதிகரித்திருப்பதாகவும் ஆய்வுகள் தெரிவிக்கின்றன. தமிழ்நாடு அக்டோபர்–டிசம்பர் வடகிழக்குப் பருவமழையைப் பெரிதும் சார்ந்துள்ளது; அது ஆண்டுக்கு ஆண்டு கடுமையாக மாறுபடுகிறது.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.monsoon.conf",
+      "class": "eldersCrossCheck",
+      "id": "monsoon",
+      "field": "conf",
+      "en": "A few very wet or very dry years dominate memory.",
+      "ta": "ஒரு சில மிக ஈரமான அல்லது மிக வறண்ட ஆண்டுகளே நினைவில் ஆதிக்கம் செலுத்துகின்றன.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.monsoon.check",
+      "class": "eldersCrossCheck",
+      "id": "monsoon",
+      "field": "check",
+      "en": "Ask which specific years people remember, then look up the rainfall for those years.",
+      "ta": "மக்கள் எந்தெந்த ஆண்டுகளை நினைவில் வைத்திருக்கிறார்கள் எனக் கேளுங்கள்; பிறகு அந்த ஆண்டுகளின் மழை அளவைத் தேடிப் பாருங்கள்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.downpour.sci",
+      "class": "eldersCrossCheck",
+      "id": "downpour",
+      "field": "sci",
+      "en": "Heavy-rain events have increased in many parts of India, consistent with warmer air holding about 7% more moisture for each 1 °C of warming.",
+      "ta": "இந்தியாவின் பல பகுதிகளில் கனமழை நிகழ்வுகள் அதிகரித்துள்ளன; ஒவ்வொரு 1 °C வெப்பமாதலுக்கும் வெப்பமான காற்று சுமார் 7% கூடுதல் ஈரப்பதத்தைத் தாங்குவதற்கு இது பொருந்துகிறது.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.downpour.conf",
+      "class": "eldersCrossCheck",
+      "id": "downpour",
+      "field": "conf",
+      "en": "Blocked drains, filled wetlands and paved ground make the same rain feel far worse.",
+      "ta": "அடைபட்ட வடிகால்கள், நிரப்பப்பட்ட ஈரநிலங்கள், கான்கிரீட் அல்லது தார் போடப்பட்ட தரை ஆகியவை அதே மழையை மிகவும் மோசமாக உணர வைக்கின்றன.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.downpour.check",
+      "class": "eldersCrossCheck",
+      "id": "downpour",
+      "field": "check",
+      "en": "Look for local reports of daily rainfall above 100 mm, and walk your street after rain to see where water stands.",
+      "ta": "ஒரு நாளில் 100 மிமீக்கு மேல் பெய்த மழை பற்றிய உள்ளூர் அறிக்கைகளைத் தேடுங்கள்; மழைக்குப் பின் உங்கள் தெருவில் நடந்து நீர் எங்கு தேங்குகிறது எனப் பாருங்கள்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.water.sci",
+      "class": "eldersCrossCheck",
+      "id": "water",
+      "field": "sci",
+      "en": "Climate affects rainfall and recharge, but in most villages pumping, borewells, silted tanks and land-use change dominate groundwater trends.",
+      "ta": "காலநிலை மழையையும் நீர் மறுநிரப்பையும் பாதிக்கிறது; ஆனால் பெரும்பாலான கிராமங்களில் நிலத்தடி நீர் போக்குகளை நீர் இறைப்பு, ஆழ்துளைக் கிணறுகள், தூர்ந்த ஏரிகள், நிலப் பயன்பாட்டு மாற்றம் ஆகியவையே தீர்மானிக்கின்றன.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.water.conf",
+      "class": "eldersCrossCheck",
+      "id": "water",
+      "field": "conf",
+      "en": "Everyone may agree the water table fell, yet the main cause is often how much is pumped out.",
+      "ta": "நீர்மட்டம் குறைந்துள்ளது என அனைவரும் ஒப்புக்கொள்ளலாம்; ஆனால் முக்கியக் காரணம் பெரும்பாலும் எவ்வளவு நீர் இறைக்கப்படுகிறது என்பதே.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.water.check",
+      "class": "eldersCrossCheck",
+      "id": "water",
+      "field": "check",
+      "en": "Count borewells now versus in your elder’s youth. Ask when the village tank was last desilted.",
+      "ta": "இப்போதுள்ள ஆழ்துளைக் கிணறுகளை உங்கள் மூத்தவரின் இளமைக்காலத்தில் இருந்தவற்றுடன் எண்ணி ஒப்பிடுங்கள். ஊர் ஏரி கடைசியாக எப்போது தூர்வாரப்பட்டது எனக் கேளுங்கள்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.coast.sci",
+      "class": "eldersCrossCheck",
+      "id": "coast",
+      "field": "sci",
+      "en": "Global sea level rose about 20 cm between 1901 and 2018, and the rise is speeding up. Local erosion also depends strongly on harbours, sand mining, reduced river sediment, mangrove loss and cyclones.",
+      "ta": "உலகளாவிய கடல்மட்டம் 1901 முதல் 2018 வரை சுமார் 20 செமீ உயர்ந்துள்ளது; இந்த உயர்வு வேகமடைந்து வருகிறது. உள்ளூர்க் கரை அரிப்பு துறைமுகங்கள், மணல் அள்ளுதல், ஆறுகள் கொண்டுவரும் படிவு குறைவு, அலையாத்திக் காடுகள் அழிவு, புயல்கள் ஆகியவற்றையும் வலுவாகச் சார்ந்தது.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.coast.conf",
+      "class": "eldersCrossCheck",
+      "id": "coast",
+      "field": "conf",
+      "en": "Do not mix up the 2004 tsunami, which was caused by an earthquake, with climate-driven change.",
+      "ta": "நிலநடுக்கத்தால் ஏற்பட்ட 2004 சுனாமியை, காலநிலையால் ஏற்படும் மாற்றத்துடன் குழப்பிக்கொள்ள வேண்டாம்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.coast.check",
+      "class": "eldersCrossCheck",
+      "id": "coast",
+      "field": "check",
+      "en": "Ask where the old shoreline was, then compare with a map or satellite view and note any harbour or sea-wall built nearby.",
+      "ta": "பழைய கடற்கரை எங்கு இருந்தது எனக் கேளுங்கள்; பிறகு வரைபடம் அல்லது செயற்கைக்கோள் காட்சியுடன் ஒப்பிட்டு, அருகில் கட்டப்பட்ட துறைமுகம் அல்லது கடல் சுவரைக் குறித்துக்கொள்ளுங்கள்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.yield.sci",
+      "class": "eldersCrossCheck",
+      "id": "yield",
+      "field": "sci",
+      "en": "Rainfall variability and ocean warming can shift crops and fish, but irrigation, seed varieties, prices, fleet size and overfishing change yields too.",
+      "ta": "மழை மாறுபாடும் கடல் வெப்பமாதலும் பயிர்களையும் மீன்களையும் இடம் மாற்றக்கூடும்; ஆனால் நீர்ப்பாசனம், விதை வகைகள், விலைகள், படகுகளின் எண்ணிக்கை, அளவுக்கு மீறிய மீன்பிடிப்பு ஆகியவையும் விளைச்சலை மாற்றுகின்றன.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.yield.conf",
+      "class": "eldersCrossCheck",
+      "id": "yield",
+      "field": "conf",
+      "en": "Better boats and seeds can hide a climate effect, and worse markets can exaggerate one.",
+      "ta": "சிறந்த படகுகளும் விதைகளும் காலநிலை விளைவை மறைக்கக்கூடும்; மோசமான சந்தைகள் அதை மிகைப்படுத்தவும் கூடும்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.yield.check",
+      "class": "eldersCrossCheck",
+      "id": "yield",
+      "field": "check",
+      "en": "Ask what changed in the way they fish or farm, not only in the results.",
+      "ta": "விளைவுகளில் மட்டுமல்ல, அவர்கள் மீன்பிடிக்கும் அல்லது பயிரிடும் முறையிலும் என்ன மாறியது எனக் கேளுங்கள்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.birds.sci",
+      "class": "eldersCrossCheck",
+      "id": "birds",
+      "field": "sci",
+      "en": "Habitat loss, pesticides, night lighting and urban growth are major drivers of bird and insect declines. Climate adds pressure but is rarely the only cause.",
+      "ta": "வாழிட இழப்பு, பூச்சிக்கொல்லிகள், இரவு விளக்குகள், நகர வளர்ச்சி ஆகியவை பறவைகளும் பூச்சிகளும் குறைவதற்கு முக்கியக் காரணங்கள். காலநிலை கூடுதல் நெருக்கடியைச் சேர்க்கிறது; ஆனால் அது ஒன்றே காரணமாக இருப்பது அரிது.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.birds.conf",
+      "class": "eldersCrossCheck",
+      "id": "birds",
+      "field": "conf",
+      "en": "Many people report a decline here. Shared experience is not proof of one cause.",
+      "ta": "இங்கு குறைவு ஏற்பட்டிருப்பதாகப் பலர் கூறுகின்றனர். பகிரப்பட்ட அனுபவம் ஒரே காரணத்துக்கான சான்று அல்ல.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.birds.check",
+      "class": "eldersCrossCheck",
+      "id": "birds",
+      "field": "check",
+      "en": "Count the species you can find in 15 minutes near the home. Ask what was built, sprayed or lit up nearby.",
+      "ta": "வீட்டருகே 15 நிமிடங்களில் காணக்கூடிய இனங்களை எண்ணுங்கள். அருகில் என்ன கட்டப்பட்டது, தெளிக்கப்பட்டது, விளக்கு போடப்பட்டது எனக் கேளுங்கள்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.cold.sci",
+      "class": "eldersCrossCheck",
+      "id": "cold",
+      "field": "sci",
+      "en": "Cold nights and mornings have become less frequent in many regions as average temperatures rose.",
+      "ta": "சராசரி வெப்பநிலை உயர்ந்ததால் பல பகுதிகளில் குளிர்ந்த இரவுகளும் காலைகளும் குறைந்து வருகின்றன.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.cold.conf",
+      "class": "eldersCrossCheck",
+      "id": "cold",
+      "field": "conf",
+      "en": "Trees, buildings and open ground change how cold a particular spot feels.",
+      "ta": "மரங்கள், கட்டடங்கள், திறந்தவெளி ஆகியவை ஒரு குறிப்பிட்ட இடம் எவ்வளவு குளிராக உணரப்படும் என்பதை மாற்றுகின்றன.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.cold.check",
+      "class": "eldersCrossCheck",
+      "id": "cold",
+      "field": "check",
+      "en": "Compare minimum temperatures at the nearest IMD station for recent and older decades.",
+      "ta": "அருகிலுள்ள IMD நிலையத்தின் சமீபத்திய, பழைய பத்தாண்டுகளுக்கான குறைந்தபட்ச வெப்பநிலைகளை ஒப்பிடுங்கள்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.storms.sci",
+      "class": "eldersCrossCheck",
+      "id": "storms",
+      "field": "sci",
+      "en": "North Indian Ocean cyclones show no clear long-term rise in number, but the strongest storms and heavy rainfall are intensifying, and higher seas worsen storm surge. Floods also follow lost drainage and building on floodplains.",
+      "ta": "வட இந்தியப் பெருங்கடல் புயல்களின் எண்ணிக்கையில் தெளிவான நீண்டகால உயர்வு இல்லை; ஆனால் மிக வலுவான புயல்களும் கனமழையும் தீவிரமடைகின்றன, உயர்ந்த கடல்மட்டம் புயல் கடல் எழுச்சியை மோசமாக்குகிறது. வடிகால் இழப்பாலும் வெள்ளச் சமவெளிகளில் கட்டுவதாலும் வெள்ளங்கள் ஏற்படுகின்றன.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.storms.conf",
+      "class": "eldersCrossCheck",
+      "id": "storms",
+      "field": "conf",
+      "en": "Notable storms are remembered; exposure has grown as more people live near the coast.",
+      "ta": "குறிப்பிடத்தக்க புயல்கள் நினைவில் நிற்கின்றன; கடற்கரை அருகே வாழ்வோர் அதிகரித்ததால் பாதிக்கப்படக்கூடிய மக்கள் எண்ணிக்கையும் வளர்ந்துள்ளது.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "Q.storms.check",
+      "class": "eldersCrossCheck",
+      "id": "storms",
+      "field": "check",
+      "en": "List the storms your elder names with years, then count how many people and houses were in harm’s way then versus now.",
+      "ta": "உங்கள் மூத்தவர் குறிப்பிடும் புயல்களை ஆண்டுகளுடன் பட்டியலிடுங்கள்; பிறகு அப்போதும் இப்போதும் ஆபத்தில் இருந்த மக்களையும் வீடுகளையும் எண்ணுங்கள்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "PRED.ocean.truth",
+      "class": "predictExplanation",
+      "id": "ocean",
+      "field": "truth",
+      "en": "About 91% (IPCC AR6).",
+      "ta": "சுமார் 91% (IPCC AR6).",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "PRED.ocean.why",
+      "class": "predictExplanation",
+      "id": "ocean",
+      "field": "why",
+      "en": "The ocean is the planet’s heat store. That is why seas rise as water expands, and why marine heatwaves matter.",
+      "ta": "பெருங்கடல் இந்தக் கோளின் வெப்பக் களஞ்சியம். அதனால்தான் நீர் விரிவடைவதால் கடல்மட்டம் உயர்கிறது; கடல் வெப்ப அலைகளும் முக்கியமாகின்றன.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "PRED.co2.truth",
+      "class": "predictExplanation",
+      "id": "co2",
+      "field": "truth",
+      "en": "About 430 ppm, rising by roughly 2–3 ppm a year. Check NOAA’s live figure.",
+      "ta": "சுமார் 430 ppm; ஆண்டுக்கு ஏறத்தாழ 2–3 ppm உயர்கிறது. NOAA-வின் நேரலை அளவைப் பாருங்கள்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "PRED.co2.why",
+      "class": "predictExplanation",
+      "id": "co2",
+      "field": "why",
+      "en": "The rise is far faster than natural changes recorded in ice cores, and its carbon signature points to fossil fuels.",
+      "ta": "பனிக்கட்டி மையங்களில் பதிவான இயற்கை மாற்றங்களைவிட இந்த உயர்வு மிக வேகமானது; அதன் கார்பன் கையொப்பம் புதைபடிவ எரிபொருட்களைச் சுட்டுகிறது.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "PRED.warm.truth",
+      "class": "predictExplanation",
+      "id": "warm",
+      "field": "truth",
+      "en": "About 1.1 °C for 2011–2020 (IPCC AR6). Recent single years have been higher.",
+      "ta": "2011–2020 காலத்துக்குச் சுமார் 1.1 °C (IPCC AR6). சமீபத்திய தனி ஆண்டுகள் இதைவிட அதிகமாக இருந்துள்ளன.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "PRED.warm.why",
+      "class": "predictExplanation",
+      "id": "warm",
+      "field": "why",
+      "en": "A small change in a global average moves the whole distribution of weather, including the hot tail.",
+      "ta": "உலகளாவிய சராசரியில் ஏற்படும் சிறிய மாற்றம், வெப்பமான முனை உட்பட வானிலையின் முழுப் பரவலையும் நகர்த்துகிறது.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "PRED.nogh.truth",
+      "class": "predictExplanation",
+      "id": "nogh",
+      "field": "truth",
+      "en": "Roughly −18 °C (a standard textbook estimate).",
+      "ta": "ஏறத்தாழ −18 °C (பாடநூல்களில் தரப்படும் வழக்கமான மதிப்பீடு).",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "PRED.nogh.why",
+      "class": "predictExplanation",
+      "id": "nogh",
+      "field": "why",
+      "en": "The greenhouse effect is natural and essential. Climate change is about strengthening it.",
+      "ta": "பசுமைக்குடில் விளைவு இயற்கையானது, இன்றியமையாதது. காலநிலை மாற்றம் என்பது அதை வலுப்படுத்துவது பற்றியது.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "PRED.vapour.truth",
+      "class": "predictExplanation",
+      "id": "vapour",
+      "field": "truth",
+      "en": "About 7% (Clausius–Clapeyron relation).",
+      "ta": "சுமார் 7% (கிளாசியஸ்–கிளாப்பைரான் தொடர்பு).",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "PRED.vapour.why",
+      "class": "predictExplanation",
+      "id": "vapour",
+      "field": "why",
+      "en": "This is one reason heavy downpours intensify in a warmer world.",
+      "ta": "வெப்பமான உலகில் பெருமழை தீவிரமடைவதற்கு இதுவும் ஒரு காரணம்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "PRED.sea.truth",
+      "class": "predictExplanation",
+      "id": "sea",
+      "field": "truth",
+      "en": "About 20 cm (IPCC AR6).",
+      "ta": "சுமார் 20 செமீ (IPCC AR6).",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "PRED.sea.why",
+      "class": "predictExplanation",
+      "id": "sea",
+      "field": "why",
+      "en": "It sounds small, yet it raises storm-surge reach and floods low coasts far more often.",
+      "ta": "இது சிறியதாகத் தோன்றினாலும், புயல் கடல் எழுச்சியின் எட்டலை அதிகரித்து, தாழ்வான கடற்கரைகளை மிக அடிக்கடி வெள்ளத்தில் ஆழ்த்துகிறது.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "PRED.india.truth",
+      "class": "predictExplanation",
+      "id": "india",
+      "field": "truth",
+      "en": "About 0.7 °C for 1901–2018 (MoES 2020 assessment).",
+      "ta": "1901–2018 காலத்துக்குச் சுமார் 0.7 °C (MoES 2020 மதிப்பீடு).",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "PRED.india.why",
+      "class": "predictExplanation",
+      "id": "india",
+      "field": "why",
+      "en": "Regional change differs from the global figure, so local records still matter.",
+      "ta": "பிராந்திய மாற்றம் உலகளாவிய அளவிலிருந்து வேறுபடுகிறது; எனவே உள்ளூர்ப் பதிவுகள் இன்னும் முக்கியம்.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "PRED.nat.truth",
+      "class": "predictExplanation",
+      "id": "nat",
+      "field": "truth",
+      "en": "Close to zero, about −0.1 to +0.1 °C (IPCC AR6).",
+      "ta": "ஏறத்தாழ பூஜ்யம்; சுமார் −0.1 முதல் +0.1 °C வரை (IPCC AR6).",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    },
+    {
+      "key": "PRED.nat.why",
+      "class": "predictExplanation",
+      "id": "nat",
+      "field": "why",
+      "en": "Natural factors push climate around, but they do not explain the sustained rise.",
+      "ta": "இயற்கைக் காரணிகள் காலநிலையை அங்கும் இங்கும் தள்ளுகின்றன; ஆனால் தொடர்ச்சியான உயர்வை அவை விளக்குவதில்லை.",
+      "status": "DRAFT",
+      "reviewState": "NEEDS_OWNER_REVIEW"
+    }
+  ],
+  "draftSource": {
+    "name": "tamil_drafts_77_DRAFT.json",
+    "count": 77,
+    "status": "DRAFT",
+    "shippedWithAppInInput": false,
+    "note": "Imported as owner-unreviewed DRAFT content; supplied CSV contained no reviewer_correction values."
+  }
 }
