@@ -1,6 +1,5 @@
 package edu.gascnagercoil.kaalakolam.ui
 
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import app.cash.paparazzi.Snapshot
@@ -84,19 +83,12 @@ class PrototypeVisualMatrixTest(
         states.forEach { state ->
             paparazzi.snapshot(name = state) {
                 KaalaKolamTheme(mode) {
-                    KaalaKolamApp(
+                    KaalaKolamVisualFixture(
                         uiState = AppUiState(
                             appState = AppState(language = language, themeMode = mode),
                             gaps = testGapManifest(),
                         ),
-                        widthSizeClass = WindowWidthSizeClass.Compact,
-                        onLanguageChange = {},
-                        onThemeChange = {},
-                        onBackup = { "" },
-                        onValidateBackup = { null },
-                        onRestore = {},
-                        onReset = {},
-                        initialRoute = routeFor(state),
+                        visualState = state,
                     )
                 }
             }
@@ -115,16 +107,6 @@ class PrototypeVisualMatrixTest(
             "learn-game",
             "learn-words",
         )
-
-        private fun routeFor(state: String): String = when (state) {
-            "home" -> "home"
-            "learn", "learn-topic", "learn-game", "learn-words" -> "learn"
-            "elders" -> "elders"
-            "class" -> "class"
-            "council" -> "council"
-            "predict" -> "predict"
-            else -> error("Unknown state: $state")
-        }
 
         @JvmStatic
         @Parameterized.Parameters(name = "{0}x{1}-{2}-{3}")
