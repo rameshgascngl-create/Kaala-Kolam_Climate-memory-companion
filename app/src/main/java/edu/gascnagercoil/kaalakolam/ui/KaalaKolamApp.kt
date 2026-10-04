@@ -324,7 +324,6 @@ private fun PrototypeTopBar(
                 fontFamily = MaterialTheme.typography.titleLarge.fontFamily,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 18.4.sp,
-                maxLines = 1,
             )
             if (!compact) {
                 Text(
@@ -361,7 +360,7 @@ private fun HeaderTool(text: String, onClick: () -> Unit) {
             modifier = Modifier.padding(horizontal = 10.dp),
             contentAlignment = Alignment.Center,
         ) {
-            Text(text, color = p.flour, maxLines = 1)
+            Text(text, color = p.flour)
         }
     }
 }

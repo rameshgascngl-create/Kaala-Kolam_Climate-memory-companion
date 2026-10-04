@@ -155,6 +155,11 @@ if content_tamil.returncode:
     fail(content_tamil.stdout + content_tamil.stderr)
 print(content_tamil.stdout.strip())
 
+typography = subprocess.run([sys.executable, str(ROOT / "tools" / "test_tamil_typography.py")], text=True, capture_output=True)
+if typography.returncode:
+    fail(typography.stdout + typography.stderr)
+print(typography.stdout.strip())
+
 parity = subprocess.run([sys.executable, str(ROOT / "tools" / "test_string_parity.py")], text=True, capture_output=True)
 if parity.returncode:
     fail(parity.stdout + parity.stderr)
