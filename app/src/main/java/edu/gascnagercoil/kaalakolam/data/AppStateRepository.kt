@@ -22,7 +22,7 @@ private val stateJson = Json {
     ignoreUnknownKeys = true
 }
 
-private object AppStateSerializer : Serializer<AppState> {
+internal object AppStateSerializer : Serializer<AppState> {
     override val defaultValue: AppState = AppState()
 
     override suspend fun readFrom(input: InputStream): AppState =

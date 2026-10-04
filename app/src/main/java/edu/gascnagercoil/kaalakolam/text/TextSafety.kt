@@ -4,6 +4,8 @@ import java.text.BreakIterator
 import java.text.Collator
 import java.text.Normalizer
 import java.util.Locale
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 
 object TextSafety {
     fun graphemePrefix(text: String, maxGraphemes: Int, locale: Locale): String {
@@ -34,6 +36,20 @@ object TextSafety {
             boundary = next
         }
         return count
+    }
+
+    fun limitTextFieldValue(value: TextFieldValue, maxGraphemes: Int, locale: Locale): TextFieldValue {
+        if (graphemeCount(value.text, locale) <= maxGraphemes) return value
+        val limited = graphemePrefix(value.text, maxGraphemes, locale)
+        val end = limited.length
+        val selection = TextRange(
+            value.selection.start.coerceIn(0, end),
+            value.selection.end.coerceIn(0, end),
+        )
+        val composition = value.composition?.let {
+            TextRange(it.start.coerceIn(0, end), it.end.coerceIn(0, end))
+        }?.takeIf { it.start < it.end }
+        return value.copy(text = limited, selection = selection, composition = composition)
     }
 
     fun sortTamil(values: Iterable<String>): List<String> {

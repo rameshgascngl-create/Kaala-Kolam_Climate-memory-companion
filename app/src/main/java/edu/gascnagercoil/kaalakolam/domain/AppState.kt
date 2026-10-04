@@ -16,9 +16,12 @@ data class AppState(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val learnedTopicIds: Set<String> = emptySet(),
     val memoryFlags: Map<String, Boolean> = emptyMap(),
+    val elderAlias: String = "",
+    val notes: String = "",
+    val reflection: String = "",
 ) {
     companion object {
-        const val CURRENT_SCHEMA = 1
+        const val CURRENT_SCHEMA = 2
     }
 }
 

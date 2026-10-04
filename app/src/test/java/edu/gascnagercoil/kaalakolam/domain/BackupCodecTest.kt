@@ -13,11 +13,28 @@ class BackupCodecTest {
             themeMode = ThemeMode.DARK,
             learnedTopicIds = setOf("monsoon", "cyclone"),
             memoryFlags = mapOf("elder" to true, "council" to false),
+            elderAlias = "பாட்டி — கொளச்சல்",
+            notes = "மழை மாறிவிட்டது; குளம் வற்றுகிறது.",
+            reflection = "நினைவு + அளவீடு இரண்டும் தேவை.",
         )
 
         val decoded = BackupCodec.decode(BackupCodec.encode(original)).getOrThrow()
 
         assertEquals(original.repair(), decoded)
+    }
+
+    @Test
+    fun tamilFreeTextSurvivesUtf8Base64UrlRoundTrip() {
+        val original = AppState(
+            language = "ta",
+            elderAlias = "அம்மம்மா",
+            notes = "க்ஷ ஶ்ரீ ஸ்ரீ கொ கௌ நந்தை பூக்கள் குழந்தைகள்",
+            reflection = "காலநிலை நினைவுகளைச் சான்றுடன் ஒப்பிட வேண்டும்.",
+        )
+        val code = BackupCodec.encode(original)
+        val decoded = BackupCodec.decode(code).getOrThrow()
+        assertEquals(original.repair(), decoded)
+        assertTrue(code.startsWith("KB1."))
     }
 
     @Test

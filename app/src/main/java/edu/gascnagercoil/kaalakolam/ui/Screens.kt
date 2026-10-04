@@ -51,6 +51,7 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import edu.gascnagercoil.kaalakolam.R
@@ -718,7 +719,7 @@ fun AboutScreen(
     val p = PrototypeTheme.palette
     var backupCode by remember { mutableStateOf<String?>(null) }
     var restoreEntryOpen by remember { mutableStateOf(false) }
-    var restoreText by remember { mutableStateOf("") }
+    var restoreText by remember { mutableStateOf(TextFieldValue("")) }
     var invalidRestore by remember { mutableStateOf(false) }
     var pendingRestore by remember { mutableStateOf<AppState?>(null) }
     var resetOpen by remember { mutableStateOf(false) }
@@ -785,7 +786,7 @@ fun AboutScreen(
                 text = stringResource(R.string.restore_data),
                 filled = false,
                 onClick = {
-                    restoreText = ""
+                    restoreText = TextFieldValue("")
                     invalidRestore = false
                     restoreEntryOpen = true
                 },
@@ -810,7 +811,7 @@ fun AboutScreen(
                     OutlinedTextField(
                         value = restoreText,
                         onValueChange = {
-                            restoreText = TextSafety.graphemePrefix(it, 65_536, Locale.ROOT)
+                            restoreText = TextSafety.limitTextFieldValue(it, 65_536, Locale.ROOT)
                             invalidRestore = false
                         },
                         modifier = Modifier.fillMaxWidth(),
@@ -823,7 +824,7 @@ fun AboutScreen(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        val decoded = onValidateBackup(restoreText)
+                        val decoded = onValidateBackup(restoreText.text)
                         if (decoded == null) {
                             invalidRestore = true
                         } else {
