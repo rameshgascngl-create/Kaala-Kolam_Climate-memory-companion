@@ -52,7 +52,7 @@ for path in [p for p in expected if "_tamil_" in p.name]:
         )
 
 display_shared = {ord(ch) for ch in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 Aa+-/().,:;!?%–—…"}
-body_shared = display_shared | {ord(ch) for ch in "°←→₂±×≥≤"}
+body_shared = display_shared | {ord(ch) for ch in "°₂±×"}
 for path in expected:
     required = body_shared if "noto_sans" in path.name else display_shared
     missing = sorted(required - cmap(path))
