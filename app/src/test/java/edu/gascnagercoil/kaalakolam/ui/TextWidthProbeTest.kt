@@ -29,6 +29,7 @@ class TextWidthProbeTest {
 
     private data class Sample(
         val id: String,
+        val lang: String,
         val text: String,
         val sizePx: Float,
         val fontRes: Int,
@@ -41,6 +42,7 @@ class TextWidthProbeTest {
         val samples = listOf(
             Sample(
                 id = "en-display",
+                lang = "en",
                 text = "Weather or climate?",
                 sizePx = 30.4f,
                 fontRes = R.font.noto_serif_600_subset,
@@ -49,6 +51,7 @@ class TextWidthProbeTest {
             ),
             Sample(
                 id = "en-body",
+                lang = "en",
                 text = "It rained heavily in my town last night.",
                 sizePx = 16f,
                 fontRes = R.font.noto_sans_400_subset,
@@ -57,6 +60,7 @@ class TextWidthProbeTest {
             ),
             Sample(
                 id = "ta-display",
+                lang = "ta",
                 text = "வானிலையா? காலநிலையா?",
                 sizePx = 30.4f,
                 fontRes = R.font.noto_serif_tamil_600_subset,
@@ -65,6 +69,7 @@ class TextWidthProbeTest {
             ),
             Sample(
                 id = "ta-body",
+                lang = "ta",
                 text = "நேற்றிரவு என் ஊரில் கனமழை பெய்தது.",
                 sizePx = 16f,
                 fontRes = R.font.noto_sans_tamil_400_subset,
@@ -80,6 +85,7 @@ class TextWidthProbeTest {
                 this.typeface = requireNotNull(typeface)
                 textSize = sample.sizePx
                 letterSpacing = 0f
+                textLocale = Locale.forLanguageTag(sample.lang)
             }
             val width = paint.measureText(sample.text)
             println(
