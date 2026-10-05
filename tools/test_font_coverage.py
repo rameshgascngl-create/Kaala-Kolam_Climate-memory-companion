@@ -6,42 +6,59 @@ from pathlib import Path
 from fontTools.ttLib import TTFont
 
 ROOT = Path(__file__).resolve().parents[1]
-BUNDLED = ROOT / "app/src/main/res/font/noto_sans_tamil.ttf"
+FONT_DIR = ROOT / "app/src/main/res/font"
 TEXT_FILES = list((ROOT / "app/src/main/assets/content").glob("*.json")) + [
     ROOT / "app/src/main/res/values/strings.xml",
     ROOT / "app/src/main/res/values-ta/strings.xml",
 ]
+KOTLIN = list((ROOT / "app/src/main/java").rglob("*.kt"))
 TAMIL_RANGE = range(0x0B80, 0x0C00)
+VISIBLE_LITERAL = re.compile(r'"((?:\\.|[^"\\])*)"')
 
-def codepoints(path: Path) -> set[int]:
-    text = path.read_text(encoding="utf-8")
-    return {ord(ch) for ch in text if ord(ch) in TAMIL_RANGE}
+def cmap(path: Path) -> set[int]:
+    font = TTFont(path)
+    return set().union(*(table.cmap.keys() for table in font["cmap"].tables))
 
-used = set().union(*(codepoints(path) for path in TEXT_FILES))
-if not used:
+def visible_codepoints() -> set[int]:
+    chars: set[str] = set()
+    for path in TEXT_FILES:
+        chars.update(path.read_text(encoding="utf-8"))
+    for path in KOTLIN:
+        text = path.read_text(encoding="utf-8")
+        for match in VISIBLE_LITERAL.finditer(text):
+            chars.update(match.group(1))
+    chars.update("க்ஷ ஶ்ரீ ஸ்ரீ கொ கௌ நந்தை பூக்கள் குழந்தைகள் CO₂ °C ± → ← – — … × ≥ ≤")
+    return {ord(ch) for ch in chars if not ch.isspace()}
+
+all_used = visible_codepoints()
+tamil_used = {cp for cp in all_used if cp in TAMIL_RANGE}
+if not tamil_used:
     raise SystemExit("FONT_COVERAGE_FAIL: no Tamil code points found")
 
-font = TTFont(BUNDLED)
-bundled_cmap = set().union(*(table.cmap.keys() for table in font["cmap"].tables))
-missing = sorted(used - bundled_cmap)
-if missing:
-    raise SystemExit("FONT_COVERAGE_FAIL bundled missing=" + ",".join(f"U+{cp:04X}" for cp in missing))
+expected = []
+for family in ("noto_serif", "noto_serif_tamil", "noto_sans", "noto_sans_tamil"):
+    for weight in (400, 500, 600, 700):
+        path = FONT_DIR / f"{family}_{weight}_subset.ttf"
+        if not path.exists():
+            raise SystemExit(f"FONT_COVERAGE_FAIL missing={path}")
+        expected.append(path)
 
-system_candidates = [
-    Path("/system/fonts/NotoSansTamil-Regular.ttf"),
-    Path("/usr/share/fonts/truetype/noto/NotoSansTamil-Regular.ttf"),
-    Path("/usr/share/fonts/opentype/noto/NotoSansTamil-Regular.ttf"),
-]
-system = next((p for p in system_candidates if p.exists()), None)
-if system is None:
-    print("SYSTEM_FONT_BLOCKED no known Tamil system-font path in CI")
-else:
-    sys_font = TTFont(system)
-    sys_cmap = set().union(*(table.cmap.keys() for table in sys_font["cmap"].tables))
-    sys_missing = sorted(used - sys_cmap)
-    if sys_missing:
-        print("SYSTEM_FONT_INCOMPLETE path=" + str(system) + " missing=" + ",".join(f"U+{cp:04X}" for cp in sys_missing))
-    else:
-        print("SYSTEM_FONT_PASS path=" + str(system) + f" codepoints={len(used)}")
+for path in [p for p in expected if "_tamil_" in p.name]:
+    missing = sorted(tamil_used - cmap(path))
+    if missing:
+        raise SystemExit(
+            f"FONT_COVERAGE_FAIL {path.name} Tamil missing="
+            + ",".join(f"U+{cp:04X}" for cp in missing)
+        )
 
-print(f"BUNDLED_FONT_PASS path={BUNDLED} codepoints={len(used)} bytes={BUNDLED.stat().st_size}")
+shared = {ord(ch) for ch in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 Aa+-/().,:;!?%°←→–—…₂"}
+for path in expected:
+    missing = sorted(shared - cmap(path))
+    if missing:
+        raise SystemExit(
+            f"FONT_COVERAGE_FAIL {path.name} shared missing="
+            + ",".join(f"U+{cp:04X}" for cp in missing)
+        )
+
+total = sum(path.stat().st_size for path in expected)
+print(f"PINNED_FONT_COVERAGE_PASS files={len(expected)} tamil_codepoints={len(tamil_used)} bytes={total}")
