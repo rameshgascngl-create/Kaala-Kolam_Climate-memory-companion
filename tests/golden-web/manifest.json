@@ -24,6 +24,7 @@
     "dark",
     "light"
   ],
+  "capturePolicy": "fresh-context-per-state; scrollY=0; visible-top-element",
   "captures": [
     {
       "state": "home",
@@ -31,7 +32,9 @@
       "language": "en",
       "theme": "dark",
       "path": "tests/golden-web/390x844/en/dark/home.png",
-      "sha256": "29cd71989710618a98c7559279c425c67c9f79b0574c80a3ad9e310d9d7ff3af"
+      "sha256": "29cd71989710618a98c7559279c425c67c9f79b0574c80a3ad9e310d9d7ff3af",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn",
@@ -39,7 +42,9 @@
       "language": "en",
       "theme": "dark",
       "path": "tests/golden-web/390x844/en/dark/learn.png",
-      "sha256": "8f27c77a879a6ebec2798f83cce508a1cbcd665e29092570e8a8a1b2896145f0"
+      "sha256": "8f27c77a879a6ebec2798f83cce508a1cbcd665e29092570e8a8a1b2896145f0",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "elders",
@@ -47,7 +52,9 @@
       "language": "en",
       "theme": "dark",
       "path": "tests/golden-web/390x844/en/dark/elders.png",
-      "sha256": "2611ab58e8ec1cc41763e29eea25b8c518cdfa110b7a3cb9481d35d1c9b3f21f"
+      "sha256": "2611ab58e8ec1cc41763e29eea25b8c518cdfa110b7a3cb9481d35d1c9b3f21f",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "class",
@@ -55,7 +62,9 @@
       "language": "en",
       "theme": "dark",
       "path": "tests/golden-web/390x844/en/dark/class.png",
-      "sha256": "a03dad5898fbb5e4771b2273d0e8c567ee27904df333621e6343cd1d2a963e0f"
+      "sha256": "a03dad5898fbb5e4771b2273d0e8c567ee27904df333621e6343cd1d2a963e0f",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "council",
@@ -63,7 +72,9 @@
       "language": "en",
       "theme": "dark",
       "path": "tests/golden-web/390x844/en/dark/council.png",
-      "sha256": "1dfd721e21e8af150c4569fc0c92aa36efdbb420e14a88d3f3f26b787e751fe2"
+      "sha256": "1dfd721e21e8af150c4569fc0c92aa36efdbb420e14a88d3f3f26b787e751fe2",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "predict",
@@ -71,7 +82,9 @@
       "language": "en",
       "theme": "dark",
       "path": "tests/golden-web/390x844/en/dark/predict.png",
-      "sha256": "3c744031dedbb9ca841f57172575d226cfdfa9a5715cc8f9078cee8884ceaa0b"
+      "sha256": "3c744031dedbb9ca841f57172575d226cfdfa9a5715cc8f9078cee8884ceaa0b",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-topic",
@@ -79,7 +92,9 @@
       "language": "en",
       "theme": "dark",
       "path": "tests/golden-web/390x844/en/dark/learn-topic.png",
-      "sha256": "9f2bcb69ebed3f2b20e966b9d801c7eb7cf69172348c6a1aead07a2b664b74c8"
+      "sha256": "9f2bcb69ebed3f2b20e966b9d801c7eb7cf69172348c6a1aead07a2b664b74c8",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-game",
@@ -87,7 +102,9 @@
       "language": "en",
       "theme": "dark",
       "path": "tests/golden-web/390x844/en/dark/learn-game.png",
-      "sha256": "2fac357dccf05470cd3f34e83f20e3274cb3cc1c1e16ee84ef672563bf91a8e9"
+      "sha256": "2fac357dccf05470cd3f34e83f20e3274cb3cc1c1e16ee84ef672563bf91a8e9",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-words",
@@ -95,7 +112,9 @@
       "language": "en",
       "theme": "dark",
       "path": "tests/golden-web/390x844/en/dark/learn-words.png",
-      "sha256": "59880982f5b086b87363124a9c376558706e50b43406ada4f593f11f7c08980a"
+      "sha256": "db963391b9a5d37fc2f6cfcb43c834684fc055dd4b446d779acfef81446e95f6",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "home",
@@ -103,7 +122,9 @@
       "language": "en",
       "theme": "light",
       "path": "tests/golden-web/390x844/en/light/home.png",
-      "sha256": "a54db68709154ce2adde137827685455f4dbc7b214635831c0db90f454a546af"
+      "sha256": "a54db68709154ce2adde137827685455f4dbc7b214635831c0db90f454a546af",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn",
@@ -111,7 +132,9 @@
       "language": "en",
       "theme": "light",
       "path": "tests/golden-web/390x844/en/light/learn.png",
-      "sha256": "60cb85aaf498c3419df479e169149a10a49883f9313201a0c07844e4e15e2678"
+      "sha256": "6838abd16bb9c4cb1a51574752449504befe39024cf68c0766e6aef512172cde",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "elders",
@@ -119,7 +142,9 @@
       "language": "en",
       "theme": "light",
       "path": "tests/golden-web/390x844/en/light/elders.png",
-      "sha256": "0e328bff714989402728465a6643de29443a7f3aef4a735b85bc71a27ce89fde"
+      "sha256": "0e328bff714989402728465a6643de29443a7f3aef4a735b85bc71a27ce89fde",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "class",
@@ -127,7 +152,9 @@
       "language": "en",
       "theme": "light",
       "path": "tests/golden-web/390x844/en/light/class.png",
-      "sha256": "bfb80b8aecff979221920864863972874222b77cdab282c4b32b4a9548bc7a04"
+      "sha256": "63d40a1e3e4a2d1034c6cf5433c05d5595f2bca254a9dbad65854faa9bf51172",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "council",
@@ -135,7 +162,9 @@
       "language": "en",
       "theme": "light",
       "path": "tests/golden-web/390x844/en/light/council.png",
-      "sha256": "9981519f55849d84cedfa48771d682dd6ecadb1cf2fe05bc062c31a90d3bbb41"
+      "sha256": "9981519f55849d84cedfa48771d682dd6ecadb1cf2fe05bc062c31a90d3bbb41",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "predict",
@@ -143,7 +172,9 @@
       "language": "en",
       "theme": "light",
       "path": "tests/golden-web/390x844/en/light/predict.png",
-      "sha256": "7e0d24ba8a3e61c2e7e8eb233ab27e9dfa23eadeaf7594d7063d72de042b7941"
+      "sha256": "8eea8eedcea569d80ba481dd091a4b319e33a217b28ddcc62b1fab396f7f3ad9",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-topic",
@@ -151,7 +182,9 @@
       "language": "en",
       "theme": "light",
       "path": "tests/golden-web/390x844/en/light/learn-topic.png",
-      "sha256": "ba67c22b3bc2e99e1fe1c46930706746fb62817cff89aa060ef0e0f0809e7a1f"
+      "sha256": "ba67c22b3bc2e99e1fe1c46930706746fb62817cff89aa060ef0e0f0809e7a1f",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-game",
@@ -159,7 +192,9 @@
       "language": "en",
       "theme": "light",
       "path": "tests/golden-web/390x844/en/light/learn-game.png",
-      "sha256": "5963f4c2e939b40621bc0f466dbc851fe81d0760c2f4b36290e95ff0d08407b2"
+      "sha256": "5963f4c2e939b40621bc0f466dbc851fe81d0760c2f4b36290e95ff0d08407b2",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-words",
@@ -167,7 +202,9 @@
       "language": "en",
       "theme": "light",
       "path": "tests/golden-web/390x844/en/light/learn-words.png",
-      "sha256": "d2de49695da6d7b8947bda72857568ecb4ec8f9ff2b6622542aeb2d5432f9b65"
+      "sha256": "6590950296038d782c8c5c47d87ee3bf0747c10e12e2127d1291bbf02706da9d",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "home",
@@ -175,7 +212,9 @@
       "language": "ta",
       "theme": "dark",
       "path": "tests/golden-web/390x844/ta/dark/home.png",
-      "sha256": "a8fb524d3fa396bdc50ffa1c4db02f3143e8201005d93342a125f8ff776ceb56"
+      "sha256": "a8fb524d3fa396bdc50ffa1c4db02f3143e8201005d93342a125f8ff776ceb56",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn",
@@ -183,7 +222,9 @@
       "language": "ta",
       "theme": "dark",
       "path": "tests/golden-web/390x844/ta/dark/learn.png",
-      "sha256": "41653e6f7100311ab2f6dd70c73e1f492a1349cd4faefbeaead845fd82afe9bb"
+      "sha256": "41653e6f7100311ab2f6dd70c73e1f492a1349cd4faefbeaead845fd82afe9bb",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "elders",
@@ -191,7 +232,9 @@
       "language": "ta",
       "theme": "dark",
       "path": "tests/golden-web/390x844/ta/dark/elders.png",
-      "sha256": "53ad224a31ce23b1944b16dd322eb92d1a2e433c4e2cf829fea66537924d6a3b"
+      "sha256": "53ad224a31ce23b1944b16dd322eb92d1a2e433c4e2cf829fea66537924d6a3b",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "class",
@@ -199,7 +242,9 @@
       "language": "ta",
       "theme": "dark",
       "path": "tests/golden-web/390x844/ta/dark/class.png",
-      "sha256": "48439650c347e33e7e92693d300bb9d9bd41d8e2ba0a90f416e68d3385a62657"
+      "sha256": "999e0b22bed3d71bb957e94ee2d392f3a9b0a6da4878be4cbe0487027bb35221",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "council",
@@ -207,7 +252,9 @@
       "language": "ta",
       "theme": "dark",
       "path": "tests/golden-web/390x844/ta/dark/council.png",
-      "sha256": "272ffbc7b82a428b35594c49f638df8d849fc2a6db01f8a8f2c0f2cb7e262b83"
+      "sha256": "7f1c1584a600172e8cedeb7047ee5b0e16d5983796a50caa38ea32e38eac85b6",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "predict",
@@ -215,7 +262,9 @@
       "language": "ta",
       "theme": "dark",
       "path": "tests/golden-web/390x844/ta/dark/predict.png",
-      "sha256": "63402574ef4dab3053418aa4de2ab0ba33acabdd82622be46e5ab03dd97d47c2"
+      "sha256": "63402574ef4dab3053418aa4de2ab0ba33acabdd82622be46e5ab03dd97d47c2",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-topic",
@@ -223,7 +272,9 @@
       "language": "ta",
       "theme": "dark",
       "path": "tests/golden-web/390x844/ta/dark/learn-topic.png",
-      "sha256": "e79beb7890af85fd8ddcb08065a98c219c7b1a40bfc90918077498f9931812d6"
+      "sha256": "e79beb7890af85fd8ddcb08065a98c219c7b1a40bfc90918077498f9931812d6",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-game",
@@ -231,7 +282,9 @@
       "language": "ta",
       "theme": "dark",
       "path": "tests/golden-web/390x844/ta/dark/learn-game.png",
-      "sha256": "ee4e1eab6b161ec110e22bb23f2e2c97a4637709c1cfbdbd3fa5bcf0135edbc5"
+      "sha256": "ee4e1eab6b161ec110e22bb23f2e2c97a4637709c1cfbdbd3fa5bcf0135edbc5",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-words",
@@ -239,7 +292,9 @@
       "language": "ta",
       "theme": "dark",
       "path": "tests/golden-web/390x844/ta/dark/learn-words.png",
-      "sha256": "1a95ea094ef0386accc46ffc37cb701920978fb130dc0ec2a092ad361ef55782"
+      "sha256": "b2e816bfed4fa61bbb973e37094a580cf9889ab522cda40dc3c029704227df5c",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "home",
@@ -247,7 +302,9 @@
       "language": "ta",
       "theme": "light",
       "path": "tests/golden-web/390x844/ta/light/home.png",
-      "sha256": "d3c0e04c6f0b9c6dc680d314c6f3b50a12748b0812c541f6357699e9e1e5d5eb"
+      "sha256": "d3c0e04c6f0b9c6dc680d314c6f3b50a12748b0812c541f6357699e9e1e5d5eb",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn",
@@ -255,7 +312,9 @@
       "language": "ta",
       "theme": "light",
       "path": "tests/golden-web/390x844/ta/light/learn.png",
-      "sha256": "43608e4f5d7d72785e358f52c54750e88e8594075dd7f2f1456baa92290d2d7a"
+      "sha256": "43608e4f5d7d72785e358f52c54750e88e8594075dd7f2f1456baa92290d2d7a",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "elders",
@@ -263,7 +322,9 @@
       "language": "ta",
       "theme": "light",
       "path": "tests/golden-web/390x844/ta/light/elders.png",
-      "sha256": "4e41bda1a1cf2cb8d66ab22d4f0c83531472dd8f3ac413f86b91cc18bde896d9"
+      "sha256": "4e41bda1a1cf2cb8d66ab22d4f0c83531472dd8f3ac413f86b91cc18bde896d9",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "class",
@@ -271,7 +332,9 @@
       "language": "ta",
       "theme": "light",
       "path": "tests/golden-web/390x844/ta/light/class.png",
-      "sha256": "d0d2e8f545cbe50a818f786abeaca8967e5bda3524dc04d3eaa40a0e73c406c3"
+      "sha256": "d0d2e8f545cbe50a818f786abeaca8967e5bda3524dc04d3eaa40a0e73c406c3",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "council",
@@ -279,7 +342,9 @@
       "language": "ta",
       "theme": "light",
       "path": "tests/golden-web/390x844/ta/light/council.png",
-      "sha256": "e9c1f83e38c0edefb94b69090a5742d140adf5cdcda5145cb6dbcc7fea83947d"
+      "sha256": "cdaa741984b943219376598654207740ccd53705ec8b43bf5eb8dc4fcc9ce228",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "predict",
@@ -287,7 +352,9 @@
       "language": "ta",
       "theme": "light",
       "path": "tests/golden-web/390x844/ta/light/predict.png",
-      "sha256": "786ffafb5aa4b2155fa00cc2d4cf8782b8baa3bbff562147608a0fc05b33cd0d"
+      "sha256": "786ffafb5aa4b2155fa00cc2d4cf8782b8baa3bbff562147608a0fc05b33cd0d",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-topic",
@@ -295,7 +362,9 @@
       "language": "ta",
       "theme": "light",
       "path": "tests/golden-web/390x844/ta/light/learn-topic.png",
-      "sha256": "37a974329f7e3e272074430473b0c781d4d012b0622a781eeb1d0a6207c8bc16"
+      "sha256": "37a974329f7e3e272074430473b0c781d4d012b0622a781eeb1d0a6207c8bc16",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-game",
@@ -303,7 +372,9 @@
       "language": "ta",
       "theme": "light",
       "path": "tests/golden-web/390x844/ta/light/learn-game.png",
-      "sha256": "14651f888c27a2f3fbf11b1d4c9b4aba6c0f163265f93d60baaea91c6960bb41"
+      "sha256": "14651f888c27a2f3fbf11b1d4c9b4aba6c0f163265f93d60baaea91c6960bb41",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-words",
@@ -311,7 +382,9 @@
       "language": "ta",
       "theme": "light",
       "path": "tests/golden-web/390x844/ta/light/learn-words.png",
-      "sha256": "1fa23466dc2424a0d62296ab982a361cb7febdd8a6df69ae8de3e5c5016d247c"
+      "sha256": "6a198977494d0e7cd13e1697822e56630dd949b4847a04a2954695349625b871",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "home",
@@ -319,7 +392,9 @@
       "language": "en",
       "theme": "dark",
       "path": "tests/golden-web/320x568/en/dark/home.png",
-      "sha256": "6b2307ec361946c1dc7e22f8d77e1fad0c0aa2ea2bdf4013371054385f8a82e8"
+      "sha256": "6b2307ec361946c1dc7e22f8d77e1fad0c0aa2ea2bdf4013371054385f8a82e8",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn",
@@ -327,7 +402,9 @@
       "language": "en",
       "theme": "dark",
       "path": "tests/golden-web/320x568/en/dark/learn.png",
-      "sha256": "b3580234b15966bf38a2b61475c9ba95dd4d1c5d89e5c83040662b5484748f2c"
+      "sha256": "b3580234b15966bf38a2b61475c9ba95dd4d1c5d89e5c83040662b5484748f2c",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "elders",
@@ -335,7 +412,9 @@
       "language": "en",
       "theme": "dark",
       "path": "tests/golden-web/320x568/en/dark/elders.png",
-      "sha256": "696859b5df2117176a816d7b6e5308bd2d789aad4cc4f5d97d6315e8c73a558d"
+      "sha256": "696859b5df2117176a816d7b6e5308bd2d789aad4cc4f5d97d6315e8c73a558d",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "class",
@@ -343,7 +422,9 @@
       "language": "en",
       "theme": "dark",
       "path": "tests/golden-web/320x568/en/dark/class.png",
-      "sha256": "aeb392323a4120e8324476e84fd83024b691aadb55733b6598aff80ad4e37c76"
+      "sha256": "aeb392323a4120e8324476e84fd83024b691aadb55733b6598aff80ad4e37c76",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "council",
@@ -351,7 +432,9 @@
       "language": "en",
       "theme": "dark",
       "path": "tests/golden-web/320x568/en/dark/council.png",
-      "sha256": "04d80ad013b2271304e688d1b1451b18aaa4ffaa8ccd9de04087d9fc575b7ac6"
+      "sha256": "04d80ad013b2271304e688d1b1451b18aaa4ffaa8ccd9de04087d9fc575b7ac6",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "predict",
@@ -359,7 +442,9 @@
       "language": "en",
       "theme": "dark",
       "path": "tests/golden-web/320x568/en/dark/predict.png",
-      "sha256": "abeb624b6cf1f84e015aa544159533e6c3bf889871ea62619712decaf5cd1183"
+      "sha256": "abeb624b6cf1f84e015aa544159533e6c3bf889871ea62619712decaf5cd1183",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-topic",
@@ -367,7 +452,9 @@
       "language": "en",
       "theme": "dark",
       "path": "tests/golden-web/320x568/en/dark/learn-topic.png",
-      "sha256": "e9e9a8c707ff0fe4eec12dbdc33ab4fdc98bd15affa5652fdd842b54bfed5847"
+      "sha256": "e9e9a8c707ff0fe4eec12dbdc33ab4fdc98bd15affa5652fdd842b54bfed5847",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-game",
@@ -375,7 +462,9 @@
       "language": "en",
       "theme": "dark",
       "path": "tests/golden-web/320x568/en/dark/learn-game.png",
-      "sha256": "a6699266baecda556cfc340fc03cd7ec2f77a869e398246196a6f2fb33dcf72d"
+      "sha256": "a6699266baecda556cfc340fc03cd7ec2f77a869e398246196a6f2fb33dcf72d",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-words",
@@ -383,7 +472,9 @@
       "language": "en",
       "theme": "dark",
       "path": "tests/golden-web/320x568/en/dark/learn-words.png",
-      "sha256": "3f4e4445fd1a404770e9eeb2095ce1921b77cca3394c01f105976efb53f32354"
+      "sha256": "b98a89c0569eb80c967581d733884a8ed754efe2dabeaf423a5d921a9acfa6b0",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "home",
@@ -391,7 +482,9 @@
       "language": "en",
       "theme": "light",
       "path": "tests/golden-web/320x568/en/light/home.png",
-      "sha256": "28d7eb70225ac55540b844fdcbaf5a1979587f1260459cc2f1aa4fdc8e914461"
+      "sha256": "28d7eb70225ac55540b844fdcbaf5a1979587f1260459cc2f1aa4fdc8e914461",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn",
@@ -399,7 +492,9 @@
       "language": "en",
       "theme": "light",
       "path": "tests/golden-web/320x568/en/light/learn.png",
-      "sha256": "968e338c8d47dfeb1880d36e6dbe1bae93eaa0ad300b8788c58bd835f8fd497e"
+      "sha256": "968e338c8d47dfeb1880d36e6dbe1bae93eaa0ad300b8788c58bd835f8fd497e",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "elders",
@@ -407,7 +502,9 @@
       "language": "en",
       "theme": "light",
       "path": "tests/golden-web/320x568/en/light/elders.png",
-      "sha256": "1c49f64643e53b48fdff45fbb368954bc50d6501115006c2f4d99356a7ff8f1e"
+      "sha256": "1c49f64643e53b48fdff45fbb368954bc50d6501115006c2f4d99356a7ff8f1e",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "class",
@@ -415,7 +512,9 @@
       "language": "en",
       "theme": "light",
       "path": "tests/golden-web/320x568/en/light/class.png",
-      "sha256": "227c0226f100e37e200feeb5ec41f347267e0048b55587e9b35e7103430507be"
+      "sha256": "227c0226f100e37e200feeb5ec41f347267e0048b55587e9b35e7103430507be",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "council",
@@ -423,7 +522,9 @@
       "language": "en",
       "theme": "light",
       "path": "tests/golden-web/320x568/en/light/council.png",
-      "sha256": "b4bab54aa8bba4c2c5e3f1b364181af689972b4f3eea803cba3aeedc3f5b9e02"
+      "sha256": "b4bab54aa8bba4c2c5e3f1b364181af689972b4f3eea803cba3aeedc3f5b9e02",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "predict",
@@ -431,7 +532,9 @@
       "language": "en",
       "theme": "light",
       "path": "tests/golden-web/320x568/en/light/predict.png",
-      "sha256": "4935c5509037268e48ddd42c0a5959cd4e7db0bb633500613a72f6a887551a67"
+      "sha256": "4935c5509037268e48ddd42c0a5959cd4e7db0bb633500613a72f6a887551a67",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-topic",
@@ -439,7 +542,9 @@
       "language": "en",
       "theme": "light",
       "path": "tests/golden-web/320x568/en/light/learn-topic.png",
-      "sha256": "2f1e1448bb3e2f8432c058a9b58ffb54b5fd08fbf71e34504b0da4fc2a70f167"
+      "sha256": "2f1e1448bb3e2f8432c058a9b58ffb54b5fd08fbf71e34504b0da4fc2a70f167",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-game",
@@ -447,7 +552,9 @@
       "language": "en",
       "theme": "light",
       "path": "tests/golden-web/320x568/en/light/learn-game.png",
-      "sha256": "8d257812ca4f20e6b0b3b24e8545c7e6ca481b71293d5c4a093b15303947b9ff"
+      "sha256": "8d257812ca4f20e6b0b3b24e8545c7e6ca481b71293d5c4a093b15303947b9ff",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-words",
@@ -455,7 +562,9 @@
       "language": "en",
       "theme": "light",
       "path": "tests/golden-web/320x568/en/light/learn-words.png",
-      "sha256": "aba862c2ea2ea562428e0978276f5ff3c3f94b31c83ff1d55a81ade0adcc8cbe"
+      "sha256": "180f6588b907cf403f571e1f96214f1d3871ab1dd1a946329521f203a10e37bc",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "home",
@@ -463,7 +572,9 @@
       "language": "ta",
       "theme": "dark",
       "path": "tests/golden-web/320x568/ta/dark/home.png",
-      "sha256": "a2c616b608d5c912b043d559561d98c3a7ac8885337308c9d29619bc4bd44a37"
+      "sha256": "a2c616b608d5c912b043d559561d98c3a7ac8885337308c9d29619bc4bd44a37",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn",
@@ -471,7 +582,9 @@
       "language": "ta",
       "theme": "dark",
       "path": "tests/golden-web/320x568/ta/dark/learn.png",
-      "sha256": "172bba529fb3d50ddc6057c5ebfdd93e113a5905632ea807e9b8e02002f033e8"
+      "sha256": "172bba529fb3d50ddc6057c5ebfdd93e113a5905632ea807e9b8e02002f033e8",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "elders",
@@ -479,7 +592,9 @@
       "language": "ta",
       "theme": "dark",
       "path": "tests/golden-web/320x568/ta/dark/elders.png",
-      "sha256": "680b42e9f191259799fbe5dd74101d33f4f709805b76b8b25d4e7b2d26ca9780"
+      "sha256": "680b42e9f191259799fbe5dd74101d33f4f709805b76b8b25d4e7b2d26ca9780",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "class",
@@ -487,7 +602,9 @@
       "language": "ta",
       "theme": "dark",
       "path": "tests/golden-web/320x568/ta/dark/class.png",
-      "sha256": "778e64c20510a9963719daed2625098dcfa08f87a81f6b1e6b3e92c86ef6841b"
+      "sha256": "778e64c20510a9963719daed2625098dcfa08f87a81f6b1e6b3e92c86ef6841b",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "council",
@@ -495,7 +612,9 @@
       "language": "ta",
       "theme": "dark",
       "path": "tests/golden-web/320x568/ta/dark/council.png",
-      "sha256": "dc0cfc67e257bcd7226e252f1714f82e94b3bd97b6c4094a282d1ee473f80646"
+      "sha256": "dc0cfc67e257bcd7226e252f1714f82e94b3bd97b6c4094a282d1ee473f80646",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "predict",
@@ -503,7 +622,9 @@
       "language": "ta",
       "theme": "dark",
       "path": "tests/golden-web/320x568/ta/dark/predict.png",
-      "sha256": "e6b77bf4497adc95198d4b6f5f347aa45d90360f357c6c78639dd602f0875f90"
+      "sha256": "e6b77bf4497adc95198d4b6f5f347aa45d90360f357c6c78639dd602f0875f90",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-topic",
@@ -511,7 +632,9 @@
       "language": "ta",
       "theme": "dark",
       "path": "tests/golden-web/320x568/ta/dark/learn-topic.png",
-      "sha256": "b199d42b35bb3ca1909f65d44291ca44bced39673f2eced9e3f896549f9b04f7"
+      "sha256": "b199d42b35bb3ca1909f65d44291ca44bced39673f2eced9e3f896549f9b04f7",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-game",
@@ -519,7 +642,9 @@
       "language": "ta",
       "theme": "dark",
       "path": "tests/golden-web/320x568/ta/dark/learn-game.png",
-      "sha256": "e8b0fbbbd925b8bf31267f2ecd68f6cbb2eb73147473c4032a4c322414bec167"
+      "sha256": "e8b0fbbbd925b8bf31267f2ecd68f6cbb2eb73147473c4032a4c322414bec167",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-words",
@@ -527,7 +652,9 @@
       "language": "ta",
       "theme": "dark",
       "path": "tests/golden-web/320x568/ta/dark/learn-words.png",
-      "sha256": "1e4dd59bec84c2bd4f90fe8c686c0633ca3f1a6917176fa5254489ba8a0e6ec1"
+      "sha256": "7f818040213495d1a70dfdba1abd96e3c4f1a646179b7adb1f7e0d1b8dc79977",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "home",
@@ -535,7 +662,9 @@
       "language": "ta",
       "theme": "light",
       "path": "tests/golden-web/320x568/ta/light/home.png",
-      "sha256": "1bad6da572d178d78f0187e696003729150afaec7d98c6adc0626d03d1ccdd09"
+      "sha256": "1bad6da572d178d78f0187e696003729150afaec7d98c6adc0626d03d1ccdd09",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn",
@@ -543,7 +672,9 @@
       "language": "ta",
       "theme": "light",
       "path": "tests/golden-web/320x568/ta/light/learn.png",
-      "sha256": "af9c12a4fd1500ce906432143fb50f2eabb2de1b8cb81fd29c11737574a8a4b6"
+      "sha256": "af9c12a4fd1500ce906432143fb50f2eabb2de1b8cb81fd29c11737574a8a4b6",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "elders",
@@ -551,7 +682,9 @@
       "language": "ta",
       "theme": "light",
       "path": "tests/golden-web/320x568/ta/light/elders.png",
-      "sha256": "8ba62f1ea351c3af7ef54842fb334415d2005fbf5cf2456106bbcc1578fef474"
+      "sha256": "8ba62f1ea351c3af7ef54842fb334415d2005fbf5cf2456106bbcc1578fef474",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "class",
@@ -559,7 +692,9 @@
       "language": "ta",
       "theme": "light",
       "path": "tests/golden-web/320x568/ta/light/class.png",
-      "sha256": "376b13cb6c3cdec44b6268fb4b18fe2f8c1fd19dafb015fb3806af97c4bd6c8d"
+      "sha256": "376b13cb6c3cdec44b6268fb4b18fe2f8c1fd19dafb015fb3806af97c4bd6c8d",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "council",
@@ -567,7 +702,9 @@
       "language": "ta",
       "theme": "light",
       "path": "tests/golden-web/320x568/ta/light/council.png",
-      "sha256": "f7ed6905e74fe42d16a00e2fb6ed12162fec9ac6774834cabfe7bf6922527195"
+      "sha256": "f7ed6905e74fe42d16a00e2fb6ed12162fec9ac6774834cabfe7bf6922527195",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "predict",
@@ -575,7 +712,9 @@
       "language": "ta",
       "theme": "light",
       "path": "tests/golden-web/320x568/ta/light/predict.png",
-      "sha256": "0e33be13466e92b2c798ec9f2b92ed4dafe161086848cca3ac1598e048c56c93"
+      "sha256": "0e33be13466e92b2c798ec9f2b92ed4dafe161086848cca3ac1598e048c56c93",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-topic",
@@ -583,7 +722,9 @@
       "language": "ta",
       "theme": "light",
       "path": "tests/golden-web/320x568/ta/light/learn-topic.png",
-      "sha256": "401eb37e6dfa908df7245cb099cbcb38311a477a6167f725dd97686e7918084b"
+      "sha256": "401eb37e6dfa908df7245cb099cbcb38311a477a6167f725dd97686e7918084b",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-game",
@@ -591,7 +732,9 @@
       "language": "ta",
       "theme": "light",
       "path": "tests/golden-web/320x568/ta/light/learn-game.png",
-      "sha256": "816262622f86118d122b7d5a5a370b53de815bcc2fa384858af79d68805aa7fb"
+      "sha256": "816262622f86118d122b7d5a5a370b53de815bcc2fa384858af79d68805aa7fb",
+      "scrollY": 0,
+      "topElementVisible": true
     },
     {
       "state": "learn-words",
@@ -599,7 +742,9 @@
       "language": "ta",
       "theme": "light",
       "path": "tests/golden-web/320x568/ta/light/learn-words.png",
-      "sha256": "602f37aacd4c168e55eadf6adc1b5512fcfa625670a78f7a46fdc2ad394161d6"
+      "sha256": "f3f098b999168f85f31a3abe1cfa4bedd311f9a8f40d82092ba31562e59270fb",
+      "scrollY": 0,
+      "topElementVisible": true
     }
   ]
 }
