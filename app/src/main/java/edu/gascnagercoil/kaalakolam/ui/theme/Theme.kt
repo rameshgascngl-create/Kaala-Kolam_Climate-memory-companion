@@ -1,5 +1,5 @@
 // GENERATED FROM Kaala_Kolam_Climate_Memory_Companion.html CSS.
-// Source generator: tools/extract_tokens.py. Do not introduce Material tonal substitutes here.
+// Source generator: tools/extract_tokens.py. Do not introduce Material tonal/type substitutes here.
 package edu.gascnagercoil.kaalakolam.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -12,7 +12,6 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
@@ -32,6 +31,35 @@ data class PrototypePalette(
     val vermilion: Color, val sea: Color, val ink: Color,
 )
 
+data class PrototypeTypographyTokens(
+    val bodyFontSp: Float,
+    val bodyLineSp: Float,
+    val h1FontSp: Float,
+    val h1LineSp: Float,
+    val h2FontSp: Float,
+    val h2LineSp: Float,
+    val h3FontSp: Float,
+    val h3LineSp: Float,
+    val brandFontSp: Float,
+    val brandLineSp: Float,
+    val mutedFontSp: Float,
+    val mutedLineSp: Float,
+    val footFontSp: Float,
+    val footLineSp: Float,
+    val chipFontSp: Float,
+    val chipLineSp: Float,
+    val tabFontSp: Float,
+    val tabLineSp: Float,
+    val qaskFontSp: Float,
+    val qaskLineSp: Float,
+    val heroMinSp: Float,
+    val heroPreferredVw: Float,
+    val heroMaxSp: Float,
+) {
+    fun heroFontSp(viewportWidthDp: Int): Float =
+        (viewportWidthDp * heroPreferredVw / 100f).coerceIn(heroMinSp, heroMaxSp)
+}
+
 object PrototypeTokens {
     const val DisplayFontStack = "\"Palatino Linotype\",\"Book Antiqua\",Palatino,Georgia,\"Noto Serif Tamil\",\"Latha\",serif"
     const val BodyFontStack = "system-ui,-apple-system,\"Segoe UI\",Roboto,\"Noto Sans Tamil\",\"Nirmala UI\",\"Latha\",Helvetica,Arial,sans-serif"
@@ -39,11 +67,27 @@ object PrototypeTokens {
     val CssRadii = listOf("3px", "4px", "6px", "8px", "10px", "12px", "50%", "99px")
     val CssSpacing = listOf(".4rem", ".5rem", ".8rem", "2px", "4px", "6px", "8px", "10px", "12px", "14px", "16px", "18px", "24px", "28px", "76px")
     val CssFontSizes = listOf(".66rem", ".72rem", ".74rem", ".76rem", ".78rem", ".8rem", ".82rem", ".84rem", ".85rem", ".9rem", ".92rem", "1rem", "1.08rem", "1.1rem", "1.15rem", "1.18rem", "1.2rem", "1.3rem", "1.35rem", "1.4rem", "1.9rem", "2.2rem", "3rem", "6.5vw", "12px")
+    val CssFontWeights = listOf(500, 600, 700)
+    val CssLineHeights = listOf("1", "1.1", "1.2", "1.25", "1.35", "1.4", "1.45", "1.55", "1.65")
 
     val BrandTurmeric = Color(0xFFF0B429)
     val BrandVermilion = Color(0xFFE2573A)
     val BrandSea = Color(0xFF34B3AB)
     val ScaleColours = listOf(Color(0xFF1F6F8B), Color(0xFF6BB3C4), Color(0xFFD8D2C4), Color(0xFFEBA46D), Color(0xFFC8452C))
+
+    val Type = PrototypeTypographyTokens(
+        bodyFontSp=16f, bodyLineSp=24.8f,
+        h1FontSp=30.4f, h1LineSp=36.48f,
+        h2FontSp=21.6f, h2LineSp=25.92f,
+        h3FontSp=17.28f, h3LineSp=20.736f,
+        brandFontSp=18.4f, brandLineSp=28.52f,
+        mutedFontSp=14.4f, mutedLineSp=22.32f,
+        footFontSp=12.8f, footLineSp=19.84f,
+        chipFontSp=12.48f, chipLineSp=19.344f,
+        tabFontSp=12f, tabLineSp=18.6f,
+        qaskFontSp=20.8f, qaskLineSp=28.08f,
+        heroMinSp=30.4f, heroPreferredVw=6.5f, heroMaxSp=48f,
+    )
 
     val Dark = PrototypePalette(
         ground = Color(0xFF10263A), ground2 = Color(0xFF16334B), ground3 = Color(0xFF1D4160), line = Color(0xFF2F5876), flour = Color(0xFFF4EFE6), flour2 = Color(0xFFCFC9BD), faint = Color(0xFF8FA6B6), turmeric = Color(0xFFF0B429), vermilion = Color(0xFFE2573A), sea = Color(0xFF34B3AB), ink = Color(0xFF0B1A27),
@@ -76,39 +120,71 @@ private fun scheme(p: PrototypePalette, dark: Boolean) =
         error=p.vermilion, onError=Color.White, scrim=Color(0xFF000000),
     )
 
-private val BundledTamilFont = FontFamily(Font(R.font.noto_sans_tamil))
+private val NotoSerifFamily = FontFamily(
+    Font(R.font.noto_serif_400_subset, FontWeight.Normal),
+    Font(R.font.noto_serif_500_subset, FontWeight.Medium),
+    Font(R.font.noto_serif_600_subset, FontWeight.SemiBold),
+    Font(R.font.noto_serif_700_subset, FontWeight.Bold),
+)
+private val NotoSerifTamilFamily = FontFamily(
+    Font(R.font.noto_serif_tamil_400_subset, FontWeight.Normal),
+    Font(R.font.noto_serif_tamil_500_subset, FontWeight.Medium),
+    Font(R.font.noto_serif_tamil_600_subset, FontWeight.SemiBold),
+    Font(R.font.noto_serif_tamil_700_subset, FontWeight.Bold),
+)
+private val NotoSansFamily = FontFamily(
+    Font(R.font.noto_sans_400_subset, FontWeight.Normal),
+    Font(R.font.noto_sans_500_subset, FontWeight.Medium),
+    Font(R.font.noto_sans_600_subset, FontWeight.SemiBold),
+    Font(R.font.noto_sans_700_subset, FontWeight.Bold),
+)
+private val NotoSansTamilFamily = FontFamily(
+    Font(R.font.noto_sans_tamil_400_subset, FontWeight.Normal),
+    Font(R.font.noto_sans_tamil_500_subset, FontWeight.Medium),
+    Font(R.font.noto_sans_tamil_600_subset, FontWeight.SemiBold),
+    Font(R.font.noto_sans_tamil_700_subset, FontWeight.Bold),
+)
 
-@Composable
-private fun prototypeTypography(): Typography {
-    val isTamil = LocalConfiguration.current.locales[0].language == "ta"
-    val bodyFamily = remember(isTamil) {
-        if (isTamil) BundledTamilFont else FontFamily.SansSerif
-    }
-    val displayFamily = if (isTamil) BundledTamilFont else FontFamily.Serif
+private fun prototypeTypography(language: String): Typography {
+    val isTamil = language == "ta"
+    val bodyFamily = if (isTamil) NotoSansTamilFamily else NotoSansFamily
+    val displayFamily = if (isTamil) NotoSerifTamilFamily else NotoSerifFamily
     val localeList = if (isTamil) LocaleList("ta") else LocaleList("en")
+    val t = PrototypeTokens.Type
     return Typography(
-        headlineLarge=TextStyle(fontFamily=displayFamily,localeList=localeList,fontWeight=FontWeight.SemiBold,fontSize=30.4.sp,lineHeight=36.48.sp),
-        headlineMedium=TextStyle(fontFamily=displayFamily,localeList=localeList,fontWeight=FontWeight.SemiBold,fontSize=21.6.sp,lineHeight=25.92.sp),
-        headlineSmall=TextStyle(fontFamily=displayFamily,localeList=localeList,fontWeight=FontWeight.SemiBold,fontSize=17.28.sp,lineHeight=20.74.sp),
-        titleLarge=TextStyle(fontFamily=displayFamily,localeList=localeList,fontWeight=FontWeight.SemiBold,fontSize=18.4.sp,lineHeight=22.08.sp),
-        titleMedium=TextStyle(fontFamily=displayFamily,localeList=localeList,fontWeight=FontWeight.SemiBold,fontSize=17.28.sp,lineHeight=20.74.sp),
-        bodyLarge=TextStyle(fontFamily=bodyFamily,localeList=localeList,fontSize=16.sp,lineHeight=24.8.sp),
-        bodyMedium=TextStyle(fontFamily=bodyFamily,localeList=localeList,fontSize=14.4.sp,lineHeight=22.32.sp),
-        bodySmall=TextStyle(fontFamily=bodyFamily,localeList=localeList,fontSize=12.8.sp,lineHeight=19.84.sp),
-        labelMedium=TextStyle(fontFamily=bodyFamily,localeList=localeList,fontSize=12.48.sp,lineHeight=16.sp),
-        labelSmall=TextStyle(fontFamily=bodyFamily,localeList=localeList,fontSize=12.sp,lineHeight=14.4.sp),
+        headlineLarge=TextStyle(fontFamily=displayFamily,localeList=localeList,fontWeight=FontWeight.SemiBold,fontSize=t.h1FontSp.sp,lineHeight=t.h1LineSp.sp),
+        headlineMedium=TextStyle(fontFamily=displayFamily,localeList=localeList,fontWeight=FontWeight.SemiBold,fontSize=t.h2FontSp.sp,lineHeight=t.h2LineSp.sp),
+        headlineSmall=TextStyle(fontFamily=displayFamily,localeList=localeList,fontWeight=FontWeight.SemiBold,fontSize=t.h3FontSp.sp,lineHeight=t.h3LineSp.sp),
+        titleLarge=TextStyle(fontFamily=displayFamily,localeList=localeList,fontWeight=FontWeight.Normal,fontSize=t.brandFontSp.sp,lineHeight=t.brandLineSp.sp),
+        titleMedium=TextStyle(fontFamily=displayFamily,localeList=localeList,fontWeight=FontWeight.SemiBold,fontSize=t.h3FontSp.sp,lineHeight=t.h3LineSp.sp),
+        bodyLarge=TextStyle(fontFamily=bodyFamily,localeList=localeList,fontWeight=FontWeight.Normal,fontSize=t.bodyFontSp.sp,lineHeight=t.bodyLineSp.sp),
+        bodyMedium=TextStyle(fontFamily=bodyFamily,localeList=localeList,fontWeight=FontWeight.Normal,fontSize=t.mutedFontSp.sp,lineHeight=t.mutedLineSp.sp),
+        bodySmall=TextStyle(fontFamily=bodyFamily,localeList=localeList,fontWeight=FontWeight.Normal,fontSize=t.footFontSp.sp,lineHeight=t.footLineSp.sp),
+        labelMedium=TextStyle(fontFamily=bodyFamily,localeList=localeList,fontWeight=FontWeight.Normal,fontSize=t.chipFontSp.sp,lineHeight=t.chipLineSp.sp),
+        labelSmall=TextStyle(fontFamily=bodyFamily,localeList=localeList,fontWeight=FontWeight.Normal,fontSize=t.tabFontSp.sp,lineHeight=t.tabLineSp.sp),
     )
 }
+
 private val PrototypeShapes = Shapes(
     extraSmall=RoundedCornerShape(4.dp), small=RoundedCornerShape(10.dp),
     medium=RoundedCornerShape(12.dp), large=RoundedCornerShape(14.dp), extraLarge=RoundedCornerShape(14.dp),
 )
 
 @Composable
-fun KaalaKolamTheme(themeMode: ThemeMode, content: @Composable () -> Unit) {
+fun KaalaKolamTheme(
+    themeMode: ThemeMode,
+    language: String? = null,
+    content: @Composable () -> Unit,
+) {
     val dark = when(themeMode) { ThemeMode.SYSTEM -> isSystemInDarkTheme(); ThemeMode.LIGHT -> false; ThemeMode.DARK -> true }
     val palette = if (dark) PrototypeTokens.Dark else PrototypeTokens.Light
+    val effectiveLanguage = language ?: LocalConfiguration.current.locales[0].language
     CompositionLocalProvider(LocalPrototypePalette provides palette) {
-        MaterialTheme(colorScheme=scheme(palette,dark), typography=prototypeTypography(), shapes=PrototypeShapes, content=content)
+        MaterialTheme(
+            colorScheme=scheme(palette,dark),
+            typography=prototypeTypography(effectiveLanguage),
+            shapes=PrototypeShapes,
+            content=content,
+        )
     }
 }
