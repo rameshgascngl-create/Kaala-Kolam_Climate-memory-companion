@@ -391,6 +391,30 @@ private fun HeaderTool(
     }
 }
 
+private fun prototypeTamilTabWidths(viewportWidthDp: Int): List<Float> {
+    val available = (viewportWidthDp - 12).coerceAtLeast(0).toFloat()
+    val minimums = listOf(54f, 42f, 71f, 56f, 69f, 63f)
+    if (minimums.sum() >= available) return minimums
+
+    val widths = MutableList<Float?>(minimums.size) { null }
+    val remaining = minimums.indices.toMutableSet()
+    var remainingSpace = available
+    while (remaining.isNotEmpty()) {
+        val target = remainingSpace / remaining.size
+        val constrained = remaining.filter { minimums[it] > target }
+        if (constrained.isEmpty()) {
+            remaining.forEach { widths[it] = target }
+            break
+        }
+        constrained.forEach { index ->
+            widths[index] = minimums[index]
+            remainingSpace -= minimums[index]
+            remaining.remove(index)
+        }
+    }
+    return widths.mapIndexed { index, value -> value ?: minimums[index] }
+}
+
 @Composable
 private fun PrototypeTabs(
     lang: String,
@@ -398,6 +422,9 @@ private fun PrototypeTabs(
     onNavigate: (Destination) -> Unit,
 ) {
     val p = PrototypeTheme.palette
+    val viewportWidthDp = LocalConfiguration.current.screenWidthDp
+    val tamilWidths = if (lang == "ta") prototypeTamilTabWidths(viewportWidthDp) else emptyList()
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -415,37 +442,50 @@ private fun PrototypeTabs(
             .padding(6.dp),
         horizontalArrangement = Arrangement.Center,
     ) {
-        Destination.entries.forEach { destination ->
+        Destination.entries.forEachIndexed { index, destination ->
             val selected = currentRoute == destination.route
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .heightIn(min = 56.dp)
-                    .fidelityTag("tab.${destination.route}", interactive = true)
-                    .background(
-                        if (selected) p.ground3 else Color.Transparent,
-                        RoundedCornerShape(12.dp),
-                    )
-                    .clickable { onNavigate(destination) },
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
+            val touchModifier = if (lang == "ta") {
+                Modifier
+            } else {
+                Modifier.weight(1f)
+            }
+            FidelityTouchTarget(
+                tag = "tab.${destination.route}",
+                modifier = touchModifier,
+                onClick = { onNavigate(destination) },
             ) {
-                Icon(
-                    imageVector = PrototypeIcons.get(destination.icon),
-                    contentDescription = localized(lang, destination.en, destination.ta),
-                    tint = if (selected) p.turmeric else p.faint,
-                    modifier = Modifier.size(24.dp),
-                )
-                PrototypeTabLabel(
-                    tag = "tab-label.${destination.route}",
-                    text = localized(lang, destination.en, destination.ta),
-                    color = if (selected) p.turmeric else p.faint,
-                )
+                val visualModifier = if (lang == "ta") {
+                    Modifier.width(tamilWidths[index].dp)
+                } else {
+                    Modifier.fillMaxWidth()
+                }
+                Column(
+                    modifier = visualModifier
+                        .heightIn(min = 56.dp)
+                        .fidelityTag("tab.${destination.route}")
+                        .background(
+                            if (selected) p.ground3 else Color.Transparent,
+                            RoundedCornerShape(12.dp),
+                        ),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
+                ) {
+                    Icon(
+                        imageVector = PrototypeIcons.get(destination.icon),
+                        contentDescription = localized(lang, destination.en, destination.ta),
+                        tint = if (selected) p.turmeric else p.faint,
+                        modifier = Modifier.size(24.dp),
+                    )
+                    PrototypeTabLabel(
+                        tag = "tab-label.${destination.route}",
+                        text = localized(lang, destination.en, destination.ta),
+                        color = if (selected) p.turmeric else p.faint,
+                    )
+                }
             }
         }
     }
 }
-
 
 @Composable
 internal fun PrototypeTabLabel(
@@ -454,21 +494,13 @@ internal fun PrototypeTabLabel(
     tag: String = "tab-label",
     onTextLayout: (TextLayoutResult) -> Unit = {},
 ) {
-    val narrowTamil =
-        LocalConfiguration.current.screenWidthDp <= 360 &&
-            text.any { it.code in 0x0B80..0x0BFF }
     val stressScale = LocalDensity.current.fontScale >= 1.5f
-    val style = if (narrowTamil) {
-        MaterialTheme.typography.labelSmall.copy(fontSize = 8.sp)
-    } else {
-        MaterialTheme.typography.labelSmall
-    }
     Text(
         text = text,
         color = color,
-        style = style,
-        maxLines = if (narrowTamil && stressScale) 2 else 1,
-        softWrap = narrowTamil && stressScale,
+        style = MaterialTheme.typography.labelSmall,
+        maxLines = if (stressScale) 2 else 1,
+        softWrap = stressScale,
         textAlign = TextAlign.Center,
         modifier = Modifier.fidelityTag(tag),
         onTextLayout = fidelityTextLayout(
