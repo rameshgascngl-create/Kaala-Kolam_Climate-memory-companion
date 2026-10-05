@@ -456,8 +456,7 @@ internal fun PrototypeTabLabel(
     Text(
         text = text,
         color = color,
-        fontSize = 12.sp,
-        lineHeight = 18.6.sp,
+        style = MaterialTheme.typography.labelSmall,
         maxLines = 2,
         softWrap = true,
         textAlign = TextAlign.Center,
