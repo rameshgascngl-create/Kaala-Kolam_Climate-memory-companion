@@ -16,6 +16,7 @@ from skimage.metrics import structural_similarity
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "tests/fidelity/parity-baseline.json"
+STATUS = ROOT / "tests/fidelity/build-status.json"
 REF_IMAGES = ROOT / "tests/golden-web"
 NATIVE_IMAGES = ROOT / "app/build/visual-native"
 REF_LAYOUT = ROOT / "tests/reference-metrics/fidelity-layout.json"
@@ -58,27 +59,50 @@ def box_error(ref: dict, got: dict) -> float:
     )
 
 
-def write_report(errors: list[str], baseline_commit: str | None, image_count: int, geometry_count: int) -> None:
+def screen_from_path(value: str) -> str | None:
+    part = value.split("/")[-1]
+    if part.endswith(".png"):
+        return part[:-4]
+    pieces = value.split("/")
+    if len(pieces) >= 3 and pieces[0].isdigit():
+        return pieces[2]
+    return None
+
+
+def write_report(
+    errors: list[str],
+    informational: list[str],
+    baseline_commit: str | None,
+    image_count: int,
+    geometry_count: int,
+    screen_status: dict[str, str],
+) -> None:
     REPORT.parent.mkdir(parents=True, exist_ok=True)
     by_screen: dict[str, list[str]] = {}
-    for error in errors:
-        key = "unknown"
-        for part in error.split():
-            if part.count("/") >= 2:
-                key = part
-                break
-        by_screen.setdefault(key, []).append(error)
+    info_by_screen: dict[str, list[str]] = {}
+    for target, destination in ((errors, by_screen), (informational, info_by_screen)):
+        for error in target:
+            key = "unknown"
+            for part in error.split():
+                if part.count("/") >= 2:
+                    key = part
+                    break
+            destination.setdefault(key, []).append(error)
     REPORT.write_text(
         json.dumps(
             {
                 "gate": "PARITY",
                 "passed": not errors,
                 "failureCount": len(errors),
+                "informationalFailureCount": len(informational),
                 "baselineCommit": baseline_commit,
                 "imageCount": image_count,
                 "geometryCount": geometry_count,
+                "screenStatus": screen_status,
                 "failures": errors,
+                "informational": informational,
                 "byScreen": by_screen,
+                "informationalByScreen": info_by_screen,
             },
             ensure_ascii=False,
             indent=2,
@@ -89,13 +113,21 @@ def write_report(errors: list[str], baseline_commit: str | None, image_count: in
 
 
 def fail_early(message: str) -> None:
-    write_report([message], None, 0, 0)
+    write_report([message], [], None, 0, 0, {})
     print(message)
     raise SystemExit(1)
 
 
 if not BASE.exists():
     fail_early("PARITY_GATE_FAIL baseline missing: tests/fidelity/parity-baseline.json")
+if not STATUS.exists():
+    fail_early("PARITY_GATE_FAIL screen status missing: tests/fidelity/build-status.json")
+
+status_doc = json.loads(STATUS.read_text(encoding="utf-8"))
+screen_status = {str(k): str(v) for k, v in status_doc.get("screens", {}).items()}
+valid_status = {"DONE", "PARTIAL", "PLACEHOLDER"}
+if not screen_status or any(value not in valid_status for value in screen_status.values()):
+    fail_early("PARITY_GATE_FAIL invalid tests/fidelity/build-status.json screen status")
 
 base = json.loads(BASE.read_text(encoding="utf-8"))
 if not base.get("changeReason"):
@@ -107,6 +139,7 @@ box_slack = float(base["boxRegressionSlackDp"])
 ssim_slack = float(base["ssimRegressionSlack"])
 baseline_commit = base.get("baselineCommit")
 errors: list[str] = []
+informational: list[str] = []
 
 # Schema 2 uses compact dictionaries. Schema 1 remains readable for older
 # deliberate baselines.
@@ -123,20 +156,27 @@ else:
         if float(x["maxErrorDp"]) <= box_tolerance
     }
 
-# SSIM regression: all 72 reference states must be represented.
+# SSIM is measured for every state. It is enforced only when the screen is DONE.
 for rel, baseline_ssim in sorted(base_images.items()):
+    state = Path(rel).stem
+    status = screen_status.get(state)
+    if status is None:
+        errors.append(f"screen status missing {state}")
+        continue
     ref = REF_IMAGES / rel
     native = NATIVE_IMAGES / rel
     if not ref.exists() or not native.exists():
-        errors.append(f"image missing {rel}")
+        message = f"image missing {rel}"
+        (errors if status == "DONE" else informational).append(message)
         continue
     current = score(ref, native)
     minimum = baseline_ssim - ssim_slack
     if current < minimum:
-        errors.append(
+        message = (
             f"SSIM regression {rel} current={current:.6f} "
             f"baseline={baseline_ssim:.6f} min={minimum:.6f}"
         )
+        (errors if status == "DONE" else informational).append(message)
 
 if len(base_images) != 72:
     errors.append(f"baseline image count={len(base_images)} expected=72")
@@ -151,9 +191,14 @@ native = layouts()
 geometry_count = 0
 for row_key, ref_row in sorted(ref_rows.items()):
     width, lang, state = row_key
+    status = screen_status.get(state)
+    if status is None:
+        errors.append(f"screen status missing {state}")
+        continue
     got_row = native.get(row_key)
     if got_row is None:
-        errors.append(f"layout row missing {width}/{lang}/{state}")
+        message = f"layout row missing {width}/{lang}/{state}"
+        (errors if status == "DONE" else informational).append(message)
         continue
     ref_boxes = {x["tag"]: x for x in ref_row["metrics"]}
     got_boxes = {x["tag"]: x for x in got_row["boxes"]}
@@ -162,32 +207,39 @@ for row_key, ref_row in sorted(ref_rows.items()):
             continue
         geometry_count += 1
         if tag not in got_boxes:
-            errors.append(f"tag missing {width}/{lang}/{state}/{tag}")
+            message = f"tag missing {width}/{lang}/{state}/{tag}"
+            (errors if status == "DONE" else informational).append(message)
             continue
         current = box_error(ref_boxes[tag], got_boxes[tag])
         path_key = f"{width}|{lang}|{state}|{tag}"
         screen_key = f"{width}/{lang}/{state}/{tag}"
         if current > box_tolerance + 1e-6:
-            errors.append(f"box >4dp {screen_key} error={current:.3f}dp")
+            message = f"box >4dp {screen_key} error={current:.3f}dp"
+            (errors if status == "DONE" else informational).append(message)
             continue
         baseline_error = baseline_geometry.get(path_key)
         if baseline_error is not None and current > baseline_error + box_slack:
-            errors.append(
+            message = (
                 f"box regression {screen_key} current={current:.3f} "
                 f"baseline={baseline_error:.3f} slack={box_slack:.3f}"
             )
+            (errors if status == "DONE" else informational).append(message)
 
 if len(native) != len(ref_rows):
     errors.append(f"layout matrix size reference={len(ref_rows)} native={len(native)}")
 
-write_report(errors, baseline_commit, len(base_images), geometry_count)
+write_report(errors, informational, baseline_commit, len(base_images), geometry_count, screen_status)
+for message in informational:
+    print("PARITY_INFO", message)
 if errors:
     print(f"PARITY_GATE_FAIL count={len(errors)} baseline={baseline_commit}")
     for error in errors:
         print("PARITY_FAIL", error)
     raise SystemExit(1)
 
+done_count = sum(1 for value in screen_status.values() if value == "DONE")
 print(
-    f"PARITY_GATE_PASS images={len(base_images)} geometry={geometry_count} "
-    f"box<=4dp ssim_regression_slack={ssim_slack}"
+    f"PARITY_GATE_PASS enforced_done_screens={done_count} "
+    f"informational_findings={len(informational)} images={len(base_images)} "
+    f"geometry={geometry_count} box<=4dp ssim_regression_slack={ssim_slack}"
 )

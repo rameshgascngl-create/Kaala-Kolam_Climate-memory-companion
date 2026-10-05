@@ -152,8 +152,11 @@ def collect_metrics(steps: list[dict]) -> dict:
         metrics["parity"] = {
             "passed": bool(parity.get("passed")),
             "failureCount": int(parity.get("failureCount", 0)),
+            "informationalFailureCount": int(parity.get("informationalFailureCount", 0)),
             "baselineCommit": parity.get("baselineCommit"),
+            "screenStatus": parity.get("screenStatus", {}),
             "failures": parity.get("failures", []),
+            "informational": parity.get("informational", []),
         }
 
     contact = read_json(ROOT / "app/build/fidelity/contact-sheet-390x844.json")

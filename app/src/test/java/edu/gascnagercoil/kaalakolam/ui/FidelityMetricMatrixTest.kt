@@ -132,7 +132,7 @@ class FidelityMetricMatrixTest(
     }
 
     companion object {
-        private val states = listOf("home", "learn", "elders", "class", "council", "predict")
+        private val states = listOf("home", "learn", "elders", "class", "council", "predict", "learn-topic", "learn-game", "learn-words")
 
         @JvmStatic
         @Parameterized.Parameters(name = "{0}x{1}-{2}-{3}")

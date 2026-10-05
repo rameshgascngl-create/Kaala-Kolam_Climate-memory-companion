@@ -19,7 +19,7 @@ KEY = "kaala_kolam_v1"
 WIDTHS = (320, 390)
 HEIGHT_FOR_WIDTH = {320: 568, 390: 844}
 LANGS = ("en", "ta")
-STATES = ("home", "learn", "elders", "class", "council", "predict")
+STATES = ("home", "learn", "elders", "class", "council", "predict", "learn-topic", "learn-game", "learn-words")
 TAB_ROUTES = ("home", "learn", "elders", "class", "council", "predict")
 
 PRIMARY = {
@@ -57,9 +57,26 @@ def state_for(name: str, language: str) -> dict:
         state.update(view="council")
     elif name == "predict":
         state.update(view="predict")
+    elif name == "learn-topic":
+        state.update(view="learn", lmode="topic", topic="sun", level="all")
+    elif name == "learn-game":
+        state.update(view="learn", lmode="home")
+    elif name == "learn-words":
+        state.update(view="learn", lmode="words")
     else:
         raise ValueError(name)
     return state
+
+
+def open_game(page, language: str) -> None:
+    label = "வானிலையா? காலநிலையா?" if language == "ta" else "Weather or climate?"
+    page.get_by_role("button", name=label, exact=True).evaluate("(el) => el.click()")
+    page.wait_for_function(
+        """() => {
+            const app = document.querySelector('#app');
+            return app && /1\s*\/\s*10/.test(app.textContent || '');
+        }"""
+    )
 
 
 def main() -> None:
@@ -89,6 +106,9 @@ def main() -> None:
                             page.reload(wait_until="load")
                             install_reference_fonts(page, lang)
                             assert_scroll_zero(page, state_name)
+                            if state_name == "learn-game":
+                                open_game(page, lang)
+                                assert_scroll_zero(page, state_name)
                             assert_visible_top(page, state_name, lang)
 
                             tagged = page.evaluate(
@@ -118,7 +138,7 @@ def main() -> None:
                                     put(primary, 'screen.primary-button', 'button', true);
                                     return tags;
                                 }""",
-                                {"tabRoutes": list(TAB_ROUTES), "primary": PRIMARY[state_name][lang]},
+                                {"tabRoutes": list(TAB_ROUTES), "primary": PRIMARY.get(state_name, {}).get(lang)},
                             )
 
                             metrics = page.evaluate(

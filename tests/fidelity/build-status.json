@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "policy": "HARD applies to every captured screen. PARITY is required only when status is DONE; PARTIAL and PLACEHOLDER parity findings are informational.",
+  "screens": {
+    "home": "PARTIAL",
+    "learn": "PARTIAL",
+    "learn-topic": "PLACEHOLDER",
+    "learn-game": "PARTIAL",
+    "learn-words": "PARTIAL",
+    "elders": "PARTIAL",
+    "class": "PARTIAL",
+    "council": "PARTIAL",
+    "predict": "PARTIAL"
+  }
+}

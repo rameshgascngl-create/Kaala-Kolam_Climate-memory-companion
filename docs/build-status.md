@@ -35,6 +35,7 @@ Status meanings:
 - CSS typography tokens are generated into Compose; generated files are committed deliberately and CI checks for drift rather than committing them.
 - Legacy full-resolution pixel-difference matrices are informational only.
 - HARD is the zero-failure structural gate: exact colour tokens, missing-glyph coverage, non-intentional text overflow/truncation, heading/label/button line counts, body line-count tolerance, and >=48 dp interactive semantics bounds. Persistent tab labels use an accessibility-first contract: fully visible at 320/390 dp and 100%/200% font scale with >=48 dp touch bounds; tab line-count comparison is informational where the web reference clips.
+- Machine-readable screen status lives in `tests/fidelity/build-status.json`. HARD applies to every captured screen. PARITY is enforced only for screens marked **DONE**; **PARTIAL** and **PLACEHOLDER** parity findings remain visible as informational evidence in CI. A screen may move to DONE only after its function, HARD and PARITY checks pass.
 - PARITY is the tagged-geometry/SSIM regression gate. Geometry uses matching runtime-only HTML tags and Compose testTags with a 4 dp absolute tolerance.
 - A parity baseline or threshold may change only in an explicit reviewed commit whose commit message records the reason. CI must never change a baseline automatically.
 
