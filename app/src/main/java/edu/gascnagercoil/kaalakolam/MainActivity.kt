@@ -48,6 +48,8 @@ class MainActivity : AppCompatActivity() {
                     onValidateBackup = viewModel::validateBackup,
                     onRestore = viewModel::restore,
                     onReset = viewModel::reset,
+                    onPredictionAnswer = viewModel::setPredictionAnswer,
+                    onClearPredictions = viewModel::clearPredictionAnswers,
                 )
             }
         }

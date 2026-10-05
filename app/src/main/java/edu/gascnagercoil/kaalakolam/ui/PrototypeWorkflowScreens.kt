@@ -24,12 +24,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Slider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,6 +43,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import edu.gascnagercoil.kaalakolam.domain.M2Domain
+import edu.gascnagercoil.kaalakolam.domain.PredictionState
 import edu.gascnagercoil.kaalakolam.ui.theme.PrototypeTheme
 
 private fun wfText(lang: String, en: String, ta: String): String = if (lang == "ta") ta else en
@@ -751,10 +753,86 @@ fun CouncilPrototypeScreen(lang: String) {
     }
 }
 
+private data class PredictionCopy(
+    val id: String,
+    val questionEn: String,
+    val questionTa: String,
+    val truth: String,
+    val why: String,
+)
+
+private val predictionCopyById = listOf(
+    PredictionCopy(
+        "ocean",
+        "Of the extra heat trapped since the 1970s, what percentage went into the oceans?",
+        "1970-களுக்குப் பிறகு சேர்ந்த கூடுதல் வெப்பத்தில் எத்தனை சதவீதம் பெருங்கடல்களுக்குச் சென்றது?",
+        "About 91% (IPCC AR6).",
+        "The ocean is the planet’s heat store. That is why seas rise as water expands, and why marine heatwaves matter.",
+    ),
+    PredictionCopy(
+        "co2",
+        "Before industry, CO₂ was about 280 ppm. What is it today?",
+        "தொழிற்புரட்சிக்கு முன் CO₂ சுமார் 280 ppm. இன்று எவ்வளவு?",
+        "About 430 ppm, rising by roughly 2–3 ppm a year. Check NOAA’s live figure.",
+        "The rise is far faster than natural changes recorded in ice cores, and its carbon signature points to fossil fuels.",
+    ),
+    PredictionCopy(
+        "warm",
+        "How much has global average surface temperature risen since 1850–1900?",
+        "1850–1900-க்குப் பிறகு உலக சராசரி மேற்பரப்பு வெப்பநிலை எவ்வளவு உயர்ந்துள்ளது?",
+        "About 1.1 °C for 2011–2020 (IPCC AR6). Recent single years have been higher.",
+        "A small change in a global average moves the whole distribution of weather, including the hot tail.",
+    ),
+    PredictionCopy(
+        "nogh",
+        "Without any natural greenhouse effect, Earth’s average surface temperature would be about… (today’s is about +15 °C)",
+        "இயற்கையான பசுமைக்குடில் விளைவே இல்லாவிட்டால் பூமியின் சராசரி மேற்பரப்பு வெப்பநிலை சுமார்… (இன்றைய அளவு சுமார் +15 °C)",
+        "Roughly −18 °C (a standard textbook estimate).",
+        "The greenhouse effect is natural and essential. Climate change is about strengthening it.",
+    ),
+    PredictionCopy(
+        "vapour",
+        "For each 1 °C of warming, air can hold about how much more water vapour?",
+        "ஒவ்வொரு 1 °C வெப்ப உயர்வுக்கும் காற்று சுமார் எவ்வளவு கூடுதல் நீராவியைத் தாங்கும்?",
+        "About 7% (Clausius–Clapeyron relation).",
+        "This is one reason heavy downpours intensify in a warmer world.",
+    ),
+    PredictionCopy(
+        "sea",
+        "Global average sea-level rise between 1901 and 2018?",
+        "1901 முதல் 2018 வரை உலக சராசரிக் கடல்மட்ட உயர்வு?",
+        "About 20 cm (IPCC AR6).",
+        "It sounds small, yet it raises storm-surge reach and floods low coasts far more often.",
+    ),
+    PredictionCopy(
+        "india",
+        "How much has India’s average surface temperature risen since 1901?",
+        "1901-க்குப் பிறகு இந்தியாவின் சராசரி மேற்பரப்பு வெப்பநிலை எவ்வளவு உயர்ந்துள்ளது?",
+        "About 0.7 °C for 1901–2018 (MoES 2020 assessment).",
+        "Regional change differs from the global figure, so local records still matter.",
+    ),
+    PredictionCopy(
+        "nat",
+        "How much of the warming since 1850–1900 is due to natural factors such as the Sun and volcanoes?",
+        "1850–1900-க்குப் பிறகான வெப்ப உயர்வில் சூரியன், எரிமலை போன்ற இயற்கைக் காரணிகளால் எவ்வளவு?",
+        "Close to zero, about −0.1 to +0.1 °C (IPCC AR6).",
+        "Natural factors push climate around, but they do not explain the sustained rise.",
+    ),
+).associateBy { it.id }
+
 @Composable
-fun PredictPrototypeScreen(lang: String) {
-    var confidence by remember { mutableStateOf(-1) }
-    var guess by remember { mutableFloatStateOf(50f) }
+fun PredictPrototypeScreen(
+    lang: String,
+    answers: Map<String, PredictionState> = emptyMap(),
+    onAnswer: (String, PredictionState) -> Unit = { _, _ -> },
+    onReset: () -> Unit = {},
+) {
+    val specs = M2Domain.predictionSpecs
+    val answered = specs.mapNotNull { spec -> answers[spec.id]?.let { spec to it } }
+    val next = M2Domain.nextPredictionSpec(answers.keys)
+    var guess by remember(next?.id) { mutableStateOf(next?.initial ?: 0.0) }
+    var confidence by remember(next?.id) { mutableStateOf(0) }
+
     WorkflowPage {
         WfH1(wfText(lang, "Predict and calibrate", "கணித்து அளவிடு"))
         WfParagraph(
@@ -765,50 +843,195 @@ fun PredictPrototypeScreen(lang: String) {
             ),
             tag = "screen.body.primary",
         )
-        WfCard(tag = "screen.first-card") {
-            Text("1 / 8", color = PrototypeTheme.palette.faint, style = MaterialTheme.typography.bodyMedium)
-            Spacer(Modifier.height(4.dp))
-            WfH2(
-                wfText(
-                    lang,
-                    "Of the extra heat trapped since the 1970s, what percentage went into the oceans?",
-                    "1970-களுக்குப் பிறகு சேர்ந்த கூடுதல் வெப்பத்தில் எத்தனை சதவீதம் பெருங்கடல்களுக்குச் சென்றது?",
-                ),
-            )
-            Text(
-                guess.toInt().toString() + "%",
-                color = PrototypeTheme.palette.flour,
-                fontFamily = MaterialTheme.typography.headlineLarge.fontFamily,
-                fontSize = 35.2.sp,
-                lineHeight = 35.2.sp,
-            )
-            Spacer(Modifier.height(12.dp))
-            PrototypeRange(guess / 100f)
-            Spacer(Modifier.height(26.dp))
-            Text(
-                wfText(lang, "How sure are you?", "எவ்வளவு உறுதி?"),
-                color = PrototypeTheme.palette.flour,
-                fontWeight = FontWeight.SemiBold,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(bottom = 4.dp),
-            )
-            WfSegments(
-                listOf(
-                    wfText(lang, "Guessing", "ஊகம் மட்டும்"),
-                    wfText(lang, "Fairly sure", "ஓரளவு உறுதி"),
-                    wfText(lang, "Certain", "முழு உறுதி"),
-                ),
-                selected = confidence,
-                onSelect = { confidence = it },
-            )
-            Spacer(Modifier.height(14.dp))
-            WfButton(
-                wfText(lang, "Lock in and reveal", "பூட்டி விடையைப் பார்"),
-                tag = "screen.primary-button",
-                filled = true,
-                enabled = confidence >= 0,
-                onClick = { guess = guess },
-            )
+
+        answered.forEachIndexed { index, (spec, answer) ->
+            val copy = predictionCopyById.getValue(spec.id)
+            WfCard(tag = if (index == 0) "screen.first-card" else null) {
+                WfH3(wfText(lang, copy.questionEn, copy.questionTa))
+                val inRange = answer.hit
+                Text(
+                    wfText(
+                        lang,
+                        if (inRange) "In range" else "Outside range",
+                        if (inRange) "சரி" else "தவறு",
+                    ),
+                    color = if (inRange) PrototypeTheme.palette.ink else PrototypeTheme.palette.flour,
+                    fontSize = 12.48.sp,
+                    modifier = Modifier
+                        .background(
+                            if (inRange) PrototypeTheme.palette.sea else PrototypeTheme.palette.vermilion,
+                            RoundedCornerShape(99.dp),
+                        )
+                        .padding(horizontal = 10.dp, vertical = 2.dp),
+                )
+                Spacer(Modifier.height(8.dp))
+                WfParagraph(
+                    wfText(lang, "You said ", "உங்கள் ஊகம் ") +
+                        M2Domain.formatPredictionValue(spec, answer.guess) +
+                        " · " +
+                        when (answer.confidence) {
+                            3 -> wfText(lang, "Certain", "முழு உறுதி")
+                            2 -> wfText(lang, "Fairly sure", "ஓரளவு உறுதி")
+                            else -> wfText(lang, "Guessing", "ஊகம் மட்டும்")
+                        },
+                    bottom = 8,
+                )
+                Text(
+                    copy.truth,
+                    color = PrototypeTheme.palette.flour,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(bottom = 8.dp),
+                )
+                WfParagraph(copy.why, muted = true, bottom = 0)
+            }
+        }
+
+        if (next != null) {
+            val copy = predictionCopyById.getValue(next.id)
+            WfCard(tag = if (answered.isEmpty()) "screen.first-card" else null) {
+                Text(
+                    (specs.indexOf(next) + 1).toString() + " / " + specs.size,
+                    color = PrototypeTheme.palette.faint,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Spacer(Modifier.height(4.dp))
+                WfH2(wfText(lang, copy.questionEn, copy.questionTa))
+                Text(
+                    M2Domain.formatPredictionValue(next, guess),
+                    color = PrototypeTheme.palette.flour,
+                    fontFamily = MaterialTheme.typography.headlineLarge.fontFamily,
+                    fontSize = 35.2.sp,
+                    lineHeight = 35.2.sp,
+                )
+                Spacer(Modifier.height(8.dp))
+                val sliderSteps = (
+                    kotlin.math.round((next.max - next.min) / next.step).toInt() - 1
+                ).coerceAtLeast(0)
+                Slider(
+                    value = guess.toFloat(),
+                    onValueChange = { raw ->
+                        guess = M2Domain.snapPredictionGuess(next, raw.toDouble())
+                    },
+                    valueRange = next.min.toFloat()..next.max.toFloat(),
+                    steps = sliderSteps,
+                )
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    wfText(lang, "How sure are you?", "எவ்வளவு உறுதி?"),
+                    color = PrototypeTheme.palette.flour,
+                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(bottom = 4.dp),
+                )
+                WfSegments(
+                    listOf(
+                        wfText(lang, "Guessing", "ஊகம் மட்டும்"),
+                        wfText(lang, "Fairly sure", "ஓரளவு உறுதி"),
+                        wfText(lang, "Certain", "முழு உறுதி"),
+                    ),
+                    selected = confidence - 1,
+                    onSelect = { confidence = it + 1 },
+                )
+                Spacer(Modifier.height(14.dp))
+                WfButton(
+                    wfText(lang, "Lock in and reveal", "பூட்டி விடையைப் பார்"),
+                    tag = "screen.primary-button",
+                    filled = true,
+                    enabled = confidence in 1..3,
+                    onClick = {
+                        val snapped = M2Domain.snapPredictionGuess(next, guess)
+                        onAnswer(
+                            next.id,
+                            PredictionState(
+                                guess = snapped,
+                                confidence = confidence,
+                                hit = M2Domain.predictionHit(next, snapped),
+                            ),
+                        )
+                    },
+                )
+            }
+        }
+
+        if (answered.size >= 3) {
+            val domainAnswers = answered.map { (spec, answer) ->
+                M2Domain.PredictionAnswer(
+                    id = spec.id,
+                    guess = answer.guess,
+                    confidence = answer.confidence,
+                    hit = answer.hit,
+                )
+            }
+            val buckets = M2Domain.calibrationBuckets(domainAnswers)
+            WfCard {
+                WfH2(wfText(lang, "Your calibration", "உங்கள் அளவீடு"))
+                buckets.forEach { bucket ->
+                    val label = when (bucket.confidence) {
+                        3 -> wfText(lang, "Certain", "முழு உறுதி")
+                        2 -> wfText(lang, "Fairly sure", "ஓரளவு")
+                        else -> wfText(lang, "Guessing", "ஊகம்")
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Text(
+                            label,
+                            color = PrototypeTheme.palette.flour,
+                            modifier = Modifier.widthIn(min = 78.dp),
+                        )
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(8.dp)
+                                .background(PrototypeTheme.palette.ground3, RoundedCornerShape(99.dp)),
+                        ) {
+                            if (bucket.n > 0) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth(bucket.correct.toFloat() / bucket.n)
+                                        .height(8.dp)
+                                        .background(PrototypeTheme.palette.sea, RoundedCornerShape(99.dp)),
+                                )
+                            }
+                        }
+                        Text(
+                            bucket.correct.toString() + " / " + bucket.n,
+                            color = PrototypeTheme.palette.faint,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                }
+                val calibrationMessage = when (M2Domain.certainCalibration(domainAnswers)) {
+                    M2Domain.CertainCalibration.OVERCONFIDENT -> wfText(
+                        lang,
+                        "Your “certain” answers were right less than 60% of the time. That is overconfidence, and nearly everyone shows it. Confidence is a feeling, not a measurement.",
+                        "உங்கள் “முழு உறுதி” பதில்களில் 60%-க்கும் குறைவே சரி. இது அதீத நம்பிக்கை; கிட்டத்தட்ட அனைவருக்கும் இது உண்டு. நம்பிக்கை ஒரு உணர்வு; அளவீடு அல்ல.",
+                    )
+                    M2Domain.CertainCalibration.PERFECT_SO_FAR -> wfText(
+                        lang,
+                        "Every answer you were certain about held up. With so few questions, treat that as a good sign, not a settled fact.",
+                        "நீங்கள் முழு உறுதி என்ற ஒவ்வொரு பதிலும் சரியாக இருந்தது. இவ்வளவு குறைந்த கேள்விகளில் இதை நல்ல அறிகுறியாக மட்டும் கொள்ளுங்கள்.",
+                    )
+                    M2Domain.CertainCalibration.KEEP_GOING -> wfText(
+                        lang,
+                        "Keep going: calibration needs a few confident answers to judge. Try committing to “certain” when you truly are.",
+                        "தொடருங்கள்: அளவீட்டை மதிப்பிட சில உறுதியான பதில்கள் தேவை. உண்மையிலேயே உறுதியாக இருக்கும்போது “முழு உறுதி” எனத் தேர்ந்தெடுங்கள்.",
+                    )
+                }
+                WfParagraph(calibrationMessage, bottom = 0)
+            }
+        }
+
+        if (next == null) {
+            Row(Modifier.padding(vertical = 4.dp)) {
+                WfButton(
+                    wfText(lang, "Try again", "மீண்டும் முயல்"),
+                    onClick = onReset,
+                )
+            }
         }
         WfFooter(lang)
     }

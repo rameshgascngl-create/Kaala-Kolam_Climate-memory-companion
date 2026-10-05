@@ -57,6 +57,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import edu.gascnagercoil.kaalakolam.R
 import edu.gascnagercoil.kaalakolam.domain.AppState
+import edu.gascnagercoil.kaalakolam.domain.PredictionState
 import edu.gascnagercoil.kaalakolam.domain.ThemeMode
 import edu.gascnagercoil.kaalakolam.speech.rememberSpeechController
 import edu.gascnagercoil.kaalakolam.ui.theme.PrototypeTheme
@@ -91,6 +92,8 @@ fun KaalaKolamApp(
     onValidateBackup: (String) -> AppState?,
     onRestore: (AppState) -> Unit,
     onReset: () -> Unit,
+    onPredictionAnswer: (String, PredictionState) -> Unit = { _, _ -> },
+    onClearPredictions: () -> Unit = {},
     initialRoute: String = Destination.HOME.route,
 ) {
     val navController = rememberNavController()
@@ -182,7 +185,12 @@ fun KaalaKolamApp(
                     CouncilPrototypeScreen(lang = lang)
                 }
                 composable(Destination.PREDICT.route) {
-                    PredictPrototypeScreen(lang = lang)
+                    PredictPrototypeScreen(
+                        lang = lang,
+                        answers = uiState.appState.predictionAnswers,
+                        onAnswer = onPredictionAnswer,
+                        onReset = onClearPredictions,
+                    )
                 }
                 composable(ABOUT_ROUTE) {
                     AboutScreen(
@@ -256,7 +264,10 @@ fun KaalaKolamVisualFixture(
                 Destination.ELDERS.route -> ElderPrototypeScreen(lang = lang)
                 Destination.CLASS.route -> ClassPoolPrototypeScreen(lang = lang)
                 Destination.COUNCIL.route -> CouncilPrototypeScreen(lang = lang)
-                Destination.PREDICT.route -> PredictPrototypeScreen(lang = lang)
+                Destination.PREDICT.route -> PredictPrototypeScreen(
+                    lang = lang,
+                    answers = uiState.appState.predictionAnswers,
+                )
                 else -> error("Unknown visual state: $visualState")
             }
         }

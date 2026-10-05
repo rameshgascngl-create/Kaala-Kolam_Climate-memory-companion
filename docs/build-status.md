@@ -19,14 +19,14 @@ Status meanings:
 | Elders | **PARTIAL** | Introductory screen and start-interview control exist. | Interview setup/questions, confidence/story capture, review, code export/import and prototype parity. |
 | Class | **PARTIAL** | Code-entry/sample-data scaffold exists. | Real code parsing, pooled aggregation, grouping/summary behaviour and prototype parity. |
 | Council | **PARTIAL** | Role, scenario and budget scaffolds exist. | Full role/scenario consequences, selectable interventions, budget mechanics, deliberation result/export and prototype parity. |
-| Predict | **PARTIAL** | One-question visual scaffold, confidence controls and range drawing exist. | Functional slider, all 8 questions, reveal/scoring/calibration summary and prototype parity. |
+| Predict | **PARTIAL** | The full eight-question sequence, stepped slider input, confidence choice, persisted answers, reveal cards, calibration buckets/message and reset flow are implemented against the M2 web-derived prediction specs. | Current-head unit/golden CI, HARD checks, accessibility/device QA and final prototype visual parity must pass before DONE. |
 | 24 animated clips | **PLACEHOLDER** | 0/24 faithful native clip players; one generic Sun animation-preview scaffold exists. | Port all 24 step sequences, captions, progress/playback controls and bilingual labels. |
 | 3 interactive demos | **PLACEHOLDER** | 0/3 faithful demos. | Port Water, Sea/Land Breeze and Greenhouse interactive demos. |
 | 2 games | **PARTIAL** | Weather-or-Climate visual scaffold exists; Myth-or-Fact is absent. | Make Weather-or-Climate fully interactive across all questions/results and implement Myth-or-Fact. |
 | Tamil-English word list | **PARTIAL** | 4/77 rows are represented in the native scaffold. | Port all 77 rows, search/filter behaviour, review-warning state and prototype layout. |
 | About | **PARTIAL** | Native About route contains purpose, storage, version/credit, sources, limits and data controls. | Replace the contact placeholder where required, complete prototype visual parity and automated/device QA. |
 | Backup / Restore | **PARTIAL** | Backup codec, copy-to-clipboard, restore validation, confirmation, repository replacement and reset flows exist; codec unit tests are present. | End-to-end UI/device QA, compatibility/round-trip evidence across realistic saved state, and final prototype/accessibility verification. |
-| M2 domain logic + web golden fixtures | **PARTIAL** | Pure Kotlin ports and web-derived golden fixtures are being added for share codes, deterministic sample records, class aggregation, council risk maths and prediction numeric specs. | Current-head CI must regenerate the fixture from the shipped HTML and pass the Kotlin golden test before this row becomes DONE. |
+| M2 domain logic + web golden fixtures | **DONE** | Run #136 on commit `4a8243f5693f2827f08a4a4678022e387e726e42` passed native static QA and the dedicated M2 web-golden test after deterministic fixture regeneration. Coverage includes share codes, deterministic sample records, class aggregation, council risk maths and prediction numeric specs. | None for the M2 domain/golden milestone; downstream feature screens must consume these rules without duplicating them. |
 
 ## Fidelity and localisation gates
 

@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.Serializer
 import androidx.datastore.dataStore
 import edu.gascnagercoil.kaalakolam.domain.AppState
+import edu.gascnagercoil.kaalakolam.domain.PredictionState
 import edu.gascnagercoil.kaalakolam.domain.ThemeMode
 import edu.gascnagercoil.kaalakolam.domain.repair
 import java.io.InputStream
@@ -53,6 +54,18 @@ class AppStateRepository(context: Context) {
 
     suspend fun setThemeMode(themeMode: ThemeMode) {
         store.updateData { current -> current.copy(themeMode = themeMode).repair() }
+    }
+
+    suspend fun setPredictionAnswer(id: String, answer: PredictionState) {
+        store.updateData { current ->
+            current.copy(
+                predictionAnswers = current.predictionAnswers + (id to answer),
+            ).repair()
+        }
+    }
+
+    suspend fun clearPredictionAnswers() {
+        store.updateData { current -> current.copy(predictionAnswers = emptyMap()).repair() }
     }
 
     suspend fun replace(validated: AppState) {

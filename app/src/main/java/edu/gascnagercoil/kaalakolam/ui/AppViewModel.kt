@@ -8,6 +8,7 @@ import edu.gascnagercoil.kaalakolam.content.GapManifest
 import edu.gascnagercoil.kaalakolam.data.AppStateRepository
 import edu.gascnagercoil.kaalakolam.domain.AppState
 import edu.gascnagercoil.kaalakolam.domain.BackupCodec
+import edu.gascnagercoil.kaalakolam.domain.PredictionState
 import edu.gascnagercoil.kaalakolam.domain.ThemeMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,6 +47,14 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     fun setThemeMode(themeMode: ThemeMode) {
         viewModelScope.launch { stateRepository.setThemeMode(themeMode) }
+    }
+
+    fun setPredictionAnswer(id: String, answer: PredictionState) {
+        viewModelScope.launch { stateRepository.setPredictionAnswer(id, answer) }
+    }
+
+    fun clearPredictionAnswers() {
+        viewModelScope.launch { stateRepository.clearPredictionAnswers() }
     }
 
     fun backupCode(state: AppState): String = BackupCodec.encode(state)

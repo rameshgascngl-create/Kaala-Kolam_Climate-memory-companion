@@ -351,6 +351,36 @@ object M2Domain {
         return CouncilRisk(hazard = hazard, risks = risks, mean = total / groups.size)
     }
 
+    fun predictionSpec(id: String): PredictionSpec? =
+        predictionSpecs.firstOrNull { it.id == id }
+
+    fun nextPredictionSpec(answeredIds: Set<String>): PredictionSpec? =
+        predictionSpecs.firstOrNull { it.id !in answeredIds }
+
+    fun snapPredictionGuess(spec: PredictionSpec, value: Double): Double {
+        val clamped = value.coerceIn(spec.min, spec.max)
+        val stepIndex = kotlin.math.round((clamped - spec.min) / spec.step)
+        val snapped = spec.min + stepIndex * spec.step
+        return if (spec.step < 1.0) {
+            kotlin.math.round(snapped * 10.0) / 10.0
+        } else {
+            kotlin.math.round(snapped)
+        }
+    }
+
+    fun formatPredictionValue(spec: PredictionSpec, value: Double): String {
+        val snapped = snapPredictionGuess(spec, value)
+        val number = if (spec.step < 1.0) {
+            val tenths = kotlin.math.round(snapped * 10.0).toInt()
+            val sign = if (tenths < 0) "-" else ""
+            val magnitude = kotlin.math.abs(tenths)
+            sign + (magnitude / 10) + "." + (magnitude % 10)
+        } else {
+            kotlin.math.round(snapped).toLong().toString()
+        }
+        return number + spec.unit
+    }
+
     fun predictionHit(spec: PredictionSpec, guess: Double): Boolean =
         guess >= spec.low && guess <= spec.high
 
