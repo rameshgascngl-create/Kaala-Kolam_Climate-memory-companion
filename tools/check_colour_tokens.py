@@ -34,9 +34,9 @@ for label,css,name in (("dark",dark,"Dark"),("light",light,"Light")):
             raise SystemExit(f"HARD_COLOUR_FAIL {label}.{key} css={css.get(key)} compose={got.get(key)}")
 
 scale=[dark[k] for k in ("s-2","s-1","s0","s1","s2")]
-m=re.search(r"val ScaleColours = listOf\\(([^\\n]+)\\)",THEME)
+m=re.search(r"val ScaleColours = listOf\(([^\n]+)\)",THEME)
 if not m: raise SystemExit("HARD_COLOUR_FAIL missing ScaleColours")
-got_scale=["#"+v[-6:].lower() for v in re.findall(r"Color\\(0x([0-9A-Fa-f]{8})\\)",m.group(1))]
+got_scale=["#"+v[-6:].lower() for v in re.findall(r"Color\(0x([0-9A-Fa-f]{8})\)",m.group(1))]
 if got_scale!=scale:
     raise SystemExit(f"HARD_COLOUR_FAIL scale css={scale} compose={got_scale}")
 print(f"HARD_COLOUR_PASS dark={len(KEYS)} light={len(KEYS)} scale={len(scale)} exact")
