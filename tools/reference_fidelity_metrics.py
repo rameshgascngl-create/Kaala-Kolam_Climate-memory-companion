@@ -150,13 +150,15 @@ def main() -> None:
                                         if (tag.startsWith('tool.') || tag === 'screen.primary-button') return 'button';
                                         return 'box';
                                       })();
+                                      const cs = getComputedStyle(el);
+                                      const clips = value => ['hidden','clip','auto','scroll'].includes(value);
                                       out.push({
                                         tag, kind,
                                         text: (el.textContent || '').trim(),
                                         left: r.left, top: r.top, width: r.width, height: r.height,
                                         lineCount: kind === 'box' ? null : textLines(el),
-                                        overflowX: el.scrollWidth > el.clientWidth + 1,
-                                        overflowY: el.scrollHeight > el.clientHeight + 1,
+                                        overflowX: clips(cs.overflowX) && el.scrollWidth > el.clientWidth + 1,
+                                        overflowY: clips(cs.overflowY) && el.scrollHeight > el.clientHeight + 1,
                                       });
                                     }
                                     for (const el of document.querySelectorAll('[data-fidelity-label-tag]')) {
