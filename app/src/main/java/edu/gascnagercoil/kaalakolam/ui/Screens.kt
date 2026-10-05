@@ -29,6 +29,7 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -100,36 +101,52 @@ fun HomeScreen(
                 modifier = Modifier.padding(top = 6.dp, bottom = 4.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
+                val homeHeading = localized(
+                    lang,
+                    "A climate app that starts with people, not theory",
+                    "கோட்பாட்டில் அல்ல, மக்களிடமிருந்து தொடங்கும் காலநிலைப் பயன்பாடு",
+                )
                 Text(
-                    text = localized(
-                        lang,
-                        "A climate app that starts with people, not theory",
-                        "கோட்பாட்டில் அல்ல, மக்களிடமிருந்து தொடங்கும் காலநிலைப் பயன்பாடு",
-                    ),
+                    text = homeHeading,
                     color = p.flour,
                     style = MaterialTheme.typography.headlineLarge,
-                    modifier = Modifier.widthIn(max = 285.dp),
+                    modifier = Modifier
+                        .widthIn(max = 285.dp)
+                        .fidelityTag("screen.heading"),
+                    onTextLayout = fidelityTextLayout(
+                        tag = "screen.heading",
+                        kind = "heading",
+                        text = homeHeading,
+                    ),
                 )
                 MemoryStripeHero(lang)
+                val homeBody = localized(
+                    lang,
+                    "From a child of six to a grandmother of ninety, everyone can learn how weather and climate work here. Your grandmother has watched this place change for seventy years and instruments have watched too. You will learn the science, interview an elder, cross-check their memories against the evidence, pool what your class found, then run a village council where every choice has a cost.",
+                    "ஆறு வயதுச் சிறுவன் முதல் தொண்ணூறு வயதுப் பாட்டி வரை எல்லோரும் இங்கு வானிலையும் காலநிலையும் எப்படிச் செயல்படுகின்றன என்று கற்கலாம். உங்கள் பாட்டி இந்த ஊர் மாறுவதை எழுபது ஆண்டுகளாகப் பார்த்திருக்கிறார்; கருவிகளும் பதிவு செய்திருக்கின்றன. அறிவியலைக் கற்று, ஒரு மூத்தவரிடம் நேர்காணல் நடத்தி, அவர் நினைவுகளைச் சான்றுகளுடன் ஒப்பிட்டு, உங்கள் வகுப்பின் கண்டுபிடிப்புகளை ஒன்றாக்கி, ஒவ்வொரு தேர்வுக்கும் விலை உள்ள ஊர்சபையை நடத்துவீர்கள்.",
+                )
                 Text(
-                    text = localized(
-                        lang,
-                        "From a child of six to a grandmother of ninety, everyone can learn how weather and climate work here. Your grandmother has watched this place change for seventy years and instruments have watched too. You will learn the science, interview an elder, cross-check their memories against the evidence, pool what your class found, then run a village council where every choice has a cost.",
-                        "ஆறு வயதுச் சிறுவன் முதல் தொண்ணூறு வயதுப் பாட்டி வரை எல்லோரும் இங்கு வானிலையும் காலநிலையும் எப்படிச் செயல்படுகின்றன என்று கற்கலாம். உங்கள் பாட்டி இந்த ஊர் மாறுவதை எழுபது ஆண்டுகளாகப் பார்த்திருக்கிறார்; கருவிகளும் பதிவு செய்திருக்கின்றன. அறிவியலைக் கற்று, ஒரு மூத்தவரிடம் நேர்காணல் நடத்தி, அவர் நினைவுகளைச் சான்றுகளுடன் ஒப்பிட்டு, உங்கள் வகுப்பின் கண்டுபிடிப்புகளை ஒன்றாக்கி, ஒவ்வொரு தேர்வுக்கும் விலை உள்ள ஊர்சபையை நடத்துவீர்கள்.",
-                    ),
+                    text = homeBody,
                     color = p.flour,
                     style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.fidelityTag("screen.body.primary"),
+                    onTextLayout = fidelityTextLayout(
+                        tag = "screen.body.primary",
+                        kind = "body",
+                        text = homeBody,
+                    ),
                 )
                 PrototypeButton(
                     text = localized(lang, "Start an interview", "நேர்காணலைத் தொடங்கு"),
                     filled = true,
+                    tag = "screen.primary-button",
                     onClick = { onNavigate("elders") },
                 )
             }
         }
 
         item {
-            PrototypeCard {
+            PrototypeCard(tag = "screen.first-card") {
                 Text(
                     localized(lang, "Choose your way in", "உங்கள் வழியைத் தேர்ந்தெடுங்கள்"),
                     color = p.flour,
@@ -320,10 +337,14 @@ private data class HomeRouteCard(
 )
 
 @Composable
-private fun PrototypeCard(content: @Composable ColumnScope.() -> Unit) {
+private fun PrototypeCard(
+    tag: String? = null,
+    content: @Composable ColumnScope.() -> Unit,
+) {
     val p = PrototypeTheme.palette
+    val tagged = if (tag == null) Modifier else Modifier.fidelityTag(tag)
     Column(
-        modifier = Modifier
+        modifier = tagged
             .fillMaxWidth()
             .background(p.ground2, RoundedCornerShape(14.dp))
             .border(1.dp, p.line, RoundedCornerShape(14.dp))
@@ -371,25 +392,40 @@ private fun EntryOption(
 private fun PrototypeButton(
     text: String,
     filled: Boolean,
+    tag: String? = null,
     onClick: () -> Unit,
 ) {
     val p = PrototypeTheme.palette
     val background = if (filled) p.turmeric else Color.Transparent
     val foreground = if (filled) Color(0xFF17120A) else p.flour
+    val effectiveTag = tag ?: "button.${text.hashCode()}"
     Box(
         modifier = Modifier
-            .heightIn(min = 46.dp)
-            .background(background, RoundedCornerShape(12.dp))
-            .border(1.dp, if (filled) p.turmeric else p.line, RoundedCornerShape(12.dp))
-            .clickable(onClick = onClick)
-            .padding(horizontal = 18.dp, vertical = 10.dp),
+            .minimumInteractiveComponentSize()
+            .fidelityTag(effectiveTag, interactive = true)
+            .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
-            text,
-            color = foreground,
-            fontWeight = if (filled) FontWeight.SemiBold else FontWeight.Normal,
-        )
+        Box(
+            modifier = Modifier
+                .heightIn(min = 46.dp)
+                .background(background, RoundedCornerShape(12.dp))
+                .border(1.dp, if (filled) p.turmeric else p.line, RoundedCornerShape(12.dp))
+                .padding(horizontal = 18.dp, vertical = 10.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text,
+                color = foreground,
+                fontWeight = if (filled) FontWeight.SemiBold else FontWeight.Normal,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                onTextLayout = fidelityTextLayout(
+                    tag = "$effectiveTag.label",
+                    kind = "button",
+                    text = text,
+                ),
+            )
+        }
     }
 }
 
