@@ -401,7 +401,10 @@ object M2Domain {
             hash = hash xor char.code.toUInt()
             hash *= 16777619u
         }
-        return hash.toString(16).padStart(8, '0').take(6)
+        val padded = hash.toString(16).padStart(8, '0')
+        return buildString(6) {
+            repeat(6) { index -> append(padded[index]) }
+        }
     }
 
     private fun base64UrlEncode(input: ByteArray): String {
