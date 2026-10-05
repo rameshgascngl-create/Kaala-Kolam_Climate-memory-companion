@@ -17,11 +17,11 @@ def main() -> None:
         raise SystemExit(f"TEXT_WIDTH_PROBE_FAIL key mismatch web={sorted(web)} android={sorted(android)}")
     failures = []
     for key in sorted(web):
-        w = float(web[key]["widthPx"])
+        w = float(web[key]["canvasWidthPx"])
         a = float(android[key]["widthPx"])
         delta = abs(a - w) / w if w else 1.0
         print(
-            f"TEXT_WIDTH_PROBE sample={key} chromium={w:.4f} android={a:.4f} "
+            f"TEXT_WIDTH_PROBE sample={key} chromium_canvas={w:.4f} android_paint={a:.4f} "
             f"delta={delta*100:.3f}% chromium_family={web[key].get('platformFamily')} "
             f"android_family={android[key].get('resolvedFamily')}"
         )
