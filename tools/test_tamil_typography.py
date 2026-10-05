@@ -18,7 +18,6 @@ def call_block(lines: list[str], start: int) -> str:
     started = False
     for line in lines[start:]:
         block.append(line)
-        # Parentheses inside quoted strings are irrelevant to call structure.
         structural = re.sub(r'"(?:\\.|[^"\\])*"', '""', line)
         if not started:
             marker = structural.find("Text(")
@@ -33,10 +32,7 @@ def call_block(lines: list[str], start: int) -> str:
                 break
     return "\n".join(block)
 
-sources = {
-    path: path.read_text(encoding="utf-8")
-    for path in sorted(JAVA.rglob("*.kt"))
-}
+sources = {path: path.read_text(encoding="utf-8") for path in sorted(JAVA.rglob("*.kt"))}
 joined = "\n".join(sources.values())
 if ".uppercase(" in joined:
     fail("visible-source policy forbids .uppercase()")
@@ -48,8 +44,6 @@ for path, text in sources.items():
         if value not in {"0.sp", "0.em", "TextUnit.Unspecified"}:
             fail(f"{path}: non-zero letter spacing {value}")
 
-# Fixed heights are permitted for drawing canvases; reject a fixed-height modifier
-# only when it belongs to the balanced Text(...) call itself.
 for path, text in sources.items():
     lines = text.splitlines()
     for index, line in enumerate(lines):
@@ -59,15 +53,29 @@ for path, text in sources.items():
                 fail(f"{path}:{index+1}: fixed-height Text container")
 
 theme = THEME.read_text(encoding="utf-8")
-for style in ("bodyLarge", "bodyMedium", "bodySmall"):
-    match = re.search(
-        rf"{style}=TextStyle\([^\n]*fontSize=([0-9.]+)\.sp,lineHeight=([0-9.]+)\.sp",
-        theme,
-    )
-    if not match:
-        fail(f"could not read {style} font/line height")
-    font, line = map(float, match.groups())
+pairs = {
+    "body": ("bodyFontSp", "bodyLineSp"),
+    "muted": ("mutedFontSp", "mutedLineSp"),
+    "foot": ("footFontSp", "footLineSp"),
+}
+for label, (font_key, line_key) in pairs.items():
+    font_match = re.search(rf"\b{font_key}=([0-9.]+)f", theme)
+    line_match = re.search(rf"\b{line_key}=([0-9.]+)f", theme)
+    if not font_match or not line_match:
+        fail(f"could not read generated {label} font/line-height tokens")
+    font = float(font_match.group(1))
+    line = float(line_match.group(1))
     if line + 1e-6 < font * 1.5:
-        fail(f"{style}: line height {line} is less than 1.5 x {font}")
+        fail(f"{label}: line height {line} is less than 1.5 x {font}")
 
-print("TAMIL_TYPOGRAPHY_PASS body_line_height>=1.5 no-uppercase no-ellipsis no-fixed-text-height")
+for token in ("h1FontSp", "h1LineSp", "h2FontSp", "h2LineSp", "h3FontSp", "h3LineSp",
+              "heroMinSp", "heroPreferredVw", "heroMaxSp", "tabFontSp", "tabLineSp"):
+    if not re.search(rf"\b{token}=[0-9.]+f", theme):
+        fail(f"generated typography token missing: {token}")
+
+if "NotoSerifTamilFamily" not in theme or "NotoSansTamilFamily" not in theme:
+    fail("Tamil display/body pinned families missing")
+if "NotoSerifFamily" not in theme or "NotoSansFamily" not in theme:
+    fail("English display/body pinned families missing")
+
+print("TAMIL_TYPOGRAPHY_PASS generated-css-tokens body_line_height>=1.5 serif-display sans-body no-uppercase no-ellipsis no-fixed-text-height")
