@@ -61,7 +61,7 @@ jobs:
       - name: Compare Chromium and Android Paint text widths
         run: python3 tools/compare_text_widths.py
 
-      - name: Measure native-to-web visual differences
+      - name: Measure native-to-web visual differences (informational)
         run: |
           python3 -m pip install --disable-pip-version-check pillow
           python3 tools/compare_visuals.py
@@ -125,6 +125,7 @@ jobs:
           path: |
             app/build/visual-native/
             app/build/visual-tamil/
+            app/build/fidelity/
             docs/visual-parity-report.md
             docs/tamil-visual-parity-report.md
           if-no-files-found: error
