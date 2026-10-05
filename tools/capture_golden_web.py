@@ -4,9 +4,9 @@
 Matrix:
   9 states x 2 viewports x 2 languages x 2 themes = 72 PNG files.
 
-No Android device/emulator is used. The audited single-file HTML prototype is
-loaded directly from disk. Captures are viewport screenshots (not full-page)
-because the visual-fidelity contract specifies exact viewport dimensions.
+Each state uses a fresh browser context. Captures are accepted only when
+window.scrollY == 0 and the state-specific top element is visibly below the
+sticky header. The shipped HTML is never modified.
 """
 from __future__ import annotations
 
@@ -16,6 +16,7 @@ import json
 from pathlib import Path
 
 from playwright.sync_api import Page, sync_playwright
+from reference_capture_guard import assert_scroll_zero, assert_visible_top
 from reference_fonts import install_reference_fonts
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -88,8 +89,6 @@ def state_for(name: str, language: str, theme: str) -> dict:
     elif name == "learn-words":
         state.update(view="learn", lmode="words")
     elif name == "learn-game":
-        # G (the game run state) is intentionally closure-local in the
-        # prototype. Start from Learn home and click the first game button.
         state.update(view="learn", lmode="home")
     else:
         raise ValueError(name)
@@ -111,11 +110,11 @@ def load_state(page: Page, state: dict) -> None:
 
 def open_game(page: Page, language: str) -> None:
     label = "வானிலையா? காலநிலையா?" if language == "ta" else "Weather or climate?"
-    page.get_by_role("button", name=label, exact=True).click()
+    page.get_by_role("button", name=label, exact=True).evaluate("(el) => el.click()")
     page.wait_for_function(
         """() => {
             const app = document.querySelector('#app');
-            return app && /1\\s*\\/\\s*10/.test(app.textContent || '');
+            return app && /1\s*\/\s*10/.test(app.textContent || '');
         }"""
     )
 
@@ -136,49 +135,56 @@ def capture(output: Path) -> None:
         browser = playwright.chromium.launch(headless=True)
         try:
             for width, height in VIEWPORTS:
-                context = browser.new_context(
-                    viewport={"width": width, "height": height},
-                    device_scale_factor=1,
-                    color_scheme="dark",
-                    reduced_motion="reduce",
-                    bypass_csp=True,
-                )
-                page = context.new_page()
                 for language in LANGUAGES:
                     for theme in THEMES:
                         for state_name in STATES:
-                            state = state_for(state_name, language, theme)
-                            load_state(page, state)
-                            if state_name == "learn-game":
-                                open_game(page, language)
-                            page.wait_for_timeout(50)
+                            context = browser.new_context(
+                                viewport={"width": width, "height": height},
+                                device_scale_factor=1,
+                                color_scheme="dark",
+                                reduced_motion="reduce",
+                                bypass_csp=True,
+                            )
+                            page = context.new_page()
+                            try:
+                                state = state_for(state_name, language, theme)
+                                load_state(page, state)
+                                assert_scroll_zero(page, state_name)
+                                if state_name == "learn-game":
+                                    open_game(page, language)
+                                    assert_scroll_zero(page, state_name)
+                                assert_visible_top(page, state_name, language)
+                                page.wait_for_timeout(50)
 
-                            target = (
-                                output
-                                / f"{width}x{height}"
-                                / language
-                                / theme
-                                / f"{state_name}.png"
-                            )
-                            target.parent.mkdir(parents=True, exist_ok=True)
-                            page.screenshot(
-                                path=str(target),
-                                full_page=False,
-                                animations="disabled",
-                                caret="hide",
-                                scale="css",
-                            )
-                            manifest.append(
-                                {
-                                    "state": state_name,
-                                    "viewport": f"{width}x{height}",
-                                    "language": language,
-                                    "theme": theme,
-                                    "path": target.relative_to(ROOT).as_posix(),
-                                    "sha256": sha256(target),
-                                }
-                            )
-                context.close()
+                                target = (
+                                    output
+                                    / f"{width}x{height}"
+                                    / language
+                                    / theme
+                                    / f"{state_name}.png"
+                                )
+                                target.parent.mkdir(parents=True, exist_ok=True)
+                                page.screenshot(
+                                    path=str(target),
+                                    full_page=False,
+                                    animations="disabled",
+                                    caret="hide",
+                                    scale="css",
+                                )
+                                manifest.append(
+                                    {
+                                        "state": state_name,
+                                        "viewport": f"{width}x{height}",
+                                        "language": language,
+                                        "theme": theme,
+                                        "path": target.relative_to(ROOT).as_posix(),
+                                        "sha256": sha256(target),
+                                        "scrollY": 0,
+                                        "topElementVisible": True,
+                                    }
+                                )
+                            finally:
+                                context.close()
         finally:
             browser.close()
 
@@ -194,6 +200,7 @@ def capture(output: Path) -> None:
                 "viewports": [f"{w}x{h}" for w, h in VIEWPORTS],
                 "languages": list(LANGUAGES),
                 "themes": list(THEMES),
+                "capturePolicy": "fresh-context-per-state; scrollY=0; visible-top-element",
                 "captures": manifest,
             },
             indent=2,
@@ -202,7 +209,7 @@ def capture(output: Path) -> None:
         + "\n",
         encoding="utf-8",
     )
-    print(f"GOLDEN_WEB_PASS captures={len(manifest)}")
+    print(f"GOLDEN_WEB_PASS captures={len(manifest)} fresh_contexts={len(manifest)}")
 
 
 def main() -> None:
