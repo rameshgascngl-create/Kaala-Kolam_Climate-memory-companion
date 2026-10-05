@@ -207,7 +207,6 @@ private fun WfIconButton(
     ) {
         Row(
             modifier = Modifier
-                .fidelityTag(effectiveTag)
                 .heightIn(min = 46.dp)
                 .border(1.dp, p.line, RoundedCornerShape(12.dp))
                 .padding(horizontal = 18.dp, vertical = 8.dp),

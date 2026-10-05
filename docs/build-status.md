@@ -33,19 +33,23 @@ Status meanings:
 - Playwright and Compose use pinned subsetted OFL Noto families: serif display and sans body, including Tamil-specific families.
 - CSS typography tokens are generated into Compose; generated files are committed deliberately and CI checks for drift rather than committing them.
 - Legacy full-resolution pixel-difference matrices are informational only.
-- HARD is the zero-failure structural gate: exact colour tokens, missing-glyph coverage, text overflow/truncation evidence, heading/label/button line counts, body line-count tolerance, tab fit and >=48 dp interactive semantics bounds.
+- HARD is the zero-failure structural gate: exact colour tokens, missing-glyph coverage, non-intentional text overflow/truncation, heading/label/button line counts, body line-count tolerance, and >=48 dp interactive semantics bounds. Persistent tab labels use an accessibility-first contract: fully visible at 320/390 dp and 100%/200% font scale with >=48 dp touch bounds; tab line-count comparison is informational where the web reference clips.
 - PARITY is the tagged-geometry/SSIM regression gate. Geometry uses matching runtime-only HTML tags and Compose testTags with a 4 dp absolute tolerance.
 - A parity baseline or threshold may change only in an explicit reviewed commit whose commit message records the reason. CI must never change a baseline automatically.
 
 ## Remaining milestones, in order
 
-1. Keep `compileDebugKotlin` green as the fast prerequisite gate and fix any compiler defect before visual work continues.
-2. Make every HARD check run from valid artefacts and fix real HARD defects without weakening criteria; preserve 44/46 px visible controls while expanding semantics/touch bounds to >=48 dp.
-3. Correct shared chrome first: top bar height/placement, then bottom tab-bar offset and tab-label fit.
-4. Correct shared cards and chips.
-5. Re-run both 320 and 390 dp matrices and correct screen-specific geometry/line-count defects.
-6. Resolve PARITY regressions against the reviewed baseline; do not update the baseline to hide a regression.
-7. Complete the 24 clips, 3 demos, second game, full first game, all 77 word-list rows and incomplete Elders/Class/Council/Predict workflows.
-8. Complete About and Backup/Restore end-to-end/device/accessibility QA.
-9. Run final device QA only after automated compile, HARD and PARITY gates are green.
-10. Consider release-signing/tagging only after every inventory item above is DONE.
+Pixel tuning is paused except for HARD defects. Functional parity now has
+priority.
+
+1. Keep `compileDebugKotlin` green and make the HARD accessibility/structural gate green without weakening it. Persistent tabs must remain fully visible at 320/390 dp and 100%/200% font scale with >=48 dp touch bounds.
+2. **M2 domain logic and golden fixtures** — port deterministic prototype rules into platform-independent Kotlin and verify them against golden web fixtures.
+3. **Predict** — complete all eight questions, slider/input behaviour, confidence, reveal/scoring and calibration summary, with golden functional parity.
+4. **Elders** — complete interview setup, questions, confidence/story capture, review and code export.
+5. **Class** — complete code parsing, pooled aggregation, grouping and summaries.
+6. **Council** — complete roles, scenarios, intervention selection, budget/consequences and result/export.
+7. **Word list and games** — complete all 77 glossary rows, search/filter/review-warning behaviour, Weather-or-Climate and Myth-or-Fact.
+8. **Clip engine + 24 clips** — implement the reusable player/animation engine, then port clips in four reviewed batches of six.
+9. Resume non-HARD shared chrome/cards/chips and PARITY pixel tuning only after the functional milestones above are materially complete.
+10. Complete About and Backup/Restore end-to-end/device/accessibility QA, then final device QA.
+11. Consider release-signing/tagging only after every inventory item above is DONE.

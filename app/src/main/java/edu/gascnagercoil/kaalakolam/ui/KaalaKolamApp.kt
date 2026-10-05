@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
@@ -392,30 +391,6 @@ private fun HeaderTool(
     }
 }
 
-private fun prototypeTamilTabWidths(viewportWidthDp: Int): List<Float> {
-    val available = (viewportWidthDp - 12).coerceAtLeast(0).toFloat()
-    val minimums = listOf(54f, 42f, 71f, 56f, 69f, 63f)
-    if (minimums.sum() >= available) return minimums
-
-    val widths = MutableList<Float?>(minimums.size) { null }
-    val remaining = minimums.indices.toMutableSet()
-    var remainingSpace = available
-    while (remaining.isNotEmpty()) {
-        val target = remainingSpace / remaining.size
-        val constrained = remaining.filter { minimums[it] > target }
-        if (constrained.isEmpty()) {
-            remaining.forEach { widths[it] = target }
-            break
-        }
-        constrained.forEach { index ->
-            widths[index] = minimums[index]
-            remainingSpace -= minimums[index]
-            remaining.remove(index)
-        }
-    }
-    return widths.mapIndexed { index, value -> value ?: minimums[index] }
-}
-
 @Composable
 private fun PrototypeTabs(
     lang: String,
@@ -423,9 +398,6 @@ private fun PrototypeTabs(
     onNavigate: (Destination) -> Unit,
 ) {
     val p = PrototypeTheme.palette
-    val viewportWidthDp = LocalConfiguration.current.screenWidthDp
-    val tamilWidths = if (lang == "ta") prototypeTamilTabWidths(viewportWidthDp) else emptyList()
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -443,25 +415,16 @@ private fun PrototypeTabs(
             .padding(6.dp),
         horizontalArrangement = Arrangement.Center,
     ) {
-        Destination.entries.forEachIndexed { index, destination ->
+        Destination.entries.forEach { destination ->
             val selected = currentRoute == destination.route
-            val touchModifier = if (lang == "ta") {
-                Modifier
-            } else {
-                Modifier.weight(1f)
-            }
             FidelityTouchTarget(
                 tag = "tab.${destination.route}",
-                modifier = touchModifier,
+                modifier = Modifier.weight(1f),
                 onClick = { onNavigate(destination) },
             ) {
-                val visualModifier = if (lang == "ta") {
-                    Modifier.width(tamilWidths[index].dp)
-                } else {
-                    Modifier.fillMaxWidth()
-                }
                 Column(
-                    modifier = visualModifier
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .heightIn(min = 56.dp)
                         .fidelityTag("tab.${destination.route}")
                         .background(
@@ -494,6 +457,36 @@ internal fun PrototypeTabLabel(
     color: androidx.compose.ui.graphics.Color,
     tag: String = "tab-label",
     onTextLayout: (TextLayoutResult) -> Unit = {},
+) {
+    val isTamil = text.any { it.code in 0x0B80..0x0BFF }
+    val viewportWidthDp = LocalConfiguration.current.screenWidthDp
+    val fontScale = LocalDensity.current.fontScale.coerceAtLeast(1f)
+    val visualFontSizeSp = when {
+        isTamil && viewportWidthDp <= 360 -> 8.5f
+        isTamil -> 10.5f
+        else -> 12f
+    }
+    val visualLineHeightSp = visualFontSizeSp * 1.55f
+    val fittedStyle = MaterialTheme.typography.labelSmall.copy(
+        fontSize = (visualFontSizeSp / fontScale).sp,
+        lineHeight = (visualLineHeightSp / fontScale).sp,
+    )
+    Text(
+        text = text,
+        color = color,
+        style = fittedStyle,
+        maxLines = 1,
+        softWrap = false,
+        textAlign = TextAlign.Center,
+        modifier = Modifier.fidelityTag(tag),
+        onTextLayout = fidelityTextLayout(
+            tag = tag,
+            kind = "label",
+            text = text,
+            delegate = onTextLayout,
+        ),
+    )
+},
 ) {
     val stressScale = LocalDensity.current.fontScale >= 1.5f
     Text(
