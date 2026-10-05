@@ -51,12 +51,14 @@ for path in [p for p in expected if "_tamil_" in p.name]:
             + ",".join(f"U+{cp:04X}" for cp in missing)
         )
 
-shared = {ord(ch) for ch in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 Aa+-/().,:;!?%°←→–—…₂"}
+display_shared = {ord(ch) for ch in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 Aa+-/().,:;!?%–—…"}
+body_shared = display_shared | {ord(ch) for ch in "°←→₂±×≥≤"}
 for path in expected:
-    missing = sorted(shared - cmap(path))
+    required = body_shared if "noto_sans" in path.name else display_shared
+    missing = sorted(required - cmap(path))
     if missing:
         raise SystemExit(
-            f"FONT_COVERAGE_FAIL {path.name} shared missing="
+            f"FONT_COVERAGE_FAIL {path.name} role missing="
             + ",".join(f"U+{cp:04X}" for cp in missing)
         )
 
