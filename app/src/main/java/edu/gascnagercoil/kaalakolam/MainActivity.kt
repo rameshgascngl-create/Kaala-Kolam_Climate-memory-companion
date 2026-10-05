@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            KaalaKolamTheme(uiState.appState.themeMode) {
+            KaalaKolamTheme(uiState.appState.themeMode, language = uiState.appState.language) {
                 KaalaKolamApp(
                     uiState = uiState,
                     widthSizeClass = widthSizeClass,
