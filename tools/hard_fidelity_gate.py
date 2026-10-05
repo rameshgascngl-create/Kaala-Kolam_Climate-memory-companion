@@ -15,7 +15,19 @@ NATIVE=ROOT/"app/build/fidelity/native-layout"
 ROUTES=("home","learn","elders","class","council","predict")
 
 
-def fail(msgs: list[str]) -> None:
+def write_report(msgs: list[str], checks: int, rows: int) -> None:
+    REPORT.parent.mkdir(parents=True, exist_ok=True)
+    by_screen={}
+    for msg in msgs:
+        key=msg.split(":",1)[0]
+        by_screen.setdefault(key,[]).append(msg)
+    REPORT.write_text(json.dumps({
+        "gate":"HARD","passed":not msgs,"failureCount":len(msgs),
+        "checks":checks,"rows":rows,"failures":msgs,"byScreen":by_screen,
+    },ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+
+def fail(msgs: list[str], checks: int, rows: int) -> None:
+    write_report(msgs,checks,rows)
     print(f"HARD_FIDELITY_FAIL count={len(msgs)}")
     for msg in msgs:
         print("HARD_FAIL",msg)
