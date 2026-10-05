@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   golden-web:
@@ -77,22 +77,6 @@ jobs:
           print("GOLDEN_TAMIL_MATRIX_PASS 80/80")
           PY
 
-      - name: Store generated visual contract on native-v2
-        id: store_contract
-        if: github.event_name == 'push' && github.ref == 'refs/heads/native-v2'
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add app/src/main/java/edu/gascnagercoil/kaalakolam/ui/theme/Theme.kt tests/golden-web
-          if git diff --cached --quiet; then
-            echo "Generated Theme.kt and golden-web references are already current."
-          else
-            git commit -m "test: store generated visual contract [skip ci]"
-            git push origin HEAD:native-v2
-          fi
-
       - name: Upload reference metrics
         if: always()
         uses: actions/upload-artifact@v4
@@ -125,7 +109,7 @@ jobs:
         if: always()
         env:
           STEPS_JSON: >-
-            {"Playwright":"${{ steps.playwright.outcome }}","Tokens":"${{ steps.tokens.outcome }}","Web references":"${{ steps.capture_web.outcome }}","Tamil references":"${{ steps.capture_tamil.outcome }}","Chromium text metrics":"${{ steps.text_metrics.outcome }}","Reference layout":"${{ steps.reference_layout.outcome }}","SSIM control":"${{ steps.ssim_control.outcome }}","SSIM calibration":"${{ steps.ssim_calibration.outcome }}","Matrix verification":"${{ steps.verify_matrix.outcome }}","Store contract":"${{ steps.store_contract.outcome }}"}
+            {"Playwright":"${{ steps.playwright.outcome }}","Tokens":"${{ steps.tokens.outcome }}","Web references":"${{ steps.capture_web.outcome }}","Tamil references":"${{ steps.capture_tamil.outcome }}","Chromium text metrics":"${{ steps.text_metrics.outcome }}","Reference layout":"${{ steps.reference_layout.outcome }}","SSIM control":"${{ steps.ssim_control.outcome }}","SSIM calibration":"${{ steps.ssim_calibration.outcome }}","Matrix verification":"${{ steps.verify_matrix.outcome }}"}
         run: python3 tools/write_ci_results.py --job golden-web --head "$GITHUB_SHA" --steps-json "$STEPS_JSON"
 
       - name: Upload golden-web ci-results.json
