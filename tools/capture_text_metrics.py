@@ -60,6 +60,15 @@ def main() -> None:
                     )
                     page.evaluate("document.fonts ? document.fonts.ready : Promise.resolve()")
                     width = page.locator("#probe").evaluate("el => el.getBoundingClientRect().width")
+                    canvas_width = page.evaluate(
+                        """sample => {
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            ctx.font = sample.weight + ' ' + sample.size + 'px ' + sample.family;
+                            return ctx.measureText(sample.text).width;
+                        }""",
+                        {**sample, "family": family},
+                    )
                     computed = page.locator("#probe").evaluate(
                         "el => getComputedStyle(el).fontFamily"
                     )
@@ -87,6 +96,7 @@ def main() -> None:
                         "computedFamily": computed,
                         "fontLoaded": bool(loaded),
                         "widthPx": float(width),
+                        "canvasWidthPx": float(canvas_width),
                         "platformFamily": platform.get("familyName"),
                         "postScriptName": platform.get("postScriptName"),
                         "isCustomFont": platform.get("isCustomFont"),
@@ -95,7 +105,7 @@ def main() -> None:
                     results.append(record)
                     print(
                         "CHROMIUM_TEXT_WIDTH "
-                        f"sample={sample['id']} width={width:.4f} "
+                        f"sample={sample['id']} dom_width={width:.4f} canvas_width={canvas_width:.4f} "
                         f"css={family} resolved={record['platformFamily']} "
                         f"postscript={record['postScriptName']} custom={record['isCustomFont']}"
                     )
