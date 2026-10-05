@@ -29,7 +29,6 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -399,12 +398,9 @@ private fun PrototypeButton(
     val background = if (filled) p.turmeric else Color.Transparent
     val foreground = if (filled) Color(0xFF17120A) else p.flour
     val effectiveTag = tag ?: "button.${text.hashCode()}"
-    Box(
-        modifier = Modifier
-            .minimumInteractiveComponentSize()
-            .fidelityTag(effectiveTag, interactive = true)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center,
+    FidelityTouchTarget(
+        tag = effectiveTag,
+        onClick = onClick,
     ) {
         Box(
             modifier = Modifier
