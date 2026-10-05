@@ -1,0 +1,364 @@
+{
+  "schemaVersion": 1,
+  "sourceHtml": "Kaala_Kolam_Climate_Memory_Companion.html",
+  "sourceHtmlSha256": "ae7b87a4f90fd990806f68cf6db1d3a0903d9cf6b5ef75c9be2c5392e66508a9",
+  "shareCodes": {
+    "interview": {
+      "record": {
+        "t": "I",
+        "i": "iv000001",
+        "p": 2,
+        "b": 4,
+        "a": "1234501234"
+      },
+      "code": "KK1.eyJ0IjoiSSIsImkiOiJpdjAwMDAwMSIsInAiOjIsImIiOjQsImEiOiIxMjM0NTAxMjM0In0.d3de15"
+    },
+    "plan": {
+      "record": {
+        "t": "P",
+        "i": "pl000001",
+        "s": 2,
+        "o": [
+          0,
+          1,
+          4
+        ]
+      },
+      "code": "KP1.eyJ0IjoiUCIsImkiOiJwbDAwMDAwMSIsInMiOjIsIm8iOlswLDEsNF19.f005ca"
+    }
+  },
+  "sampleRecords": {
+    "count": 28,
+    "canonicalSha256": "e14aab9076b901cde266a2b90311e8add174a05d667e73bce4408bbde3a4a9a4",
+    "first": [
+      {
+        "t": "I",
+        "i": "smp000",
+        "p": 1,
+        "b": 2,
+        "a": "5435404235"
+      },
+      {
+        "t": "I",
+        "i": "smp001",
+        "p": 0,
+        "b": 2,
+        "a": "4334453115"
+      },
+      {
+        "t": "I",
+        "i": "smp002",
+        "p": 1,
+        "b": 3,
+        "a": "5434304203"
+      },
+      {
+        "t": "I",
+        "i": "smp003",
+        "p": 4,
+        "b": 1,
+        "a": "4434232005"
+      },
+      {
+        "t": "I",
+        "i": "smp004",
+        "p": 4,
+        "b": 3,
+        "a": "3523203113"
+      }
+    ],
+    "last": [
+      {
+        "t": "I",
+        "i": "smp026",
+        "p": 0,
+        "b": 0,
+        "a": "5414241124"
+      },
+      {
+        "t": "I",
+        "i": "smp027",
+        "p": 0,
+        "b": 4,
+        "a": "4535344223"
+      }
+    ]
+  },
+  "aggregates": [
+    {
+      "name": "q0-all",
+      "questionIndex": 0,
+      "groupBy": "all",
+      "rows": [
+        {
+          "label": "all",
+          "c": [
+            0,
+            0,
+            3,
+            13,
+            12
+          ],
+          "n": 28,
+          "mean": 1.3214285714285714,
+          "agree": 0.6712151314371078
+        }
+      ]
+    },
+    {
+      "name": "q7-all",
+      "questionIndex": 7,
+      "groupBy": "all",
+      "rows": [
+        {
+          "label": "all",
+          "c": [
+            15,
+            12,
+            0,
+            0,
+            0
+          ],
+          "n": 27,
+          "mean": -1.5555555555555556,
+          "agree": 0.7515480025000235
+        }
+      ]
+    },
+    {
+      "name": "q0-place",
+      "questionIndex": 0,
+      "groupBy": "place",
+      "rows": [
+        {
+          "label": "p0",
+          "c": [
+            0,
+            0,
+            0,
+            4,
+            3
+          ],
+          "n": 7,
+          "mean": 1.4285714285714286,
+          "agree": 0.7525641703473034
+        },
+        {
+          "label": "p1",
+          "c": [
+            0,
+            0,
+            1,
+            2,
+            5
+          ],
+          "n": 8,
+          "mean": 1.5,
+          "agree": 0.6464466094067263
+        },
+        {
+          "label": "p2",
+          "c": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "n": 0,
+          "mean": null,
+          "agree": null
+        },
+        {
+          "label": "p3",
+          "c": [
+            0,
+            0,
+            1,
+            2,
+            2
+          ],
+          "n": 5,
+          "mean": 1.2,
+          "agree": 0.6258342613226058
+        },
+        {
+          "label": "p4",
+          "c": [
+            0,
+            0,
+            1,
+            5,
+            2
+          ],
+          "n": 8,
+          "mean": 1.125,
+          "agree": 0.700260529792955
+        }
+      ]
+    }
+  ],
+  "council": [
+    {
+      "name": "none_today",
+      "picks": [],
+      "scenario": 0,
+      "spent": 0,
+      "hazard": 5,
+      "risks": {
+        "fish": 24,
+        "farm": 18,
+        "old": 24,
+        "poor": 32
+      },
+      "mean": 24.5,
+      "uncovered": [
+        "fish",
+        "farm",
+        "old",
+        "poor"
+      ]
+    },
+    {
+      "name": "warn_shelter_today",
+      "picks": [
+        "warn",
+        "shelter"
+      ],
+      "scenario": 0,
+      "spent": 5,
+      "hazard": 5,
+      "risks": {
+        "fish": 14,
+        "farm": 14.4,
+        "old": 20.1,
+        "poor": 26.8
+      },
+      "mean": 18.825,
+      "uncovered": []
+    },
+    {
+      "name": "mangrove_clean_high",
+      "picks": [
+        "mangrove",
+        "clean"
+      ],
+      "scenario": 2,
+      "spent": 5,
+      "hazard": 6.302,
+      "risks": {
+        "fish": 27.22464,
+        "farm": 19.662240000000004,
+        "old": 30.249599999999997,
+        "poor": 40.3328
+      },
+      "mean": 29.36732,
+      "uncovered": [
+        "old",
+        "poor"
+      ]
+    },
+    {
+      "name": "balanced_strong",
+      "picks": [
+        "warn",
+        "shelter",
+        "drains",
+        "income"
+      ],
+      "scenario": 1,
+      "spent": 9,
+      "hazard": 5.75,
+      "risks": {
+        "fish": 16.1,
+        "farm": 10.925,
+        "old": 19.665,
+        "poor": 22.942500000000003
+      },
+      "mean": 17.408125,
+      "uncovered": []
+    }
+  ],
+  "predictionSpecs": [
+    {
+      "id": "ocean",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "initial": 50,
+      "low": 85,
+      "high": 95,
+      "unit": "%"
+    },
+    {
+      "id": "co2",
+      "min": 250,
+      "max": 600,
+      "step": 5,
+      "initial": 350,
+      "low": 420,
+      "high": 440,
+      "unit": " ppm"
+    },
+    {
+      "id": "warm",
+      "min": 0,
+      "max": 4,
+      "step": 0.1,
+      "initial": 0.5,
+      "low": 1.0,
+      "high": 1.6,
+      "unit": " °C"
+    },
+    {
+      "id": "nogh",
+      "min": -50,
+      "max": 30,
+      "step": 1,
+      "initial": 0,
+      "low": -25,
+      "high": -12,
+      "unit": " °C"
+    },
+    {
+      "id": "vapour",
+      "min": 0,
+      "max": 25,
+      "step": 1,
+      "initial": 3,
+      "low": 6,
+      "high": 8,
+      "unit": "%"
+    },
+    {
+      "id": "sea",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "initial": 5,
+      "low": 15,
+      "high": 25,
+      "unit": " cm"
+    },
+    {
+      "id": "india",
+      "min": 0,
+      "max": 3,
+      "step": 0.1,
+      "initial": 0.3,
+      "low": 0.5,
+      "high": 0.9,
+      "unit": " °C"
+    },
+    {
+      "id": "nat",
+      "min": -0.5,
+      "max": 1.5,
+      "step": 0.1,
+      "initial": 0.5,
+      "low": -0.2,
+      "high": 0.2,
+      "unit": " °C"
+    }
+  ]
+}

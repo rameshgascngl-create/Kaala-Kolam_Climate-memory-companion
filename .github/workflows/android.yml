@@ -107,6 +107,11 @@ jobs:
         id: reference_layout
         run: python3 tools/reference_fidelity_metrics.py
 
+      - name: Generate M2 web golden fixtures
+        if: needs.compile.result == 'success'
+        id: m2_golden
+        run: python3 tools/capture_m2_golden.py
+
       - name: Capture SSIM negative control
         if: needs.compile.result == 'success'
         id: ssim_control
@@ -138,16 +143,21 @@ jobs:
           print("GOLDEN_TAMIL_MATRIX_PASS 80/80")
           PY
 
-      - name: Check generated visual-contract drift
+      - name: Check generated-contract drift
         if: needs.compile.result == 'success'
         id: generated_drift
         shell: bash
         run: |
           set -euo pipefail
-          git diff --exit-code --             app/src/main/java/edu/gascnagercoil/kaalakolam/ui/theme/Theme.kt             tests/golden-web
-          if [ -n "$(git status --porcelain --untracked-files=all --             app/src/main/java/edu/gascnagercoil/kaalakolam/ui/theme/Theme.kt             tests/golden-web)" ]; then
+          generated=(
+            app/src/main/java/edu/gascnagercoil/kaalakolam/ui/theme/Theme.kt
+            tests/golden-web
+            tests/m2/web-golden.json
+          )
+          git diff --exit-code -- "${generated[@]}"
+          if [ -n "$(git status --porcelain --untracked-files=all -- "${generated[@]}")" ]; then
             echo "GENERATED_CONTRACT_DRIFT_FAIL untracked or unstaged generated files"
-            git status --short --               app/src/main/java/edu/gascnagercoil/kaalakolam/ui/theme/Theme.kt               tests/golden-web
+            git status --short -- "${generated[@]}"
             exit 1
           fi
           echo "GENERATED_CONTRACT_DRIFT_PASS"
@@ -160,6 +170,7 @@ jobs:
           path: |
             tests/reference-metrics/
             tests/ssim-controls/
+            tests/m2/web-golden.json
             docs/ssim-calibration.md
           if-no-files-found: warn
 
@@ -183,7 +194,7 @@ jobs:
         if: always() && needs.compile.result == 'success'
         env:
           STEPS_JSON: >-
-            {"Playwright":"${{ steps.playwright.outcome }}","Tokens":"${{ steps.tokens.outcome }}","Web references":"${{ steps.capture_web.outcome }}","Tamil references":"${{ steps.capture_tamil.outcome }}","Chromium text metrics":"${{ steps.text_metrics.outcome }}","Reference layout":"${{ steps.reference_layout.outcome }}","SSIM control":"${{ steps.ssim_control.outcome }}","SSIM calibration":"${{ steps.ssim_calibration.outcome }}","Matrix verification":"${{ steps.verify_matrix.outcome }}","Generated contract drift":"${{ steps.generated_drift.outcome }}"}
+            {"Playwright":"${{ steps.playwright.outcome }}","Tokens":"${{ steps.tokens.outcome }}","Web references":"${{ steps.capture_web.outcome }}","Tamil references":"${{ steps.capture_tamil.outcome }}","Chromium text metrics":"${{ steps.text_metrics.outcome }}","Reference layout":"${{ steps.reference_layout.outcome }}","M2 web golden":"${{ steps.m2_golden.outcome }}","SSIM control":"${{ steps.ssim_control.outcome }}","SSIM calibration":"${{ steps.ssim_calibration.outcome }}","Matrix verification":"${{ steps.verify_matrix.outcome }}","Generated contract drift":"${{ steps.generated_drift.outcome }}"}
         run: python3 tools/write_ci_results.py --job golden-web --head "$GITHUB_SHA" --steps-json "$STEPS_JSON"
 
       - name: Write reference-capture BLOCKED result
@@ -265,6 +276,11 @@ jobs:
         if: needs.compile.result == 'success' && needs.golden-web.result == 'success'
         id: static_qa
         run: python3 tools/native_static_qa.py
+
+      - name: Verify M2 domain logic against web golden fixtures
+        if: needs.compile.result == 'success' && needs.golden-web.result == 'success'
+        id: m2_tests
+        run: ./gradlew --no-daemon testDebugUnitTest --tests "edu.gascnagercoil.kaalakolam.domain.M2DomainGoldenTest"
 
       - name: Lint, unit test, and assemble debug
         if: needs.compile.result == 'success' && needs.golden-web.result == 'success'
@@ -368,7 +384,7 @@ jobs:
         if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success'
         env:
           STEPS_JSON: >-
-            {"Content policy":"${{ steps.content.outcome }}","Native static QA":"${{ steps.static_qa.outcome }}","Debug build/tests":"${{ steps.debug_build.outcome }}","Text width comparison (informational)":"${{ steps.text_width_info.outcome }}","Legacy visual comparison (informational)":"${{ steps.legacy_visual.outcome }}","Release QA build":"${{ steps.release_qa.outcome }}","Merged manifest permissions":"${{ steps.permissions.outcome }}"}
+            {"Content policy":"${{ steps.content.outcome }}","Native static QA":"${{ steps.static_qa.outcome }}","M2 web-golden tests":"${{ steps.m2_tests.outcome }}","Debug build/tests":"${{ steps.debug_build.outcome }}","Text width comparison (informational)":"${{ steps.text_width_info.outcome }}","Legacy visual comparison (informational)":"${{ steps.legacy_visual.outcome }}","Release QA build":"${{ steps.release_qa.outcome }}","Merged manifest permissions":"${{ steps.permissions.outcome }}"}
         run: python3 tools/write_ci_results.py --job verify --head "$GITHUB_SHA" --steps-json "$STEPS_JSON"
 
       - name: Write verify BLOCKED result

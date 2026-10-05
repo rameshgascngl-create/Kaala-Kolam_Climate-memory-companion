@@ -26,6 +26,7 @@ Status meanings:
 | Tamil-English word list | **PARTIAL** | 4/77 rows are represented in the native scaffold. | Port all 77 rows, search/filter behaviour, review-warning state and prototype layout. |
 | About | **PARTIAL** | Native About route contains purpose, storage, version/credit, sources, limits and data controls. | Replace the contact placeholder where required, complete prototype visual parity and automated/device QA. |
 | Backup / Restore | **PARTIAL** | Backup codec, copy-to-clipboard, restore validation, confirmation, repository replacement and reset flows exist; codec unit tests are present. | End-to-end UI/device QA, compatibility/round-trip evidence across realistic saved state, and final prototype/accessibility verification. |
+| M2 domain logic + web golden fixtures | **PARTIAL** | Pure Kotlin ports and web-derived golden fixtures are being added for share codes, deterministic sample records, class aggregation, council risk maths and prediction numeric specs. | Current-head CI must regenerate the fixture from the shipped HTML and pass the Kotlin golden test before this row becomes DONE. |
 
 ## Fidelity and localisation gates
 
