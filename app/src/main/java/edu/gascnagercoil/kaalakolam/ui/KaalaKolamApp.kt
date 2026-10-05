@@ -25,7 +25,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -294,13 +293,10 @@ private fun PrototypeTopBar(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .minimumInteractiveComponentSize()
-                .fidelityTag("chrome.brand", interactive = true)
-                .clickable(onClick = onAbout),
-            contentAlignment = Alignment.CenterStart,
+        FidelityTouchTarget(
+            tag = "chrome.brand",
+            modifier = Modifier.weight(1f),
+            onClick = onAbout,
         ) {
             Column {
                 val brandText = localized(lang, "Kaala Kolam", "காலக்கோலம்")
@@ -363,13 +359,10 @@ private fun HeaderTool(
     onClick: () -> Unit,
 ) {
     val p = PrototypeTheme.palette
-    Box(
-        modifier = Modifier
-            .minimumInteractiveComponentSize()
-            .fidelityTag(tag, interactive = true)
-            .semantics { this.contentDescription = contentDescription }
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center,
+    FidelityTouchTarget(
+        tag = tag,
+        modifier = Modifier.semantics { this.contentDescription = contentDescription },
+        onClick = onClick,
     ) {
         Surface(
             modifier = Modifier
