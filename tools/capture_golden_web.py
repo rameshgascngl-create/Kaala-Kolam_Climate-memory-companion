@@ -15,7 +15,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from playwright.sync_api import Page, sync_playwright
+from playwright.sync_api import Page, sync_playwright\nfrom reference_fonts import install_reference_fonts
 
 ROOT = Path(__file__).resolve().parents[1]
 HTML = ROOT / "Kaala_Kolam_Climate_Memory_Companion.html"
