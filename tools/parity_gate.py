@@ -86,6 +86,20 @@ for key,item in sorted(baseline_geometry.items()):
           f"baseline={baseline:.3f}"
         )
 
+REPORT.parent.mkdir(parents=True,exist_ok=True)
+by_screen={}
+for error in errors:
+    parts=error.split()
+    key="unknown"
+    for part in parts:
+        if part.count("/")>=2:
+            key=part
+            break
+    by_screen.setdefault(key,[]).append(error)
+REPORT.write_text(json.dumps({
+  "gate":"PARITY","passed":not errors,"failureCount":len(errors),
+  "baselineCommit":base.get("baselineCommit"),"failures":errors,"byScreen":by_screen,
+},ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
 if errors:
     print(f"PARITY_GATE_FAIL count={len(errors)} baseline={base.get('baselineCommit')}")
     for e in errors: print("PARITY_FAIL",e)
