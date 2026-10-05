@@ -377,6 +377,7 @@ private fun LearnHomePrototype(
                 "Weather and climate explained at three levels, for children, for everyone, and for those who want the detail. Every topic has an animated clip and can be read aloud.",
                 "வானிலையும் காலநிலையும் மூன்று நிலைகளில் விளக்கப்படுகின்றன: சிறுவர்களுக்கு, அனைவருக்கும், விவரம் விரும்புவோருக்கு. ஒவ்வொரு தலைப்புக்கும் அனிமேஷன் காட்சி உண்டு; குரலிலும் வாசிக்கச் செய்யலாம்.",
             ),
+            tag = "screen.body.primary",
         )
         WfSegments(
             labels = listOf(
@@ -387,7 +388,7 @@ private fun LearnHomePrototype(
             selected = level,
             onSelect = { level = it },
         )
-        WfCard {
+        WfCard(tag = "screen.first-card") {
             WfH2(wfText(lang, "Happening now? Safety steps", "இப்போது நடக்கிறதா? பாதுகாப்பு வழிகள்"))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 WfIconButton("heat", wfText(lang, "Heat", "வெப்பம்"), Modifier.weight(1f))
@@ -414,6 +415,7 @@ private fun LearnHomePrototype(
         Row(Modifier.padding(vertical = 10.dp)) {
             WfButton(
                 wfText(lang, "Tamil–English word list", "தமிழ்–ஆங்கிலச் சொற்பட்டி"),
+                tag = "screen.primary-button",
                 onClick = onWords,
             )
         }
@@ -628,8 +630,9 @@ fun ElderPrototypeScreen(lang: String) {
                 "Sit with someone who has lived in your place for decades. Ask permission first. Listen more than you talk. You will record how things changed, how sure they are, and a story if they offer one.",
                 "பல பத்தாண்டுகள் உங்கள் ஊரில் வாழ்ந்தவருடன் அமருங்கள். முதலில் அனுமதி கேளுங்கள். பேசுவதைவிட அதிகம் கேளுங்கள். மாற்றங்கள், அவர் எவ்வளவு உறுதியாகச் சொல்கிறார், அவர் விரும்பினால் ஒரு கதை ஆகியவற்றைப் பதிவு செய்வீர்கள்.",
             ),
+            tag = "screen.body.primary",
         )
-        WfButton(wfText(lang, "Start an interview", "நேர்காணலைத் தொடங்கு"), filled = true)
+        WfButton(wfText(lang, "Start an interview", "நேர்காணலைத் தொடங்கு"), filled = true, tag = "screen.primary-button")
         WfNote(wfText(lang, "No interviews yet. Try asking your grandparent first.", "இன்னும் நேர்காணல்கள் இல்லை. முதலில் உங்கள் தாத்தா அல்லது பாட்டியிடம் கேட்டுப் பாருங்கள்."))
         WfFooter(lang)
     }
@@ -647,8 +650,9 @@ fun ClassPoolPrototypeScreen(lang: String) {
                 "Everyone shares a code. One person pastes all the codes here. No server is needed: send codes by WhatsApp, Bluetooth or on paper.",
                 "ஒவ்வொருவரும் ஒரு குறியீட்டைப் பகிர்கிறார்கள். ஒருவர் அனைத்தையும் இங்கே ஒட்டுகிறார். சேவையகம் தேவையில்லை: வாட்ஸ்அப், புளூடூத் அல்லது காகிதத்தில் குறியீடுகளை அனுப்பலாம்.",
             ),
+            tag = "screen.body.primary",
         )
-        WfCard {
+        WfCard(tag = "screen.first-card") {
             WfH2(wfText(lang, "Add codes", "குறியீடுகளைச் சேர்"))
             WfInput(
                 code,
@@ -658,7 +662,7 @@ fun ClassPoolPrototypeScreen(lang: String) {
             )
             Spacer(Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                WfButton(wfText(lang, "Add", "சேர்"), filled = true)
+                WfButton(wfText(lang, "Add", "சேர்"), filled = true, tag = "screen.primary-button")
                 WfButton(
                     if (sample) wfText(lang, "Remove sample data", "மாதிரித் தரவை நீக்கு")
                     else wfText(lang, "Try sample data (synthetic)", "மாதிரித் தரவைப் பார் (செயற்கை)"),
@@ -683,14 +687,16 @@ fun CouncilPrototypeScreen(lang: String) {
                 "Kadalur is an invented village on a low coast, with four groups of families. A storm season is coming. You have a budget of 12 coins and cannot buy everything. Hold the meeting in a group of three to five, with each person taking a role, and agree on one plan.",
                 "கடலூர் தாழ்வான கடற்கரையில் உள்ள ஒரு கற்பனை கிராமம்; நான்கு குழுக் குடும்பங்கள் உள்ளன. புயல் பருவம் வருகிறது. உங்களிடம் 12 நாணயங்கள் உள்ளன; எல்லாவற்றையும் வாங்க முடியாது. மூன்று முதல் ஐந்து பேர் குழுவாக, ஒவ்வொருவரும் ஒரு பாத்திரம் ஏற்று, ஒரு திட்டத்தில் உடன்படுங்கள்.",
             ),
+            tag = "screen.body.primary",
         )
-        WfCard {
+        WfCard(tag = "screen.first-card") {
             WfH2(wfText(lang, "Your role", "உங்கள் பாத்திரம்"))
             role?.let {
                 WfNote(it)
             }
             WfButton(
                 wfText(lang, "Deal me a role", "ஒரு பாத்திரம் வழங்கு"),
+                tag = "screen.primary-button",
                 onClick = {
                     role = wfText(
                         lang,
@@ -754,8 +760,9 @@ fun PredictPrototypeScreen(lang: String) {
                 "Move the slider to your best guess, then say how sure you are. The point is not to score high. It is to find out whether feeling certain and being right go together for you.",
                 "உங்கள் சிறந்த ஊகத்துக்கு ஸ்லைடரை நகர்த்தி, எவ்வளவு உறுதி என்று சொல்லுங்கள். அதிக மதிப்பெண் பெறுவது நோக்கமல்ல; உறுதியாக உணர்வதும் சரியாக இருப்பதும் உங்களுக்கு ஒன்றாக வருகின்றனவா என்று அறிவதே நோக்கம்.",
             ),
+            tag = "screen.body.primary",
         )
-        WfCard {
+        WfCard(tag = "screen.first-card") {
             Text("1 / 8", color = PrototypeTheme.palette.faint, style = MaterialTheme.typography.bodyMedium)
             Spacer(Modifier.height(4.dp))
             WfH2(
@@ -794,6 +801,7 @@ fun PredictPrototypeScreen(lang: String) {
             Spacer(Modifier.height(14.dp))
             WfButton(
                 wfText(lang, "Lock in and reveal", "பூட்டி விடையைப் பார்"),
+                tag = "screen.primary-button",
                 filled = true,
                 enabled = confidence >= 0,
                 onClick = { guess = guess },
