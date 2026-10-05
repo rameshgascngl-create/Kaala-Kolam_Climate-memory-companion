@@ -71,6 +71,7 @@ private fun WfH1(text: String) {
         color = PrototypeTheme.palette.flour,
         style = MaterialTheme.typography.headlineLarge,
         modifier = Modifier
+            .fillMaxWidth()
             .padding(bottom = 8.dp)
             .fidelityTag("screen.heading"),
         onTextLayout = fidelityTextLayout(
