@@ -160,6 +160,9 @@ jobs:
       - name: Capture pinned Chromium text metrics
         run: python3 tools/capture_text_metrics.py
 
+      - name: Capture reference fidelity metrics
+        run: python3 tools/reference_fidelity_metrics.py
+
       - name: Capture SSIM negative control
         run: python3 tools/capture_ssim_controls.py
 
