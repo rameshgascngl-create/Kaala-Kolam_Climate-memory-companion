@@ -86,6 +86,8 @@ class TextWidthProbeTest {
                 textSize = sample.sizePx
                 letterSpacing = 0f
                 textLocale = Locale.forLanguageTag(sample.lang)
+                isLinearText = true
+                hinting = Paint.HINTING_OFF
             }
             val width = paint.measureText(sample.text)
             println(
