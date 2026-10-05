@@ -375,13 +375,15 @@ fun KaalaKolamTheme(
     val dark = when(themeMode) {{ ThemeMode.SYSTEM -> isSystemInDarkTheme(); ThemeMode.LIGHT -> false; ThemeMode.DARK -> true }}
     val palette = if (dark) PrototypeTokens.Dark else PrototypeTokens.Light
     val effectiveLanguage = language ?: LocalConfiguration.current.locales[0].language
+    val typography = prototypeTypography(effectiveLanguage)
     CompositionLocalProvider(LocalPrototypePalette provides palette) {{
         MaterialTheme(
             colorScheme=scheme(palette,dark),
-            typography=prototypeTypography(effectiveLanguage),
+            typography=typography,
             shapes=PrototypeShapes,
-            content=content,
-        )
+        ) {{
+            ProvideTextStyle(value = typography.bodyLarge, content = content)
+        }}
     }}
 }}
 """
