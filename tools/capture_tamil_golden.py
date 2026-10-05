@@ -10,7 +10,8 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
-from playwright.sync_api import Page, sync_playwright\nfrom reference_fonts import install_reference_fonts
+from playwright.sync_api import Page, sync_playwright
+from reference_fonts import install_reference_fonts
 
 ROOT = Path(__file__).resolve().parents[1]
 HTML = ROOT / "Kaala_Kolam_Climate_Memory_Companion.html"
@@ -50,7 +51,7 @@ def load(page: Page, state: dict, font_scale: int) -> None:
     page.evaluate("([key,value]) => { localStorage.clear(); localStorage.setItem(key, JSON.stringify(value)); }", [KEY,state])
     page.reload(wait_until="load")
     page.evaluate("scale => { document.documentElement.style.fontSize = scale + '%'; }", font_scale)
-    page.evaluate("document.fonts ? document.fonts.ready : Promise.resolve()")
+    install_reference_fonts(page, "ta")
 
 def open_game(page: Page) -> None:
     page.get_by_role("button", name="வானிலையா? காலநிலையா?", exact=True).click()
