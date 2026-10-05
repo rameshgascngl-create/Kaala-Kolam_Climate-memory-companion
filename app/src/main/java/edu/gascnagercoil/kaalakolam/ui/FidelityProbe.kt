@@ -50,13 +50,13 @@ internal fun Modifier.fidelityTag(
     this
         .testTag(tag)
         .onGloballyPositioned { coordinates ->
-            val bounds = coordinates.boundsInRoot()
+            val position = coordinates.positionInRoot()
             recorder?.recordBox(
                 tag = tag,
-                leftDp = bounds.left / density,
-                topDp = bounds.top / density,
-                widthDp = bounds.width / density,
-                heightDp = bounds.height / density,
+                leftDp = position.x / density,
+                topDp = position.y / density,
+                widthDp = coordinates.size.width / density,
+                heightDp = coordinates.size.height / density,
                 interactive = interactive,
             )
         }
