@@ -48,7 +48,7 @@ internal fun Modifier.fidelityTag(
     val recorder = LocalFidelityRecorder.current
     val density = LocalDensity.current.density
     this
-        .semantics { testTag = tag }
+        .testTag(tag)
         .onGloballyPositioned { coordinates ->
             val bounds = coordinates.boundsInRoot()
             recorder?.recordBox(
@@ -106,8 +106,10 @@ internal fun FidelityTouchTarget(
         require(measurables.size == 1) { "FidelityTouchTarget requires one visual child" }
         val visualConstraints = constraints.copy(minHeight = 0)
         val placeable = measurables.single().measure(visualConstraints)
-        val width = constraints.constrainWidth(maxOf(placeable.width, minTouchPx))
-        val height = constraints.constrainHeight(maxOf(placeable.height, minTouchPx))
+        val requestedWidth = maxOf(placeable.width, minTouchPx)
+        val requestedHeight = maxOf(placeable.height, minTouchPx)
+        val width = requestedWidth.coerceIn(constraints.minWidth, constraints.maxWidth)
+        val height = requestedHeight.coerceIn(constraints.minHeight, constraints.maxHeight)
         layout(width, height) {
             placeable.placeRelative(
                 x = (width - placeable.width) / 2,
