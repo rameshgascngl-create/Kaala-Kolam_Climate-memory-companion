@@ -13,6 +13,7 @@ REF_IMAGES=ROOT/"tests/golden-web"
 NATIVE_IMAGES=ROOT/"app/build/visual-native"
 REF_LAYOUT=ROOT/"tests/reference-metrics/fidelity-layout.json"
 NATIVE_LAYOUT=ROOT/"app/build/fidelity/native-layout"
+REPORT=ROOT/"app/build/fidelity/parity-report.json"
 
 
 def prep(path: Path):
