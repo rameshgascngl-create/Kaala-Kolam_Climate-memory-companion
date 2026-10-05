@@ -41,6 +41,38 @@ def canonical_sha(value: object) -> str:
     return hashlib.sha256(compact.encode("utf-8")).hexdigest()
 
 
+def preserve_numeric_shapes(value: object, existing: object) -> object:
+    """Keep JSON number spelling stable without masking a value change.
+
+    JavaScript has one Number type, so Playwright may deserialize 1.0 as the
+    Python int 1. The committed fixture may legitimately spell the same domain
+    value as 1.0. This function preserves only the existing int-vs-float shape
+    when the numeric value is unchanged; any changed value still produces a
+    generated-contract diff.
+    """
+    if isinstance(value, bool) or isinstance(existing, bool):
+        return value
+    if isinstance(value, (int, float)) and isinstance(existing, (int, float)):
+        if float(value) != float(existing):
+            return value
+        if isinstance(existing, float):
+            return float(value)
+        if isinstance(existing, int) and float(value).is_integer():
+            return int(value)
+        return value
+    if isinstance(value, list) and isinstance(existing, list):
+        return [
+            preserve_numeric_shapes(item, existing[index]) if index < len(existing) else item
+            for index, item in enumerate(value)
+        ]
+    if isinstance(value, dict) and isinstance(existing, dict):
+        return {
+            key: preserve_numeric_shapes(item, existing[key]) if key in existing else item
+            for key, item in value.items()
+        }
+    return value
+
+
 def main() -> None:
     source_bytes = HTML.read_bytes()
     source_sha = hashlib.sha256(source_bytes).hexdigest()
@@ -130,6 +162,10 @@ def main() -> None:
         "council": data["council"],
         "predictionSpecs": data["predictionSpecs"],
     }
+    if OUT.exists():
+        existing = json.loads(OUT.read_text(encoding="utf-8"))
+        payload = preserve_numeric_shapes(payload, existing)
+
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
