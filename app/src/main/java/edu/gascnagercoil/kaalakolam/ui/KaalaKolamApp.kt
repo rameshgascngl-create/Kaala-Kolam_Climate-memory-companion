@@ -486,22 +486,4 @@ internal fun PrototypeTabLabel(
             delegate = onTextLayout,
         ),
     )
-},
-) {
-    val stressScale = LocalDensity.current.fontScale >= 1.5f
-    Text(
-        text = text,
-        color = color,
-        style = MaterialTheme.typography.labelSmall,
-        maxLines = if (stressScale) 2 else 1,
-        softWrap = stressScale,
-        textAlign = TextAlign.Center,
-        modifier = Modifier.fidelityTag(tag),
-        onTextLayout = fidelityTextLayout(
-            tag = tag,
-            kind = "label",
-            text = text,
-            delegate = onTextLayout,
-        ),
-    )
 }
