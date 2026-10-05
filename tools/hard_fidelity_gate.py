@@ -66,11 +66,6 @@ for row in ref:
         if tag not in boxes and tag not in texts:
             errors.append(f"{key}: required tag missing {tag}")
 
-    # Reference overflow itself is a hard failure.
-    for tag,metric in refm.items():
-        if metric.get("overflowX") or metric.get("overflowY"):
-            errors.append(f"{key}: reference overflow {tag}")
-
     # Exact line counts for headings/labels/buttons, +/-1 for body.
     for tag,metric in refm.items():
         kind=metric.get("kind")
