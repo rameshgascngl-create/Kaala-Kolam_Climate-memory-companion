@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -24,6 +25,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -208,16 +210,18 @@ fun KaalaKolamApp(
 fun KaalaKolamVisualFixture(
     uiState: AppUiState,
     visualState: String,
+    fidelityRecorder: FidelityRecorder? = null,
 ) {
     val lang = uiState.appState.language
     val primaryRoute = when (visualState) {
         "learn-topic", "learn-deep", "learn-game", "learn-words" -> Destination.LEARN.route
         else -> visualState
     }
-    Scaffold(
-        containerColor = PrototypeTheme.palette.ground,
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        topBar = {
+    CompositionLocalProvider(LocalFidelityRecorder provides fidelityRecorder) {
+        Scaffold(
+            containerColor = PrototypeTheme.palette.ground,
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            topBar = {
             PrototypeTopBar(
                 lang = lang,
                 zoom = 0,
@@ -257,6 +261,7 @@ fun KaalaKolamVisualFixture(
                 else -> error("Unknown visual state: $visualState")
             }
         }
+        }
     }
 }
 
@@ -274,6 +279,7 @@ private fun PrototypeTopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .fidelityTag("chrome.topbar")
             .background(p.ground2)
             .drawBehind {
                 drawLine(
@@ -288,38 +294,52 @@ private fun PrototypeTopBar(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .weight(1f)
+                .minimumInteractiveComponentSize()
+                .fidelityTag("chrome.brand", interactive = true)
                 .clickable(onClick = onAbout),
+            contentAlignment = Alignment.CenterStart,
         ) {
-            Text(
-                localized(lang, "Kaala Kolam", "காலக்கோலம்"),
-                color = p.flour,
-                fontFamily = MaterialTheme.typography.titleLarge.fontFamily,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 18.4.sp,
-                maxLines = 1,
-                softWrap = false,
-            )
-            if (!compact) {
+            Column {
+                val brandText = localized(lang, "Kaala Kolam", "காலக்கோலம்")
                 Text(
-                    localized(
-                        lang,
-                        "Ask your elders. Test the evidence. Decide together.",
-                        "மூத்தோரிடம் கேளுங்கள். சான்றைச் சோதியுங்கள். இணைந்து முடிவெடுங்கள்.",
+                    brandText,
+                    color = p.flour,
+                    fontFamily = MaterialTheme.typography.titleLarge.fontFamily,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 18.4.sp,
+                    maxLines = 1,
+                    softWrap = false,
+                    modifier = Modifier.fidelityTag("chrome.brand-label"),
+                    onTextLayout = fidelityTextLayout(
+                        tag = "chrome.brand-label",
+                        kind = "label",
+                        text = brandText,
                     ),
-                    color = p.faint,
-                    fontSize = 11.84.sp,
                 )
+                if (!compact) {
+                    Text(
+                        localized(
+                            lang,
+                            "Ask your elders. Test the evidence. Decide together.",
+                            "மூத்தோரிடம் கேளுங்கள். சான்றைச் சோதியுங்கள். இணைந்து முடிவெடுங்கள்.",
+                        ),
+                        color = p.faint,
+                        fontSize = 11.84.sp,
+                    )
+                }
             }
         }
         HeaderTool(
+            tag = "tool.text-size",
             text = listOf("Aa", "Aa+", "Aa++")[zoom],
             contentDescription = stringResource(R.string.access_text_size),
             onClick = onZoom,
         )
         HeaderTool(
+            tag = "tool.language",
             text = if (lang == "ta") "EN" else "தமிழ்",
             contentDescription = stringResource(
                 if (lang == "ta") R.string.access_switch_english else R.string.access_switch_tamil,
@@ -327,6 +347,7 @@ private fun PrototypeTopBar(
             onClick = onLanguage,
         )
         HeaderTool(
+            tag = "tool.theme",
             text = "◐",
             contentDescription = stringResource(R.string.access_toggle_theme),
             onClick = onTheme,
@@ -336,26 +357,42 @@ private fun PrototypeTopBar(
 
 @Composable
 private fun HeaderTool(
+    tag: String,
     text: String,
     contentDescription: String,
     onClick: () -> Unit,
 ) {
     val p = PrototypeTheme.palette
-    Surface(
+    Box(
         modifier = Modifier
-            .heightIn(min = 44.dp)
-            .widthIn(min = 44.dp)
+            .minimumInteractiveComponentSize()
+            .fidelityTag(tag, interactive = true)
             .semantics { this.contentDescription = contentDescription }
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(12.dp),
-        color = p.ground2,
-        border = BorderStroke(1.dp, p.line),
+        contentAlignment = Alignment.Center,
     ) {
-        Box(
-            modifier = Modifier.padding(horizontal = 10.dp),
-            contentAlignment = Alignment.Center,
+        Surface(
+            modifier = Modifier
+                .height(44.dp)
+                .widthIn(min = 44.dp),
+            shape = RoundedCornerShape(12.dp),
+            color = p.ground2,
+            border = BorderStroke(1.dp, p.line),
         ) {
-            Text(text, color = p.flour)
+            Box(
+                modifier = Modifier.padding(horizontal = 10.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = text,
+                    color = p.flour,
+                    onTextLayout = fidelityTextLayout(
+                        tag = "$tag.label",
+                        kind = "button",
+                        text = text,
+                    ),
+                )
+            }
         }
     }
 }
@@ -370,6 +407,7 @@ private fun PrototypeTabs(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .fidelityTag("chrome.tabbar")
             .background(p.ground2)
             .drawBehind {
                 drawLine(
@@ -389,6 +427,7 @@ private fun PrototypeTabs(
                 modifier = Modifier
                     .weight(1f)
                     .heightIn(min = 56.dp)
+                    .fidelityTag("tab.${destination.route}", interactive = true)
                     .background(
                         if (selected) p.ground3 else Color.Transparent,
                         RoundedCornerShape(12.dp),
@@ -404,6 +443,7 @@ private fun PrototypeTabs(
                     modifier = Modifier.size(24.dp),
                 )
                 PrototypeTabLabel(
+                    tag = "tab-label.${destination.route}",
                     text = localized(lang, destination.en, destination.ta),
                     color = if (selected) p.turmeric else p.faint,
                 )
@@ -417,6 +457,7 @@ private fun PrototypeTabs(
 internal fun PrototypeTabLabel(
     text: String,
     color: androidx.compose.ui.graphics.Color,
+    tag: String = "tab-label",
     onTextLayout: (TextLayoutResult) -> Unit = {},
 ) {
     Text(
@@ -427,6 +468,12 @@ internal fun PrototypeTabLabel(
         maxLines = 2,
         softWrap = true,
         textAlign = TextAlign.Center,
-        onTextLayout = onTextLayout,
+        modifier = Modifier.fidelityTag(tag),
+        onTextLayout = fidelityTextLayout(
+            tag = tag,
+            kind = "label",
+            text = text,
+            delegate = onTextLayout,
+        ),
     )
 }
