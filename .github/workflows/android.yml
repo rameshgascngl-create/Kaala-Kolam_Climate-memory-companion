@@ -11,10 +11,134 @@ permissions:
   contents: write
 
 jobs:
+  golden-web:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install Playwright Chromium
+        id: playwright
+        run: |
+          python -m pip install --disable-pip-version-check playwright==1.55.0
+          python -m playwright install --with-deps chromium
+
+      - name: Regenerate prototype visual tokens
+        id: tokens
+        run: python3 tools/extract_tokens.py
+
+      - name: Capture HTML prototype golden matrix
+        id: capture_web
+        run: python3 tools/capture_golden_web.py
+
+      - name: Capture Tamil localisation golden matrix
+        id: capture_tamil
+        run: python3 tools/capture_tamil_golden.py
+
+      - name: Capture pinned Chromium text metrics
+        id: text_metrics
+        run: python3 tools/capture_text_metrics.py
+
+      - name: Capture reference fidelity metrics
+        id: reference_layout
+        run: python3 tools/reference_fidelity_metrics.py
+
+      - name: Capture SSIM negative control
+        id: ssim_control
+        run: python3 tools/capture_ssim_controls.py
+
+      - name: Calibrate SSIM preprocessing
+        id: ssim_calibration
+        run: |
+          python3 -m pip install --disable-pip-version-check pillow==11.3.0 numpy==2.3.3 scikit-image==0.25.2
+          python3 tools/ssim_calibration.py
+
+      - name: Verify golden matrix
+        id: verify_matrix
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          manifest = json.loads(Path("tests/golden-web/manifest.json").read_text(encoding="utf-8"))
+          count = manifest["captureCount"]
+          files = list(Path("tests/golden-web").glob("*/*/*/*.png"))
+          if count != 72 or len(files) != 72:
+              raise SystemExit(f"Expected 72 golden PNGs; manifest={count}, files={len(files)}")
+          print("GOLDEN_WEB_MATRIX_PASS 72/72")
+          tamil = json.loads(Path("tests/golden-tamil/manifest.json").read_text(encoding="utf-8"))
+          tamil_files = list(Path("tests/golden-tamil").glob("*/*/*/*.png"))
+          if tamil["captureCount"] != 80 or len(tamil_files) != 80:
+              raise SystemExit(f"Expected 80 Tamil golden PNGs; manifest={tamil['captureCount']}, files={len(tamil_files)}")
+          print("GOLDEN_TAMIL_MATRIX_PASS 80/80")
+          PY
+
+      - name: Store generated visual contract on native-v2
+        id: store_contract
+        if: github.event_name == 'push' && github.ref == 'refs/heads/native-v2'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/src/main/java/edu/gascnagercoil/kaalakolam/ui/theme/Theme.kt tests/golden-web
+          if git diff --cached --quiet; then
+            echo "Generated Theme.kt and golden-web references are already current."
+          else
+            git commit -m "test: store generated visual contract [skip ci]"
+            git push origin HEAD:native-v2
+          fi
+
+      - name: Upload reference metrics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-reference-metrics
+          path: |
+            tests/reference-metrics/
+            tests/ssim-controls/
+            docs/ssim-calibration.md
+          if-no-files-found: warn
+
+      - name: Upload Tamil golden references
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-golden-tamil-80
+          path: tests/golden-tamil/
+          if-no-files-found: warn
+
+      - name: Upload golden web references
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-golden-web-72
+          path: tests/golden-web/
+          if-no-files-found: warn
+
+      - name: Write golden-web CI results
+        id: results
+        if: always()
+        env:
+          STEPS_JSON: >-
+            {"Playwright":"${{ steps.playwright.outcome }}","Tokens":"${{ steps.tokens.outcome }}","Web references":"${{ steps.capture_web.outcome }}","Tamil references":"${{ steps.capture_tamil.outcome }}","Chromium text metrics":"${{ steps.text_metrics.outcome }}","Reference layout":"${{ steps.reference_layout.outcome }}","SSIM control":"${{ steps.ssim_control.outcome }}","SSIM calibration":"${{ steps.ssim_calibration.outcome }}","Matrix verification":"${{ steps.verify_matrix.outcome }}","Store contract":"${{ steps.store_contract.outcome }}"}
+        run: python3 tools/write_ci_results.py --job golden-web --head "$GITHUB_SHA" --steps-json "$STEPS_JSON"
+
+      - name: Upload golden-web ci-results.json
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-ci-results-golden-web
+          path: app/build/ci-results/golden-web/ci-results.json
+          if-no-files-found: error
+
   verify:
     needs: golden-web
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out source
         uses: actions/checkout@v5
@@ -24,6 +148,12 @@ jobs:
         with:
           name: KaalaKolam-golden-tamil-80
           path: tests/golden-tamil
+
+      - name: Download golden web references
+        uses: actions/download-artifact@v5
+        with:
+          name: KaalaKolam-golden-web-72
+          path: tests/golden-web
 
       - name: Download reference metrics
         uses: actions/download-artifact@v5
@@ -44,33 +174,43 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Regenerate prototype visual tokens
+        id: tokens
         run: python3 tools/extract_tokens.py
 
       - name: Verify generated content policy
+        id: content
         run: python3 tools/test_content_asset.py
 
       - name: Install Tamil font QA dependency
         run: python3 -m pip install --disable-pip-version-check fonttools==4.60.1
 
       - name: Run native static QA
+        id: static_qa
         run: python3 tools/native_static_qa.py
 
       - name: Lint, unit test, and assemble debug
+        id: debug_build
         run: ./gradlew --no-daemon lintDebug testDebugUnitTest assembleDebug
 
-      - name: Compare Chromium and Android Paint text widths
+      - name: Compare Chromium and Android Paint text widths (informational preflight)
+        id: text_width_preflight
+        continue-on-error: true
         run: python3 tools/compare_text_widths.py
 
       - name: Measure native-to-web visual differences (informational)
+        id: legacy_visual
+        continue-on-error: true
         run: |
           python3 -m pip install --disable-pip-version-check pillow
           python3 tools/compare_visuals.py
           python3 tools/compare_tamil_visuals.py
 
       - name: Lint and bundle release QA
+        id: release_qa
         run: ./gradlew --no-daemon lintRelease bundleRelease
 
       - name: Assert merged manifests request no permissions
+        id: permissions
         shell: bash
         run: |
           set -euo pipefail
@@ -86,144 +226,293 @@ jobs:
             python3 tools/assert_merged_manifest.py "$manifest"
           done
 
+      - name: Upload native fidelity inputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-native-fidelity-inputs
+          path: |
+            app/build/fidelity/
+            app/build/visual-native/
+            app/build/visual-tamil/
+          if-no-files-found: warn
+
       - name: Upload debug APK
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: KaalaKolam-native-v2-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
+          if-no-files-found: warn
 
-      - name: Upload lint report
+      - name: Upload lint reports
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: KaalaKolam-native-v2-lint
-          path: app/build/reports/lint-results-debug.html
-          if-no-files-found: error
+          path: |
+            app/build/reports/lint-results-debug.html
+            app/build/reports/lint-results-release.html
+          if-no-files-found: warn
 
       - name: Upload release QA evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: KaalaKolam-native-v2-release-qa
-          path: |
-            app/build/outputs/bundle/release/app-release.aab
-            app/build/reports/lint-results-release.html
-          if-no-files-found: error
+          path: app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: warn
 
       - name: Upload unit-test reports
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: KaalaKolam-native-v2-unit-tests
           path: |
             app/build/test-results/testDebugUnitTest/
             app/build/reports/tests/testDebugUnitTest/
-          if-no-files-found: error
+          if-no-files-found: warn
 
-      - name: Upload visual parity evidence
+      - name: Upload legacy visual reports (informational)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: KaalaKolam-native-v2-visual-parity
+          name: KaalaKolam-native-v2-visual-informational
           path: |
-            app/build/visual-native/
-            app/build/visual-tamil/
-            app/build/fidelity/
             docs/visual-parity-report.md
             docs/tamil-visual-parity-report.md
+          if-no-files-found: warn
+
+      - name: Write verify CI results
+        if: always()
+        env:
+          STEPS_JSON: >-
+            {"Tokens":"${{ steps.tokens.outcome }}","Content policy":"${{ steps.content.outcome }}","Native static QA":"${{ steps.static_qa.outcome }}","Debug build/tests":"${{ steps.debug_build.outcome }}","Text width preflight":"${{ steps.text_width_preflight.outcome }}","Legacy visual informational":"${{ steps.legacy_visual.outcome }}","Release QA build":"${{ steps.release_qa.outcome }}","Merged manifest permissions":"${{ steps.permissions.outcome }}"}
+        run: python3 tools/write_ci_results.py --job verify --head "$GITHUB_SHA" --steps-json "$STEPS_JSON"
+
+      - name: Upload verify ci-results.json
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-ci-results-verify
+          path: app/build/ci-results/verify/ci-results.json
           if-no-files-found: error
 
-
-  golden-web:
+  hard:
+    name: HARD fidelity
+    needs: [golden-web, verify]
+    if: always() && needs.golden-web.result == 'success'
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out source
         uses: actions/checkout@v5
 
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.12'
-
-      - name: Install Playwright Chromium
-        run: |
-          python -m pip install --disable-pip-version-check playwright==1.55.0
-          python -m playwright install --with-deps chromium
-
-      - name: Regenerate prototype visual tokens
-        run: python3 tools/extract_tokens.py
-
-      - name: Capture HTML prototype golden matrix
-        run: python3 tools/capture_golden_web.py
-
-      - name: Capture Tamil localisation golden matrix
-        run: python3 tools/capture_tamil_golden.py
-
-      - name: Capture pinned Chromium text metrics
-        run: python3 tools/capture_text_metrics.py
-
-      - name: Capture reference fidelity metrics
-        run: python3 tools/reference_fidelity_metrics.py
-
-      - name: Capture SSIM negative control
-        run: python3 tools/capture_ssim_controls.py
-
-      - name: Calibrate SSIM preprocessing
-        run: |
-          python3 -m pip install --disable-pip-version-check pillow==11.3.0 numpy==2.3.3 scikit-image==0.25.2
-          python3 tools/ssim_calibration.py
-
-      - name: Verify golden matrix
-        run: |
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          manifest = json.loads(Path("tests/golden-web/manifest.json").read_text(encoding="utf-8"))
-          count = manifest["captureCount"]
-          files = list(Path("tests/golden-web").glob("*/*/*/*.png"))
-          if count != 72 or len(files) != 72:
-              raise SystemExit(f"Expected 72 golden PNGs; manifest={count}, files={len(files)}")
-          print("GOLDEN_WEB_MATRIX_PASS 72/72")
-          tamil = json.loads(Path("tests/golden-tamil/manifest.json").read_text(encoding="utf-8"))
-          tamil_files = list(Path("tests/golden-tamil").glob("*/*/*/*.png"))
-          if tamil["captureCount"] != 80 or len(tamil_files) != 80:
-              raise SystemExit(f"Expected 80 Tamil golden PNGs; manifest={tamil['captureCount']}, files={len(tamil_files)}")
-          print("GOLDEN_TAMIL_MATRIX_PASS 80/80")
-          PY
-
-      - name: Store generated visual contract on native-v2
-        if: github.event_name == 'push' && github.ref == 'refs/heads/native-v2'
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add app/src/main/java/edu/gascnagercoil/kaalakolam/ui/theme/Theme.kt tests/golden-web
-          if git diff --cached --quiet; then
-            echo "Generated Theme.kt and golden-web references are already current."
-          else
-            git commit -m "test: store generated visual contract [skip ci]"
-            git push origin HEAD:native-v2
-          fi
-
-      - name: Upload reference metrics
-        uses: actions/upload-artifact@v4
+      - name: Download reference metrics
+        uses: actions/download-artifact@v5
         with:
           name: KaalaKolam-reference-metrics
-          path: |
-            tests/reference-metrics/
-            tests/ssim-controls/
-            docs/ssim-calibration.md
-          if-no-files-found: error
+          path: .
 
-      - name: Upload Tamil golden references
+      - name: Download native fidelity inputs
+        uses: actions/download-artifact@v5
+        with:
+          name: KaalaKolam-native-fidelity-inputs
+          path: app/build
+
+      - name: Install hard-gate Python dependencies
+        id: deps
+        run: python3 -m pip install --disable-pip-version-check fonttools==4.60.1
+
+      - name: Exact colour tokens
+        id: colours
+        continue-on-error: true
+        run: python3 tools/check_colour_tokens.py
+
+      - name: Chromium vs Android Paint text widths
+        id: text_width
+        continue-on-error: true
+        run: python3 tools/compare_text_widths.py
+
+      - name: Structural HARD fidelity
+        id: structure
+        continue-on-error: true
+        run: python3 tools/hard_fidelity_gate.py
+
+      - name: Enforce HARD zero failures
+        id: enforce
+        if: always()
+        shell: bash
+        run: |
+          failed=0
+          [ "${{ steps.colours.outcome }}" = "success" ] || failed=1
+          [ "${{ steps.text_width.outcome }}" = "success" ] || failed=1
+          [ "${{ steps.structure.outcome }}" = "success" ] || failed=1
+          if [ "$failed" -ne 0 ]; then
+            echo "HARD_JOB_FAIL colour=${{ steps.colours.outcome }} text_width=${{ steps.text_width.outcome }} structure=${{ steps.structure.outcome }}"
+            exit 1
+          fi
+          echo "HARD_JOB_PASS failures=0"
+
+      - name: Upload HARD report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: KaalaKolam-golden-tamil-80
-          path: tests/golden-tamil/
+          name: KaalaKolam-hard-report
+          path: app/build/fidelity/hard-report.json
+          if-no-files-found: warn
+
+      - name: Write HARD CI results
+        if: always()
+        env:
+          STEPS_JSON: >-
+            {"Dependencies":"${{ steps.deps.outcome }}","Exact colours":"${{ steps.colours.outcome }}","Text width <=1%":"${{ steps.text_width.outcome }}","Structural HARD":"${{ steps.structure.outcome }}","Enforcement":"${{ steps.enforce.outcome }}"}
+        run: python3 tools/write_ci_results.py --job hard --head "$GITHUB_SHA" --steps-json "$STEPS_JSON"
+
+      - name: Upload HARD ci-results.json
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-ci-results-hard
+          path: app/build/ci-results/hard/ci-results.json
           if-no-files-found: error
 
-      - name: Upload golden web references
-        uses: actions/upload-artifact@v4
+  parity:
+    name: PARITY regression
+    needs: [golden-web, verify]
+    if: always() && needs.golden-web.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Download golden web references
+        uses: actions/download-artifact@v5
         with:
           name: KaalaKolam-golden-web-72
-          path: tests/golden-web/
+          path: tests/golden-web
+
+      - name: Download reference metrics
+        uses: actions/download-artifact@v5
+        with:
+          name: KaalaKolam-reference-metrics
+          path: .
+
+      - name: Download native fidelity inputs
+        uses: actions/download-artifact@v5
+        with:
+          name: KaalaKolam-native-fidelity-inputs
+          path: app/build
+
+      - name: Install PARITY dependencies
+        id: deps
+        run: python3 -m pip install --disable-pip-version-check pillow==11.3.0 numpy==2.3.3 scikit-image==0.25.2
+
+      - name: Tagged boxes and calibrated SSIM
+        id: parity_gate
+        continue-on-error: true
+        run: python3 tools/parity_gate.py
+
+      - name: Enforce PARITY regression gate
+        id: enforce
+        if: always()
+        shell: bash
+        run: |
+          if [ "${{ steps.parity_gate.outcome }}" != "success" ]; then
+            echo "PARITY_JOB_FAIL gate=${{ steps.parity_gate.outcome }}"
+            exit 1
+          fi
+          echo "PARITY_JOB_PASS"
+
+      - name: Upload PARITY report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-parity-report
+          path: app/build/fidelity/parity-report.json
+          if-no-files-found: warn
+
+      - name: Write PARITY CI results
+        if: always()
+        env:
+          STEPS_JSON: >-
+            {"Dependencies":"${{ steps.deps.outcome }}","Tagged boxes + SSIM":"${{ steps.parity_gate.outcome }}","Enforcement":"${{ steps.enforce.outcome }}"}
+        run: python3 tools/write_ci_results.py --job parity --head "$GITHUB_SHA" --steps-json "$STEPS_JSON"
+
+      - name: Upload PARITY ci-results.json
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-ci-results-parity
+          path: app/build/ci-results/parity/ci-results.json
+          if-no-files-found: error
+
+  contact-sheet:
+    name: Contact sheet (informational)
+    needs: [golden-web, verify, hard, parity]
+    if: always() && needs.golden-web.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Download golden web references
+        uses: actions/download-artifact@v5
+        with:
+          name: KaalaKolam-golden-web-72
+          path: tests/golden-web
+
+      - name: Download native fidelity inputs
+        uses: actions/download-artifact@v5
+        with:
+          name: KaalaKolam-native-fidelity-inputs
+          path: app/build
+
+      - name: Download HARD report
+        if: always()
+        continue-on-error: true
+        uses: actions/download-artifact@v5
+        with:
+          name: KaalaKolam-hard-report
+          path: app/build/fidelity
+
+      - name: Download PARITY report
+        if: always()
+        continue-on-error: true
+        uses: actions/download-artifact@v5
+        with:
+          name: KaalaKolam-parity-report
+          path: app/build/fidelity
+
+      - name: Install image dependency
+        id: deps
+        run: python3 -m pip install --disable-pip-version-check pillow==11.3.0
+
+      - name: Build six-screen EN/TA contact sheet (informational)
+        id: contact
+        continue-on-error: true
+        run: python3 tools/contact_sheet.py
+
+      - name: Upload contact-sheet artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-fidelity-contact-sheet
+          path: |
+            app/build/fidelity/contact-sheet-390x844.png
+            app/build/fidelity/contact-sheet-390x844.json
+          if-no-files-found: warn
+
+      - name: Write contact-sheet CI results
+        if: always()
+        env:
+          STEPS_JSON: >-
+            {"Dependencies":"${{ steps.deps.outcome }}","Contact sheet informational":"${{ steps.contact.outcome }}"}
+        run: python3 tools/write_ci_results.py --job contact-sheet --head "$GITHUB_SHA" --steps-json "$STEPS_JSON"
+
+      - name: Upload contact-sheet ci-results.json
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-ci-results-contact-sheet
+          path: app/build/ci-results/contact-sheet/ci-results.json
           if-no-files-found: error
