@@ -39,6 +39,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -71,7 +72,9 @@ private fun WfH1(text: String) {
     Text(
         text = text,
         color = PrototypeTheme.palette.flour,
-        style = MaterialTheme.typography.headlineLarge,
+        style = MaterialTheme.typography.headlineLarge.copy(
+            platformStyle = PlatformTextStyle(includeFontPadding = false),
+        ),
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp)
@@ -242,17 +245,45 @@ private fun WfSegments(
     selected: Int,
     onSelect: (Int) -> Unit = {},
 ) {
+    val p = PrototypeTheme.palette
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         labels.forEachIndexed { index, label ->
-            WfButton(
-                text = label,
+            val active = index == selected
+            FidelityTouchTarget(
+                tag = "segment.$index",
                 modifier = Modifier.weight(1f),
-                selected = index == selected,
                 onClick = { onSelect(index) },
-            )
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 46.dp)
+                        .background(
+                            if (active) p.turmeric else Color.Transparent,
+                            RoundedCornerShape(10.dp),
+                        )
+                        .border(
+                            1.dp,
+                            if (active) p.turmeric else p.line,
+                            RoundedCornerShape(10.dp),
+                        )
+                        .padding(horizontal = 4.dp, vertical = 6.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = label,
+                        color = if (active) Color(0xFF17120A) else p.flour,
+                        fontWeight = if (active) FontWeight.SemiBold else FontWeight.Normal,
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            lineHeight = 20.sp,
+                        ),
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            }
         }
     }
 }
@@ -909,6 +940,7 @@ fun PredictPrototypeScreen(
                     kotlin.math.round((next.max - next.min) / next.step).toInt() - 1
                 ).coerceAtLeast(0)
                 Slider(
+                    modifier = Modifier.fillMaxWidth().height(36.dp),
                     value = guess.toFloat(),
                     onValueChange = { raw ->
                         guess = M2Domain.snapPredictionGuess(next, raw.toDouble())

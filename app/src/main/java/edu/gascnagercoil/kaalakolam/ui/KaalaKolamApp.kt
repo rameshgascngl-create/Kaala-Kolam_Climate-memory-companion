@@ -300,7 +300,7 @@ private fun PrototypeTopBar(
                 )
             }
             .statusBarsPadding()
-            .padding(horizontal = 16.dp, vertical = 8.5.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
