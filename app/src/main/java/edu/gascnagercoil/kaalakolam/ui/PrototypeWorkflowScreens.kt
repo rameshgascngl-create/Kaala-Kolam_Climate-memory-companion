@@ -113,7 +113,7 @@ private fun WfParagraph(
         text = text,
         color = if (muted) PrototypeTheme.palette.faint else PrototypeTheme.palette.flour,
         style = if (muted) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.bodyLarge,
-        modifier = tagged.padding(bottom = bottom.dp),
+        modifier = Modifier.padding(bottom = bottom.dp).then(tagged),
         onTextLayout = if (tag == null) {
             {}
         } else {
@@ -129,11 +129,12 @@ private fun WfCard(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val p = PrototypeTheme.palette
-    val tagged = if (tag == null) modifier else modifier.fidelityTag(tag)
+    val tagged = if (tag == null) Modifier else Modifier.fidelityTag(tag)
     Column(
-        modifier = tagged
+        modifier = modifier
             .fillMaxWidth()
             .padding(bottom = 14.dp)
+            .then(tagged)
             .background(p.ground2, RoundedCornerShape(14.dp))
             .border(1.dp, p.line, RoundedCornerShape(14.dp))
             .padding(16.dp),
@@ -165,6 +166,7 @@ private fun WfButton(
     ) {
         Box(
             modifier = Modifier
+                .fidelityTag(effectiveTag)
                 .heightIn(min = 46.dp)
                 .background(bg, RoundedCornerShape(12.dp))
                 .border(1.dp, border, RoundedCornerShape(12.dp))
@@ -204,6 +206,7 @@ private fun WfIconButton(
     ) {
         Row(
             modifier = Modifier
+                .fidelityTag(effectiveTag)
                 .heightIn(min = 46.dp)
                 .border(1.dp, p.line, RoundedCornerShape(12.dp))
                 .padding(horizontal = 18.dp, vertical = 8.dp),

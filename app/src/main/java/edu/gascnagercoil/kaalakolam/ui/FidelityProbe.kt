@@ -101,7 +101,7 @@ internal fun FidelityTouchTarget(
     Layout(
         content = content,
         modifier = modifier
-            .fidelityTag(tag, interactive = true)
+            .fidelityTag("touch.$tag", interactive = true)
             .clickable(enabled = enabled, onClick = onClick),
     ) { measurables, constraints ->
         require(measurables.size == 1) { "FidelityTouchTarget requires one visual child" }

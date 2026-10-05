@@ -404,6 +404,7 @@ private fun PrototypeButton(
     ) {
         Box(
             modifier = Modifier
+                .fidelityTag(effectiveTag)
                 .heightIn(min = 46.dp)
                 .background(background, RoundedCornerShape(12.dp))
                 .border(1.dp, if (filled) p.turmeric else p.line, RoundedCornerShape(12.dp))

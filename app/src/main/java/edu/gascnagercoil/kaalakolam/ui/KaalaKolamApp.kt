@@ -289,8 +289,8 @@ private fun PrototypeTopBar(
                 )
             }
             .statusBarsPadding()
-            .padding(horizontal = 16.dp, vertical = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
+            .padding(horizontal = 16.dp, vertical = 8.5.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         FidelityTouchTarget(
@@ -298,7 +298,7 @@ private fun PrototypeTopBar(
             modifier = Modifier.weight(1f),
             onClick = onAbout,
         ) {
-            Column {
+            Column(modifier = Modifier.fidelityTag("chrome.brand")) {
                 val brandText = localized(lang, "Kaala Kolam", "காலக்கோலம்")
                 Text(
                     brandText,
@@ -366,6 +366,7 @@ private fun HeaderTool(
     ) {
         Surface(
             modifier = Modifier
+                .fidelityTag(tag)
                 .height(44.dp)
                 .widthIn(min = 44.dp),
             shape = RoundedCornerShape(12.dp),
@@ -453,12 +454,21 @@ internal fun PrototypeTabLabel(
     tag: String = "tab-label",
     onTextLayout: (TextLayoutResult) -> Unit = {},
 ) {
+    val narrowTamil =
+        LocalConfiguration.current.screenWidthDp <= 360 &&
+            text.any { it.code in 0x0B80..0x0BFF }
+    val stressScale = LocalDensity.current.fontScale >= 1.5f
+    val style = if (narrowTamil) {
+        MaterialTheme.typography.labelSmall.copy(fontSize = 8.sp)
+    } else {
+        MaterialTheme.typography.labelSmall
+    }
     Text(
         text = text,
         color = color,
-        style = MaterialTheme.typography.labelSmall,
-        maxLines = 2,
-        softWrap = true,
+        style = style,
+        maxLines = if (narrowTamil && stressScale) 2 else 1,
+        softWrap = narrowTamil && stressScale,
         textAlign = TextAlign.Center,
         modifier = Modifier.fidelityTag(tag),
         onTextLayout = fidelityTextLayout(
