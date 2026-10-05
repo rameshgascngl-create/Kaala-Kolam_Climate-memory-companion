@@ -16,7 +16,7 @@ import androidx.compose.ui.text.TextLayoutResult
  * semantics testTags; recording is a no-op unless a JVM fidelity test provides
  * a recorder through LocalFidelityRecorder.
  */
-internal interface FidelityRecorder {
+interface FidelityRecorder {
     fun recordBox(
         tag: String,
         leftDp: Float,
