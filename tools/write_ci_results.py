@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Write machine-readable CI results and a compact GitHub job summary.
 
-This reporter is deliberately independent of raw Actions logs. It consumes the
-step outcomes supplied by the workflow and, when present, reads generated
-metric artefacts directly from the workspace.
+The result schema is independent of raw Actions logs. Required steps and jobs
+use only PASS, FAIL, or BLOCKED. Informational steps retain their measured
+status but do not by themselves make the enclosing job FAIL.
 """
 from __future__ import annotations
 
@@ -11,9 +11,11 @@ import argparse
 import json
 import os
 import re
+from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+VALID = {"PASS", "FAIL", "BLOCKED"}
 
 
 def read_json(path: Path):
@@ -27,12 +29,60 @@ def parse_steps(raw: str) -> list[dict]:
     rows = []
     for name, outcome in obj.items():
         value = (outcome or "skipped").lower()
-        status = "PASS" if value == "success" else "FAIL" if value in {"failure", "cancelled"} else "SKIP"
-        rows.append({"step": name, "outcome": value, "status": status})
+        if value == "success":
+            status = "PASS"
+        elif value in {"failure", "cancelled"}:
+            status = "FAIL"
+        else:
+            status = "BLOCKED"
+        rows.append(
+            {
+                "step": name,
+                "outcome": value,
+                "status": status,
+                "required": not name.endswith(" (informational)"),
+            }
+        )
     return rows
 
 
-def collect_metrics() -> dict:
+def structural_failure_counts(failures: list[str]) -> dict[str, int]:
+    counts = {
+        "clipping": 0,
+        "truncation": 0,
+        "overflow": 0,
+        "missing_glyphs": 0,
+        "tab_label_fit": 0,
+        "line_counts": 0,
+        "touch_targets_48dp": 0,
+        "colour_tokens": 0,
+        "other": 0,
+    }
+    for failure in failures:
+        text = failure.lower()
+        if "touch-target" in text:
+            key = "touch_targets_48dp"
+        elif "tab-label-fit" in text:
+            key = "tab_label_fit"
+        elif "line-count" in text:
+            key = "line_counts"
+        elif "truncat" in text:
+            key = "truncation"
+        elif "clip" in text:
+            key = "clipping"
+        elif "overflow" in text:
+            key = "overflow"
+        elif "glyph" in text:
+            key = "missing_glyphs"
+        elif "colour" in text or "color" in text:
+            key = "colour_tokens"
+        else:
+            key = "other"
+        counts[key] += 1
+    return counts
+
+
+def collect_metrics(steps: list[dict]) -> dict:
     metrics: dict[str, object] = {}
 
     web = read_json(ROOT / "tests/golden-web/manifest.json")
@@ -48,31 +98,53 @@ def collect_metrics() -> dict:
     if chromium and android:
         web_rows = {x["id"]: x for x in chromium.get("samples", [])}
         android_rows = {x["id"]: x for x in android.get("samples", [])}
-        deltas = {}
+        samples = {}
         for key in sorted(set(web_rows) & set(android_rows)):
-            w = float(web_rows[key].get("canvasWidthPx", web_rows[key].get("widthPx", 0)))
-            a = float(android_rows[key].get("widthPx", 0))
-            if w:
-                deltas[key] = round(abs(a - w) / w * 100.0, 4)
-        if deltas:
-            metrics["text_width_delta_pct"] = deltas
-            metrics["text_width_max_delta_pct"] = max(deltas.values())
+            web_row = web_rows[key]
+            android_row = android_rows[key]
+            chromium_px = float(web_row.get("canvasWidthPx", web_row.get("widthPx", 0)))
+            android_px = float(android_row.get("widthPx", 0))
+            delta_pct = abs(android_px - chromium_px) / chromium_px * 100.0 if chromium_px else None
+            samples[key] = {
+                "text": web_row.get("text"),
+                "chromiumPx": round(chromium_px, 6),
+                "androidPx": round(android_px, 6),
+                "deltaPct": None if delta_pct is None else round(delta_pct, 4),
+                "chromiumFamily": web_row.get("platformFamily"),
+                "androidFamily": android_row.get("resolvedFamily"),
+            }
+        if samples:
+            metrics["text_width_samples"] = samples
+            values = [x["deltaPct"] for x in samples.values() if x["deltaPct"] is not None]
+            metrics["text_width_max_delta_pct"] = max(values) if values else None
 
     ssim = ROOT / "docs/ssim-calibration.md"
     if ssim.exists():
-        vals = {}
-        for label, value in re.findall(r"\|\s*([^|]+?)\s*\|\s*(0\.\d+)\s*\|", ssim.read_text(encoding="utf-8")):
-            vals[label.strip()] = float(value)
-        if vals:
-            metrics["ssim_calibration"] = vals
+        values = {}
+        for label, value in re.findall(
+            r"\|\s*([^|]+?)\s*\|\s*(-?0\.\d+)\s*\|",
+            ssim.read_text(encoding="utf-8"),
+        ):
+            values[label.strip()] = float(value)
+        if values:
+            metrics["ssim_calibration"] = values
 
     hard = read_json(ROOT / "app/build/fidelity/hard-report.json")
     if hard:
+        failures = [str(x) for x in hard.get("failures", [])]
+        counts = structural_failure_counts(failures)
+        step_map = {x["step"]: x["status"] for x in steps}
+        if step_map.get("Missing glyph coverage") == "FAIL":
+            counts["missing_glyphs"] += 1
+        if step_map.get("Exact colour tokens") == "FAIL":
+            counts["colour_tokens"] += 1
         metrics["hard"] = {
             "passed": bool(hard.get("passed")),
-            "failureCount": int(hard.get("failureCount", 0)),
+            "failureCount": int(hard.get("failureCount", len(failures))),
             "checks": int(hard.get("checks", 0)),
             "rows": int(hard.get("rows", 0)),
+            "failureCounts": counts,
+            "failures": failures,
         }
 
     parity = read_json(ROOT / "app/build/fidelity/parity-report.json")
@@ -81,6 +153,7 @@ def collect_metrics() -> dict:
             "passed": bool(parity.get("passed")),
             "failureCount": int(parity.get("failureCount", 0)),
             "baselineCommit": parity.get("baselineCommit"),
+            "failures": parity.get("failures", []),
         }
 
     contact = read_json(ROOT / "app/build/fidelity/contact-sheet-390x844.json")
@@ -99,21 +172,35 @@ def main() -> None:
     parser.add_argument("--job", required=True)
     parser.add_argument("--head", required=True)
     parser.add_argument("--steps-json", required=True)
+    parser.add_argument("--blocked-reason", default="")
     args = parser.parse_args()
 
     steps = parse_steps(args.steps_json)
-    counts = {
-        "pass": sum(x["status"] == "PASS" for x in steps),
-        "fail": sum(x["status"] == "FAIL" for x in steps),
-        "skip": sum(x["status"] == "SKIP" for x in steps),
-    }
+    counts = Counter(row["status"] for row in steps)
+    blocked_reason = args.blocked_reason.strip() or None
+    required = [row for row in steps if row["required"]]
+
+    if blocked_reason:
+        job_status = "BLOCKED"
+    elif any(row["status"] == "FAIL" for row in required):
+        job_status = "FAIL"
+    elif any(row["status"] == "BLOCKED" for row in required):
+        job_status = "BLOCKED"
+    else:
+        job_status = "PASS"
+
+    if job_status not in VALID:
+        raise SystemExit(f"CI_RESULTS_FAIL invalid status {job_status}")
+
     payload = {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "job": args.job,
         "headSha": args.head,
+        "status": job_status,
+        "blockedReason": blocked_reason,
         "steps": steps,
-        "counts": counts,
-        "metrics": collect_metrics(),
+        "counts": {key: counts.get(key, 0) for key in ("PASS", "FAIL", "BLOCKED")},
+        "metrics": collect_metrics(steps),
     }
 
     out_dir = ROOT / "app/build/ci-results" / args.job
@@ -124,14 +211,20 @@ def main() -> None:
     summary = os.environ.get("GITHUB_STEP_SUMMARY")
     if summary:
         with open(summary, "a", encoding="utf-8") as stream:
-            stream.write(f"## {args.job}\n\n")
-            stream.write(f"HEAD: {args.head}\n\n")
-            stream.write("| Step | Result | Outcome |\n|---|---|---|\n")
+            stream.write(f"## {args.job}: {job_status}\n\n")
+            stream.write(f"HEAD: `{args.head}`\n\n")
+            if blocked_reason:
+                stream.write(f"Blocked: {blocked_reason}\n\n")
+            stream.write("| Step | Required | Result | Outcome |\n|---|---|---|---|\n")
             for row in steps:
-                stream.write(f"| {row['step']} | **{row['status']}** | {row['outcome']} |\n")
+                stream.write(
+                    f"| {row['step']} | {'yes' if row['required'] else 'no'} | "
+                    f"**{row['status']}** | {row['outcome']} |\n"
+                )
             stream.write("\n")
             stream.write(
-                f"Counts: PASS {counts['pass']} · FAIL {counts['fail']} · SKIP {counts['skip']}\n\n"
+                f"Counts: PASS {counts.get('PASS', 0)} · FAIL {counts.get('FAIL', 0)} · "
+                f"BLOCKED {counts.get('BLOCKED', 0)}\n\n"
             )
             if payload["metrics"]:
                 stream.write("Metrics:\n\n")
@@ -140,8 +233,9 @@ def main() -> None:
                 stream.write("\n")
 
     print(
-        f"CI_RESULTS_WRITTEN job={args.job} pass={counts['pass']} "
-        f"fail={counts['fail']} skip={counts['skip']} out={out}"
+        f"CI_RESULTS_WRITTEN job={args.job} status={job_status} "
+        f"pass={counts.get('PASS', 0)} fail={counts.get('FAIL', 0)} "
+        f"blocked={counts.get('BLOCKED', 0)} out={out}"
     )
 
 

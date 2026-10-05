@@ -11,139 +11,12 @@ permissions:
   contents: read
 
 jobs:
-  golden-web:
+  compile:
+    name: Compile
     runs-on: ubuntu-latest
     steps:
       - name: Check out source
         uses: actions/checkout@v5
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.12'
-
-      - name: Install Playwright Chromium
-        id: playwright
-        run: |
-          python -m pip install --disable-pip-version-check playwright==1.55.0
-          python -m playwright install --with-deps chromium
-
-      - name: Regenerate prototype visual tokens
-        id: tokens
-        run: python3 tools/extract_tokens.py
-
-      - name: Capture HTML prototype golden matrix
-        id: capture_web
-        run: python3 tools/capture_golden_web.py
-
-      - name: Capture Tamil localisation golden matrix
-        id: capture_tamil
-        run: python3 tools/capture_tamil_golden.py
-
-      - name: Capture pinned Chromium text metrics
-        id: text_metrics
-        run: python3 tools/capture_text_metrics.py
-
-      - name: Capture reference fidelity metrics
-        id: reference_layout
-        run: python3 tools/reference_fidelity_metrics.py
-
-      - name: Capture SSIM negative control
-        id: ssim_control
-        run: python3 tools/capture_ssim_controls.py
-
-      - name: Calibrate SSIM preprocessing
-        id: ssim_calibration
-        run: |
-          python3 -m pip install --disable-pip-version-check pillow==11.3.0 numpy==2.3.3 scikit-image==0.25.2
-          python3 tools/ssim_calibration.py
-
-      - name: Verify golden matrix
-        id: verify_matrix
-        run: |
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          manifest = json.loads(Path("tests/golden-web/manifest.json").read_text(encoding="utf-8"))
-          count = manifest["captureCount"]
-          files = list(Path("tests/golden-web").glob("*/*/*/*.png"))
-          if count != 72 or len(files) != 72:
-              raise SystemExit(f"Expected 72 golden PNGs; manifest={count}, files={len(files)}")
-          print("GOLDEN_WEB_MATRIX_PASS 72/72")
-          tamil = json.loads(Path("tests/golden-tamil/manifest.json").read_text(encoding="utf-8"))
-          tamil_files = list(Path("tests/golden-tamil").glob("*/*/*/*.png"))
-          if tamil["captureCount"] != 80 or len(tamil_files) != 80:
-              raise SystemExit(f"Expected 80 Tamil golden PNGs; manifest={tamil['captureCount']}, files={len(tamil_files)}")
-          print("GOLDEN_TAMIL_MATRIX_PASS 80/80")
-          PY
-
-      - name: Upload reference metrics
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: KaalaKolam-reference-metrics
-          path: |
-            tests/reference-metrics/
-            tests/ssim-controls/
-            docs/ssim-calibration.md
-          if-no-files-found: warn
-
-      - name: Upload Tamil golden references
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: KaalaKolam-golden-tamil-80
-          path: tests/golden-tamil/
-          if-no-files-found: warn
-
-      - name: Upload golden web references
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: KaalaKolam-golden-web-72
-          path: tests/golden-web/
-          if-no-files-found: warn
-
-      - name: Write golden-web CI results
-        id: results
-        if: always()
-        env:
-          STEPS_JSON: >-
-            {"Playwright":"${{ steps.playwright.outcome }}","Tokens":"${{ steps.tokens.outcome }}","Web references":"${{ steps.capture_web.outcome }}","Tamil references":"${{ steps.capture_tamil.outcome }}","Chromium text metrics":"${{ steps.text_metrics.outcome }}","Reference layout":"${{ steps.reference_layout.outcome }}","SSIM control":"${{ steps.ssim_control.outcome }}","SSIM calibration":"${{ steps.ssim_calibration.outcome }}","Matrix verification":"${{ steps.verify_matrix.outcome }}"}
-        run: python3 tools/write_ci_results.py --job golden-web --head "$GITHUB_SHA" --steps-json "$STEPS_JSON"
-
-      - name: Upload golden-web ci-results.json
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: KaalaKolam-ci-results-golden-web
-          path: app/build/ci-results/golden-web/ci-results.json
-          if-no-files-found: error
-
-  verify:
-    needs: golden-web
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out source
-        uses: actions/checkout@v5
-
-      - name: Download Tamil Playwright references
-        uses: actions/download-artifact@v5
-        with:
-          name: KaalaKolam-golden-tamil-80
-          path: tests/golden-tamil
-
-      - name: Download golden web references
-        uses: actions/download-artifact@v5
-        with:
-          name: KaalaKolam-golden-web-72
-          path: tests/golden-web
-
-      - name: Download reference metrics
-        uses: actions/download-artifact@v5
-        with:
-          name: KaalaKolam-reference-metrics
-          path: .
 
       - name: Set up JDK 21
         uses: actions/setup-java@v5
@@ -157,31 +30,255 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Compile debug Kotlin
+        id: compile_kotlin
+        continue-on-error: true
+        run: ./gradlew --no-daemon compileDebugKotlin
+
+      - name: Write compile CI results
+        if: always()
+        env:
+          STEPS_JSON: >-
+            {"Compile debug Kotlin":"${{ steps.compile_kotlin.outcome }}"}
+        run: python3 tools/write_ci_results.py --job compile --head "$GITHUB_SHA" --steps-json "$STEPS_JSON"
+
+      - name: Upload compile ci-results.json
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-ci-results-compile
+          path: app/build/ci-results/compile/ci-results.json
+          if-no-files-found: error
+
+      - name: Enforce compile
+        if: always()
+        shell: bash
+        run: |
+          if [ "${{ steps.compile_kotlin.outcome }}" != "success" ]; then
+            echo "COMPILE_JOB_FAIL outcome=${{ steps.compile_kotlin.outcome }}"
+            exit 1
+          fi
+          echo "COMPILE_JOB_PASS"
+
+  golden-web:
+    name: Reference capture
+    needs: compile
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        if: needs.compile.result == 'success'
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install Playwright Chromium
+        if: needs.compile.result == 'success'
+        id: playwright
+        run: |
+          python -m pip install --disable-pip-version-check playwright==1.55.0
+          python -m playwright install --with-deps chromium
+
       - name: Regenerate prototype visual tokens
+        if: needs.compile.result == 'success'
         id: tokens
         run: python3 tools/extract_tokens.py
 
+      - name: Capture HTML prototype golden matrix
+        if: needs.compile.result == 'success'
+        id: capture_web
+        run: python3 tools/capture_golden_web.py
+
+      - name: Capture Tamil localisation golden matrix
+        if: needs.compile.result == 'success'
+        id: capture_tamil
+        run: python3 tools/capture_tamil_golden.py
+
+      - name: Capture pinned Chromium text metrics
+        if: needs.compile.result == 'success'
+        id: text_metrics
+        run: python3 tools/capture_text_metrics.py
+
+      - name: Capture reference fidelity metrics
+        if: needs.compile.result == 'success'
+        id: reference_layout
+        run: python3 tools/reference_fidelity_metrics.py
+
+      - name: Capture SSIM negative control
+        if: needs.compile.result == 'success'
+        id: ssim_control
+        run: python3 tools/capture_ssim_controls.py
+
+      - name: Calibrate SSIM preprocessing
+        if: needs.compile.result == 'success'
+        id: ssim_calibration
+        run: |
+          python3 -m pip install --disable-pip-version-check pillow==11.3.0 numpy==2.3.3 scikit-image==0.25.2
+          python3 tools/ssim_calibration.py
+
+      - name: Verify golden matrix
+        if: needs.compile.result == 'success'
+        id: verify_matrix
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          manifest = json.loads(Path("tests/golden-web/manifest.json").read_text(encoding="utf-8"))
+          files = list(Path("tests/golden-web").glob("*/*/*/*.png"))
+          if manifest["captureCount"] != 72 or len(files) != 72:
+              raise SystemExit(f"Expected 72 golden PNGs; manifest={manifest['captureCount']}, files={len(files)}")
+          print("GOLDEN_WEB_MATRIX_PASS 72/72")
+          tamil = json.loads(Path("tests/golden-tamil/manifest.json").read_text(encoding="utf-8"))
+          tamil_files = list(Path("tests/golden-tamil").glob("*/*/*/*.png"))
+          if tamil["captureCount"] != 80 or len(tamil_files) != 80:
+              raise SystemExit(f"Expected 80 Tamil golden PNGs; manifest={tamil['captureCount']}, files={len(tamil_files)}")
+          print("GOLDEN_TAMIL_MATRIX_PASS 80/80")
+          PY
+
+      - name: Check generated visual-contract drift
+        if: needs.compile.result == 'success'
+        id: generated_drift
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code --             app/src/main/java/edu/gascnagercoil/kaalakolam/ui/theme/Theme.kt             tests/golden-web
+          if [ -n "$(git status --porcelain --untracked-files=all --             app/src/main/java/edu/gascnagercoil/kaalakolam/ui/theme/Theme.kt             tests/golden-web)" ]; then
+            echo "GENERATED_CONTRACT_DRIFT_FAIL untracked or unstaged generated files"
+            git status --short --               app/src/main/java/edu/gascnagercoil/kaalakolam/ui/theme/Theme.kt               tests/golden-web
+            exit 1
+          fi
+          echo "GENERATED_CONTRACT_DRIFT_PASS"
+
+      - name: Upload reference metrics
+        if: always() && needs.compile.result == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-reference-metrics
+          path: |
+            tests/reference-metrics/
+            tests/ssim-controls/
+            docs/ssim-calibration.md
+          if-no-files-found: warn
+
+      - name: Upload Tamil golden references
+        if: always() && needs.compile.result == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-golden-tamil-80
+          path: tests/golden-tamil/
+          if-no-files-found: warn
+
+      - name: Upload golden web references
+        if: always() && needs.compile.result == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-golden-web-72
+          path: tests/golden-web/
+          if-no-files-found: warn
+
+      - name: Write reference-capture CI results
+        if: always() && needs.compile.result == 'success'
+        env:
+          STEPS_JSON: >-
+            {"Playwright":"${{ steps.playwright.outcome }}","Tokens":"${{ steps.tokens.outcome }}","Web references":"${{ steps.capture_web.outcome }}","Tamil references":"${{ steps.capture_tamil.outcome }}","Chromium text metrics":"${{ steps.text_metrics.outcome }}","Reference layout":"${{ steps.reference_layout.outcome }}","SSIM control":"${{ steps.ssim_control.outcome }}","SSIM calibration":"${{ steps.ssim_calibration.outcome }}","Matrix verification":"${{ steps.verify_matrix.outcome }}","Generated contract drift":"${{ steps.generated_drift.outcome }}"}
+        run: python3 tools/write_ci_results.py --job golden-web --head "$GITHUB_SHA" --steps-json "$STEPS_JSON"
+
+      - name: Write reference-capture BLOCKED result
+        if: always() && needs.compile.result != 'success'
+        env:
+          STEPS_JSON: >-
+            {"Reference capture":"skipped"}
+        run: python3 tools/write_ci_results.py --job golden-web --head "$GITHUB_SHA" --steps-json "$STEPS_JSON" --blocked-reason "compile job did not succeed"
+
+      - name: Upload reference-capture ci-results.json
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-ci-results-golden-web
+          path: app/build/ci-results/golden-web/ci-results.json
+          if-no-files-found: error
+
+      - name: Mark reference capture BLOCKED
+        if: always() && needs.compile.result != 'success'
+        run: |
+          echo "REFERENCE_CAPTURE_BLOCKED upstream compile did not succeed"
+          exit 1
+
+  verify:
+    name: Verify
+    needs: [compile, golden-web]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Download Tamil Playwright references
+        if: needs.compile.result == 'success' && needs.golden-web.result == 'success'
+        uses: actions/download-artifact@v5
+        with:
+          name: KaalaKolam-golden-tamil-80
+          path: tests/golden-tamil
+
+      - name: Download golden web references
+        if: needs.compile.result == 'success' && needs.golden-web.result == 'success'
+        uses: actions/download-artifact@v5
+        with:
+          name: KaalaKolam-golden-web-72
+          path: tests/golden-web
+
+      - name: Download reference metrics
+        if: needs.compile.result == 'success' && needs.golden-web.result == 'success'
+        uses: actions/download-artifact@v5
+        with:
+          name: KaalaKolam-reference-metrics
+          path: .
+
+      - name: Set up JDK 21
+        if: needs.compile.result == 'success' && needs.golden-web.result == 'success'
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Validate Gradle wrapper
+        if: needs.compile.result == 'success' && needs.golden-web.result == 'success'
+        uses: gradle/actions/wrapper-validation@v4
+
+      - name: Set up Gradle
+        if: needs.compile.result == 'success' && needs.golden-web.result == 'success'
+        uses: gradle/actions/setup-gradle@v4
+
       - name: Verify generated content policy
+        if: needs.compile.result == 'success' && needs.golden-web.result == 'success'
         id: content
         run: python3 tools/test_content_asset.py
 
       - name: Install Tamil font QA dependency
+        if: needs.compile.result == 'success' && needs.golden-web.result == 'success'
         run: python3 -m pip install --disable-pip-version-check fonttools==4.60.1
 
       - name: Run native static QA
+        if: needs.compile.result == 'success' && needs.golden-web.result == 'success'
         id: static_qa
         run: python3 tools/native_static_qa.py
 
       - name: Lint, unit test, and assemble debug
+        if: needs.compile.result == 'success' && needs.golden-web.result == 'success'
         id: debug_build
         run: ./gradlew --no-daemon lintDebug testDebugUnitTest assembleDebug
 
-      - name: Compare Chromium and Android Paint text widths (informational preflight)
-        id: text_width_preflight
+      - name: Compare Chromium and Android Paint text widths (informational)
+        if: needs.compile.result == 'success' && needs.golden-web.result == 'success'
+        id: text_width_info
         continue-on-error: true
         run: python3 tools/compare_text_widths.py
 
       - name: Measure native-to-web visual differences (informational)
+        if: needs.compile.result == 'success' && needs.golden-web.result == 'success'
         id: legacy_visual
         continue-on-error: true
         run: |
@@ -190,10 +287,12 @@ jobs:
           python3 tools/compare_tamil_visuals.py
 
       - name: Lint and bundle release QA
+        if: needs.compile.result == 'success' && needs.golden-web.result == 'success'
         id: release_qa
         run: ./gradlew --no-daemon lintRelease bundleRelease
 
       - name: Assert merged manifests request no permissions
+        if: needs.compile.result == 'success' && needs.golden-web.result == 'success'
         id: permissions
         shell: bash
         run: |
@@ -204,14 +303,12 @@ jobs:
             printf '%s\n' "${manifests[@]}" >&2
             exit 1
           fi
-          printf 'Merged manifests:\n'
-          printf '  %s\n' "${manifests[@]}"
           for manifest in "${manifests[@]}"; do
             python3 tools/assert_merged_manifest.py "$manifest"
           done
 
       - name: Upload native fidelity inputs
-        if: always()
+        if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: KaalaKolam-native-fidelity-inputs
@@ -222,7 +319,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Upload debug APK
-        if: always()
+        if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: KaalaKolam-native-v2-debug-apk
@@ -230,7 +327,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Upload lint reports
-        if: always()
+        if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: KaalaKolam-native-v2-lint
@@ -240,7 +337,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Upload release QA evidence
-        if: always()
+        if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: KaalaKolam-native-v2-release-qa
@@ -248,7 +345,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Upload unit-test reports
-        if: always()
+        if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: KaalaKolam-native-v2-unit-tests
@@ -258,7 +355,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Upload legacy visual reports (informational)
-        if: always()
+        if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: KaalaKolam-native-v2-visual-informational
@@ -268,11 +365,18 @@ jobs:
           if-no-files-found: warn
 
       - name: Write verify CI results
-        if: always()
+        if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success'
         env:
           STEPS_JSON: >-
-            {"Tokens":"${{ steps.tokens.outcome }}","Content policy":"${{ steps.content.outcome }}","Native static QA":"${{ steps.static_qa.outcome }}","Debug build/tests":"${{ steps.debug_build.outcome }}","Text width preflight":"${{ steps.text_width_preflight.outcome }}","Legacy visual informational":"${{ steps.legacy_visual.outcome }}","Release QA build":"${{ steps.release_qa.outcome }}","Merged manifest permissions":"${{ steps.permissions.outcome }}"}
+            {"Content policy":"${{ steps.content.outcome }}","Native static QA":"${{ steps.static_qa.outcome }}","Debug build/tests":"${{ steps.debug_build.outcome }}","Text width comparison (informational)":"${{ steps.text_width_info.outcome }}","Legacy visual comparison (informational)":"${{ steps.legacy_visual.outcome }}","Release QA build":"${{ steps.release_qa.outcome }}","Merged manifest permissions":"${{ steps.permissions.outcome }}"}
         run: python3 tools/write_ci_results.py --job verify --head "$GITHUB_SHA" --steps-json "$STEPS_JSON"
+
+      - name: Write verify BLOCKED result
+        if: always() && (needs.compile.result != 'success' || needs.golden-web.result != 'success')
+        env:
+          STEPS_JSON: >-
+            {"Verify":"skipped"}
+        run: python3 tools/write_ci_results.py --job verify --head "$GITHUB_SHA" --steps-json "$STEPS_JSON" --blocked-reason "compile or reference-capture prerequisite did not succeed"
 
       - name: Upload verify ci-results.json
         if: always()
@@ -282,63 +386,70 @@ jobs:
           path: app/build/ci-results/verify/ci-results.json
           if-no-files-found: error
 
+      - name: Mark verify BLOCKED
+        if: always() && (needs.compile.result != 'success' || needs.golden-web.result != 'success')
+        run: |
+          echo "VERIFY_BLOCKED prerequisite did not succeed"
+          exit 1
+
   hard:
     name: HARD fidelity
-    needs: [golden-web, verify]
-    if: always() && needs.golden-web.result == 'success'
+    needs: [compile, golden-web, verify]
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out source
         uses: actions/checkout@v5
 
       - name: Download reference metrics
+        if: needs.compile.result == 'success' && needs.golden-web.result == 'success' && needs.verify.result == 'success'
+        id: ref_metrics
+        continue-on-error: true
         uses: actions/download-artifact@v5
         with:
           name: KaalaKolam-reference-metrics
           path: .
 
       - name: Download native fidelity inputs
+        if: needs.compile.result == 'success' && needs.golden-web.result == 'success' && needs.verify.result == 'success'
+        id: native_inputs
+        continue-on-error: true
         uses: actions/download-artifact@v5
         with:
           name: KaalaKolam-native-fidelity-inputs
           path: app/build
 
-      - name: Install hard-gate Python dependencies
+      - name: Install HARD dependencies
+        if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success' && needs.verify.result == 'success'
         id: deps
         run: python3 -m pip install --disable-pip-version-check fonttools==4.60.1
 
       - name: Exact colour tokens
+        if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success' && needs.verify.result == 'success'
         id: colours
         continue-on-error: true
         run: python3 tools/check_colour_tokens.py
 
+      - name: Missing glyph coverage
+        if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success' && needs.verify.result == 'success'
+        id: glyphs
+        continue-on-error: true
+        run: python3 tools/test_font_coverage.py
+
       - name: Chromium vs Android Paint text widths
+        if: always() && steps.ref_metrics.outcome == 'success' && steps.native_inputs.outcome == 'success'
         id: text_width
         continue-on-error: true
         run: python3 tools/compare_text_widths.py
 
       - name: Structural HARD fidelity
+        if: always() && steps.ref_metrics.outcome == 'success' && steps.native_inputs.outcome == 'success'
         id: structure
         continue-on-error: true
         run: python3 tools/hard_fidelity_gate.py
 
-      - name: Enforce HARD zero failures
-        id: enforce
-        if: always()
-        shell: bash
-        run: |
-          failed=0
-          [ "${{ steps.colours.outcome }}" = "success" ] || failed=1
-          [ "${{ steps.text_width.outcome }}" = "success" ] || failed=1
-          [ "${{ steps.structure.outcome }}" = "success" ] || failed=1
-          if [ "$failed" -ne 0 ]; then
-            echo "HARD_JOB_FAIL colour=${{ steps.colours.outcome }} text_width=${{ steps.text_width.outcome }} structure=${{ steps.structure.outcome }}"
-            exit 1
-          fi
-          echo "HARD_JOB_PASS failures=0"
-
       - name: Upload HARD report
-        if: always()
+        if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success' && needs.verify.result == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: KaalaKolam-hard-report
@@ -346,11 +457,18 @@ jobs:
           if-no-files-found: warn
 
       - name: Write HARD CI results
-        if: always()
+        if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success' && needs.verify.result == 'success'
         env:
           STEPS_JSON: >-
-            {"Dependencies":"${{ steps.deps.outcome }}","Exact colours":"${{ steps.colours.outcome }}","Text width <=1%":"${{ steps.text_width.outcome }}","Structural HARD":"${{ steps.structure.outcome }}","Enforcement":"${{ steps.enforce.outcome }}"}
+            {"Reference metrics download":"${{ steps.ref_metrics.outcome }}","Native fidelity download":"${{ steps.native_inputs.outcome }}","Dependencies":"${{ steps.deps.outcome }}","Exact colour tokens":"${{ steps.colours.outcome }}","Missing glyph coverage":"${{ steps.glyphs.outcome }}","Text width <=1%":"${{ steps.text_width.outcome }}","Structural HARD":"${{ steps.structure.outcome }}"}
         run: python3 tools/write_ci_results.py --job hard --head "$GITHUB_SHA" --steps-json "$STEPS_JSON"
+
+      - name: Write HARD BLOCKED result
+        if: always() && (needs.compile.result != 'success' || needs.golden-web.result != 'success' || needs.verify.result != 'success')
+        env:
+          STEPS_JSON: >-
+            {"HARD gate":"skipped"}
+        run: python3 tools/write_ci_results.py --job hard --head "$GITHUB_SHA" --steps-json "$STEPS_JSON" --blocked-reason "compile, reference-capture, or verify prerequisite did not succeed"
 
       - name: Upload HARD ci-results.json
         if: always()
@@ -360,55 +478,75 @@ jobs:
           path: app/build/ci-results/hard/ci-results.json
           if-no-files-found: error
 
+      - name: Enforce HARD
+        if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success' && needs.verify.result == 'success'
+        shell: bash
+        run: |
+          failed=0
+          for outcome in             "${{ steps.ref_metrics.outcome }}"             "${{ steps.native_inputs.outcome }}"             "${{ steps.deps.outcome }}"             "${{ steps.colours.outcome }}"             "${{ steps.glyphs.outcome }}"             "${{ steps.text_width.outcome }}"             "${{ steps.structure.outcome }}"; do
+            [ "$outcome" = "success" ] || failed=1
+          done
+          if [ "$failed" -ne 0 ]; then
+            echo "HARD_JOB_FAIL"
+            exit 1
+          fi
+          echo "HARD_JOB_PASS failures=0"
+
+      - name: Mark HARD BLOCKED
+        if: always() && (needs.compile.result != 'success' || needs.golden-web.result != 'success' || needs.verify.result != 'success')
+        run: |
+          echo "HARD_JOB_BLOCKED prerequisite did not succeed"
+          exit 1
+
   parity:
     name: PARITY regression
-    needs: [golden-web, verify]
-    if: always() && needs.golden-web.result == 'success'
+    needs: [compile, golden-web, verify]
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out source
         uses: actions/checkout@v5
 
       - name: Download golden web references
+        if: needs.compile.result == 'success' && needs.golden-web.result == 'success' && needs.verify.result == 'success'
+        id: golden_refs
+        continue-on-error: true
         uses: actions/download-artifact@v5
         with:
           name: KaalaKolam-golden-web-72
           path: tests/golden-web
 
       - name: Download reference metrics
+        if: needs.compile.result == 'success' && needs.golden-web.result == 'success' && needs.verify.result == 'success'
+        id: ref_metrics
+        continue-on-error: true
         uses: actions/download-artifact@v5
         with:
           name: KaalaKolam-reference-metrics
           path: .
 
       - name: Download native fidelity inputs
+        if: needs.compile.result == 'success' && needs.golden-web.result == 'success' && needs.verify.result == 'success'
+        id: native_inputs
+        continue-on-error: true
         uses: actions/download-artifact@v5
         with:
           name: KaalaKolam-native-fidelity-inputs
           path: app/build
 
       - name: Install PARITY dependencies
+        if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success' && needs.verify.result == 'success'
         id: deps
         run: python3 -m pip install --disable-pip-version-check pillow==11.3.0 numpy==2.3.3 scikit-image==0.25.2
 
       - name: Tagged boxes and calibrated SSIM
+        if: always() && steps.golden_refs.outcome == 'success' && steps.ref_metrics.outcome == 'success' && steps.native_inputs.outcome == 'success'
         id: parity_gate
         continue-on-error: true
         run: python3 tools/parity_gate.py
 
-      - name: Enforce PARITY regression gate
-        id: enforce
-        if: always()
-        shell: bash
-        run: |
-          if [ "${{ steps.parity_gate.outcome }}" != "success" ]; then
-            echo "PARITY_JOB_FAIL gate=${{ steps.parity_gate.outcome }}"
-            exit 1
-          fi
-          echo "PARITY_JOB_PASS"
-
       - name: Upload PARITY report
-        if: always()
+        if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success' && needs.verify.result == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: KaalaKolam-parity-report
@@ -416,11 +554,18 @@ jobs:
           if-no-files-found: warn
 
       - name: Write PARITY CI results
-        if: always()
+        if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success' && needs.verify.result == 'success'
         env:
           STEPS_JSON: >-
-            {"Dependencies":"${{ steps.deps.outcome }}","Tagged boxes + SSIM":"${{ steps.parity_gate.outcome }}","Enforcement":"${{ steps.enforce.outcome }}"}
+            {"Golden reference download":"${{ steps.golden_refs.outcome }}","Reference metrics download":"${{ steps.ref_metrics.outcome }}","Native fidelity download":"${{ steps.native_inputs.outcome }}","Dependencies":"${{ steps.deps.outcome }}","Tagged boxes + SSIM":"${{ steps.parity_gate.outcome }}"}
         run: python3 tools/write_ci_results.py --job parity --head "$GITHUB_SHA" --steps-json "$STEPS_JSON"
+
+      - name: Write PARITY BLOCKED result
+        if: always() && (needs.compile.result != 'success' || needs.golden-web.result != 'success' || needs.verify.result != 'success')
+        env:
+          STEPS_JSON: >-
+            {"PARITY gate":"skipped"}
+        run: python3 tools/write_ci_results.py --job parity --head "$GITHUB_SHA" --steps-json "$STEPS_JSON" --blocked-reason "compile, reference-capture, or verify prerequisite did not succeed"
 
       - name: Upload PARITY ci-results.json
         if: always()
@@ -430,54 +575,80 @@ jobs:
           path: app/build/ci-results/parity/ci-results.json
           if-no-files-found: error
 
+      - name: Enforce PARITY
+        if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success' && needs.verify.result == 'success'
+        run: |
+          if [ "${{ steps.parity_gate.outcome }}" != "success" ]; then
+            echo "PARITY_JOB_FAIL gate=${{ steps.parity_gate.outcome }}"
+            exit 1
+          fi
+          echo "PARITY_JOB_PASS"
+
+      - name: Mark PARITY BLOCKED
+        if: always() && (needs.compile.result != 'success' || needs.golden-web.result != 'success' || needs.verify.result != 'success')
+        run: |
+          echo "PARITY_JOB_BLOCKED prerequisite did not succeed"
+          exit 1
+
   contact-sheet:
     name: Contact sheet (informational)
-    needs: [golden-web, verify, hard, parity]
-    if: always() && needs.golden-web.result == 'success'
+    needs: [compile, golden-web, verify, hard, parity]
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out source
         uses: actions/checkout@v5
 
-      - name: Download golden web references
+      - name: Download golden web references (informational)
+        if: needs.compile.result == 'success' && needs.golden-web.result == 'success' && needs.verify.result == 'success'
+        id: contact_golden
+        continue-on-error: true
         uses: actions/download-artifact@v5
         with:
           name: KaalaKolam-golden-web-72
           path: tests/golden-web
 
-      - name: Download native fidelity inputs
+      - name: Download native fidelity inputs (informational)
+        if: needs.compile.result == 'success' && needs.golden-web.result == 'success' && needs.verify.result == 'success'
+        id: contact_native
+        continue-on-error: true
         uses: actions/download-artifact@v5
         with:
           name: KaalaKolam-native-fidelity-inputs
           path: app/build
 
-      - name: Download HARD report
-        if: always()
+      - name: Download HARD report (informational)
+        if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success' && needs.verify.result == 'success'
+        id: contact_hard
         continue-on-error: true
         uses: actions/download-artifact@v5
         with:
           name: KaalaKolam-hard-report
           path: app/build/fidelity
 
-      - name: Download PARITY report
-        if: always()
+      - name: Download PARITY report (informational)
+        if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success' && needs.verify.result == 'success'
+        id: contact_parity
         continue-on-error: true
         uses: actions/download-artifact@v5
         with:
           name: KaalaKolam-parity-report
           path: app/build/fidelity
 
-      - name: Install image dependency
-        id: deps
+      - name: Install image dependency (informational)
+        if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success' && needs.verify.result == 'success'
+        id: contact_deps
+        continue-on-error: true
         run: python3 -m pip install --disable-pip-version-check pillow==11.3.0
 
       - name: Build six-screen EN/TA contact sheet (informational)
+        if: always() && steps.contact_golden.outcome == 'success' && steps.contact_native.outcome == 'success' && steps.contact_deps.outcome == 'success'
         id: contact
         continue-on-error: true
         run: python3 tools/contact_sheet.py
 
       - name: Upload contact-sheet artifact
-        if: always()
+        if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success' && needs.verify.result == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: KaalaKolam-fidelity-contact-sheet
@@ -487,11 +658,18 @@ jobs:
           if-no-files-found: warn
 
       - name: Write contact-sheet CI results
-        if: always()
+        if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success' && needs.verify.result == 'success'
         env:
           STEPS_JSON: >-
-            {"Dependencies":"${{ steps.deps.outcome }}","Contact sheet informational":"${{ steps.contact.outcome }}"}
+            {"Golden reference download (informational)":"${{ steps.contact_golden.outcome }}","Native fidelity download (informational)":"${{ steps.contact_native.outcome }}","HARD report download (informational)":"${{ steps.contact_hard.outcome }}","PARITY report download (informational)":"${{ steps.contact_parity.outcome }}","Image dependency (informational)":"${{ steps.contact_deps.outcome }}","Contact sheet build (informational)":"${{ steps.contact.outcome }}"}
         run: python3 tools/write_ci_results.py --job contact-sheet --head "$GITHUB_SHA" --steps-json "$STEPS_JSON"
+
+      - name: Write contact-sheet BLOCKED result
+        if: always() && (needs.compile.result != 'success' || needs.golden-web.result != 'success' || needs.verify.result != 'success')
+        env:
+          STEPS_JSON: >-
+            {"Contact sheet (informational)":"skipped"}
+        run: python3 tools/write_ci_results.py --job contact-sheet --head "$GITHUB_SHA" --steps-json "$STEPS_JSON" --blocked-reason "compile, reference-capture, or verify prerequisite did not succeed"
 
       - name: Upload contact-sheet ci-results.json
         if: always()
