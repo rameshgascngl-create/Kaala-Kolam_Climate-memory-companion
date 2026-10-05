@@ -70,7 +70,14 @@ private fun WfH1(text: String) {
         text = text,
         color = PrototypeTheme.palette.flour,
         style = MaterialTheme.typography.headlineLarge,
-        modifier = Modifier.padding(bottom = 8.dp),
+        modifier = Modifier
+            .padding(bottom = 8.dp)
+            .fidelityTag("screen.heading"),
+        onTextLayout = fidelityTextLayout(
+            tag = "screen.heading",
+            kind = "heading",
+            text = text,
+        ),
     )
 }
 
@@ -95,23 +102,36 @@ private fun WfH3(text: String) {
 }
 
 @Composable
-private fun WfParagraph(text: String, muted: Boolean = false, bottom: Int = 13) {
+private fun WfParagraph(
+    text: String,
+    muted: Boolean = false,
+    bottom: Int = 13,
+    tag: String? = null,
+) {
+    val tagged = if (tag == null) Modifier else Modifier.fidelityTag(tag)
     Text(
         text = text,
         color = if (muted) PrototypeTheme.palette.faint else PrototypeTheme.palette.flour,
         style = if (muted) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.bodyLarge,
-        modifier = Modifier.padding(bottom = bottom.dp),
+        modifier = tagged.padding(bottom = bottom.dp),
+        onTextLayout = if (tag == null) {
+            {}
+        } else {
+            fidelityTextLayout(tag = tag, kind = "body", text = text)
+        },
     )
 }
 
 @Composable
 private fun WfCard(
     modifier: Modifier = Modifier,
+    tag: String? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val p = PrototypeTheme.palette
+    val tagged = if (tag == null) modifier else modifier.fidelityTag(tag)
     Column(
-        modifier = modifier
+        modifier = tagged
             .fillMaxWidth()
             .padding(bottom = 14.dp)
             .background(p.ground2, RoundedCornerShape(14.dp))
@@ -128,6 +148,7 @@ private fun WfButton(
     filled: Boolean = false,
     selected: Boolean = false,
     enabled: Boolean = true,
+    tag: String? = null,
     onClick: () -> Unit = {},
 ) {
     val p = PrototypeTheme.palette
@@ -135,22 +156,34 @@ private fun WfButton(
     val bg = if (useFill) p.turmeric.copy(alpha = if (enabled) 1f else .45f) else Color.Transparent
     val border = if (useFill) p.turmeric else p.line
     val fg = if (useFill) Color(0xFF17120A).copy(alpha = if (enabled) 1f else .45f) else p.flour
-    Box(
-        modifier = modifier
-            .heightIn(min = 46.dp)
-            .background(bg, RoundedCornerShape(12.dp))
-            .border(1.dp, border, RoundedCornerShape(12.dp))
-            .clickable(enabled = enabled, onClick = onClick)
-            .padding(horizontal = 18.dp, vertical = 8.dp),
-        contentAlignment = Alignment.Center,
+    val effectiveTag = tag ?: "button.${text.hashCode()}"
+    FidelityTouchTarget(
+        tag = effectiveTag,
+        modifier = modifier,
+        enabled = enabled,
+        onClick = onClick,
     ) {
-        Text(
-            text = text,
-            color = fg,
-            fontWeight = if (useFill) FontWeight.SemiBold else FontWeight.Normal,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyLarge,
-        )
+        Box(
+            modifier = Modifier
+                .heightIn(min = 46.dp)
+                .background(bg, RoundedCornerShape(12.dp))
+                .border(1.dp, border, RoundedCornerShape(12.dp))
+                .padding(horizontal = 18.dp, vertical = 8.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = text,
+                color = fg,
+                fontWeight = if (useFill) FontWeight.SemiBold else FontWeight.Normal,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyLarge,
+                onTextLayout = fidelityTextLayout(
+                    tag = "$effectiveTag.label",
+                    kind = "button",
+                    text = text,
+                ),
+            )
+        }
     }
 }
 
@@ -159,25 +192,42 @@ private fun WfIconButton(
     icon: String,
     text: String,
     modifier: Modifier = Modifier,
+    tag: String? = null,
     onClick: () -> Unit = {},
 ) {
     val p = PrototypeTheme.palette
-    Row(
-        modifier = modifier
-            .heightIn(min = 46.dp)
-            .border(1.dp, p.line, RoundedCornerShape(12.dp))
-            .clickable(onClick = onClick)
-            .padding(horizontal = 18.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    val effectiveTag = tag ?: "icon-button.${text.hashCode()}"
+    FidelityTouchTarget(
+        tag = effectiveTag,
+        modifier = modifier,
+        onClick = onClick,
     ) {
-        Icon(
-            imageVector = PrototypeIcons.get(icon),
-            contentDescription = text,
-            tint = p.flour,
-            modifier = Modifier.size(22.dp),
-        )
-        Text(text, color = p.flour, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
+        Row(
+            modifier = Modifier
+                .heightIn(min = 46.dp)
+                .border(1.dp, p.line, RoundedCornerShape(12.dp))
+                .padding(horizontal = 18.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Icon(
+                imageVector = PrototypeIcons.get(icon),
+                contentDescription = text,
+                tint = p.flour,
+                modifier = Modifier.size(22.dp),
+            )
+            Text(
+                text,
+                color = p.flour,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold,
+                onTextLayout = fidelityTextLayout(
+                    tag = "$effectiveTag.label",
+                    kind = "button",
+                    text = text,
+                ),
+            )
+        }
     }
 }
 
