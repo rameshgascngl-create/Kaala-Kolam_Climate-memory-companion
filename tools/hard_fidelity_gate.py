@@ -12,6 +12,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 REF=ROOT/"tests/reference-metrics/fidelity-layout.json"
 NATIVE=ROOT/"app/build/fidelity/native-layout"
+REPORT=ROOT/"app/build/fidelity/hard-report.json"
 ROUTES=("home","learn","elders","class","council","predict")
 
 
@@ -127,5 +128,6 @@ if len(native)!=len(ref):
     errors.append(f"matrix size reference={len(ref)} native={len(native)}")
 
 if errors:
-    fail(errors)
+    fail(errors, checks, len(ref))
+write_report([], checks, len(ref))
 print(f"HARD_FIDELITY_PASS rows={len(ref)} checks={checks} failures=0")
