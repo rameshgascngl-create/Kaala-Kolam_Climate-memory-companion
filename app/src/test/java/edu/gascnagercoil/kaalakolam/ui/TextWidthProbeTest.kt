@@ -75,7 +75,7 @@ class TextWidthProbeTest {
 
         val measured = samples.map { sample ->
             val typeface = ResourcesCompat.getFont(paparazzi.context, sample.fontRes)
-            assertNotNull("Missing pinned font \${sample.resourceName}", typeface)
+            assertNotNull("Missing pinned font ${sample.resourceName}", typeface)
             val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.SUBPIXEL_TEXT_FLAG).apply {
                 this.typeface = requireNotNull(typeface)
                 textSize = sample.sizePx
@@ -83,8 +83,8 @@ class TextWidthProbeTest {
             }
             val width = paint.measureText(sample.text)
             println(
-                "ANDROID_TEXT_WIDTH sample=\${sample.id} width=\$width " +
-                    "family=\${sample.resolvedFamily} resource=\${sample.resourceName}",
+                "ANDROID_TEXT_WIDTH sample=${sample.id} width=$width " +
+                    "family=${sample.resolvedFamily} resource=${sample.resourceName}",
             )
             sample to width
         }
@@ -93,20 +93,17 @@ class TextWidthProbeTest {
         output.parentFile.mkdirs()
         output.writeText(
             buildString {
-                append("{\\n  \\"samples\\": [\\n")
+                append("{\n  \"samples\": [\n")
                 measured.forEachIndexed { index, (sample, width) ->
-                    append("    {")
-                    append("\\"id\\":\\"\${sample.id}\\",")
-                    append("\\"widthPx\\":\${"%.6f".format(Locale.US, width)},")
-                    append("\\"resolvedFamily\\":\\"\${sample.resolvedFamily}\\",")
-                    append("\\"resourceName\\":\\"\${sample.resourceName}\\"")
-                    append("}")
+                    append(
+                        """    {"id":"${sample.id}","widthPx":${"%.6f".format(Locale.US, width)},"resolvedFamily":"${sample.resolvedFamily}","resourceName":"${sample.resourceName}"}"""
+                    )
                     if (index != measured.lastIndex) append(",")
-                    append("\\n")
+                    append("\n")
                 }
-                append("  ]\\n}\\n")
+                append("  ]\n}\n")
             },
         )
-        println("ANDROID_TEXT_WIDTH_PASS samples=\${measured.size} output=\${output.path}")
+        println("ANDROID_TEXT_WIDTH_PASS samples=${measured.size} output=${output.path}")
     }
 }
