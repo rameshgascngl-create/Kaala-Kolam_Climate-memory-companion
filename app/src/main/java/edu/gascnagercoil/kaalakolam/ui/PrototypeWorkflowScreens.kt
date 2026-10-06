@@ -497,7 +497,7 @@ private fun LearnTopicPrototype(lang: String, deep: Boolean, onBack: () -> Unit)
             val topicHeadingWidth = if (
                 lang == "ta" && LocalConfiguration.current.screenWidthDp >= 360
             ) {
-                Modifier.widthIn(max = 234.dp)
+                Modifier.widthIn(max = 268.dp)
             } else {
                 Modifier.weight(1f)
             }
