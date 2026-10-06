@@ -789,10 +789,11 @@ fun ElderPrototypeScreen(
     }
 
     if (appState.elderSession.mode == ElderMode.ASK && activeInterview != null) {
+        val question = asset.elderQuestions[appState.elderSession.questionIndex]
         ElderAskScreen(
             lang = lang,
             interview = activeInterview,
-            question = asset.elderQuestions[appState.elderSession.questionIndex],
+            question = question,
             questionIndex = appState.elderSession.questionIndex,
             questionCount = asset.elderQuestions.size,
             content = asset.sliceC,
