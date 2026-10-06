@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity() {
                     widthSizeClass = widthSizeClass,
                     onLanguageChange = viewModel::setLanguage,
                     onThemeChange = viewModel::setThemeMode,
+                    onCurrentTabChange = viewModel::setCurrentTab,
                     onBackup = viewModel::backupCode,
                     onValidateBackup = viewModel::validateBackup,
                     onRestore = viewModel::restore,
@@ -54,6 +55,7 @@ class MainActivity : AppCompatActivity() {
                     onCreateElderInterview = viewModel::createElderInterview,
                     onDeleteElderInterview = viewModel::deleteElderInterview,
                     onElderAnswerChange = viewModel::setElderAnswer,
+                    onAdvanceElderQuestion = viewModel::advanceElderQuestion,
                 )
             }
         }

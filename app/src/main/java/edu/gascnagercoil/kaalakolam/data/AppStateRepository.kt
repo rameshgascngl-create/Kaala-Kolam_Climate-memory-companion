@@ -46,6 +46,30 @@ private val Context.appStateDataStore: DataStore<AppState> by dataStore(
     serializer = AppStateSerializer,
 )
 
+internal fun advanceElderState(
+    current: AppState,
+    interviewId: String,
+    questionId: String,
+    answer: InterviewAnswer?,
+    session: ElderSession,
+): AppState {
+    val interviews = if (answer == null || questionId !in EldersDomain.questionIds) {
+        current.interviews
+    } else {
+        current.interviews.map { interview ->
+            if (interview.id == interviewId) {
+                interview.copy(answers = interview.answers + (questionId to answer))
+            } else {
+                interview
+            }
+        }
+    }
+    return current.copy(
+        interviews = interviews,
+        elderSession = session,
+    ).repair()
+}
+
 class AppStateRepository(context: Context) {
     private val store = context.applicationContext.appStateDataStore
 
@@ -59,6 +83,10 @@ class AppStateRepository(context: Context) {
 
     suspend fun setThemeMode(themeMode: ThemeMode) {
         store.updateData { current -> current.copy(themeMode = themeMode).repair() }
+    }
+
+    suspend fun setCurrentTab(tab: String) {
+        store.updateData { current -> current.copy(currentTab = tab).repair() }
     }
 
     suspend fun setPredictionAnswer(id: String, answer: PredictionState) {
@@ -123,6 +151,17 @@ class AppStateRepository(context: Context) {
                     }
                 },
             ).repair()
+        }
+    }
+
+    suspend fun advanceElderQuestion(
+        interviewId: String,
+        questionId: String,
+        answer: InterviewAnswer?,
+        session: ElderSession,
+    ) {
+        store.updateData { current ->
+            advanceElderState(current, interviewId, questionId, answer, session)
         }
     }
 

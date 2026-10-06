@@ -6,11 +6,13 @@ import edu.gascnagercoil.kaalakolam.domain.AppState
 import edu.gascnagercoil.kaalakolam.domain.ElderMode
 import edu.gascnagercoil.kaalakolam.domain.ElderSession
 import edu.gascnagercoil.kaalakolam.domain.Interview
+import edu.gascnagercoil.kaalakolam.domain.InterviewAnswer
 import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -48,6 +50,7 @@ class AppStateRealStorageTest {
         val file = freshFile("state.json")
         val expected = AppState(
             language = "ta",
+            currentTab = "elders",
             interviews = listOf(
                 Interview(
                     id = "iv000001",
@@ -74,6 +77,65 @@ class AppStateRealStorageTest {
         val reloaded = secondProcess.store.data.first()
         assertEquals(expected, reloaded)
         secondProcess.close()
+    }
+
+    @Test
+    fun answerWriteCompletesBeforeNextQuestionStateIsEmitted() = runBlocking {
+        val file = freshFile("answer-before-next.json")
+        val interviewId = "iv000001"
+        val initial = AppState(
+            currentTab = "elders",
+            interviews = listOf(
+                Interview(
+                    id = interviewId,
+                    nickname = "Elder",
+                    birthDecade = 1,
+                    place = 0,
+                    createdAt = 1234L,
+                ),
+            ),
+            elderSession = ElderSession(
+                mode = ElderMode.ASK,
+                activeId = interviewId,
+                questionIndex = 0,
+            ),
+        )
+        val handle = newStore(file)
+        handle.store.updateData { initial }
+
+        val nextQuestion = async {
+            handle.store.data.first { state ->
+                state.elderSession.questionIndex == 1
+            }
+        }
+        val answer = InterviewAnswer(
+            answered = true,
+            rating = 0,
+            confidence = 2,
+            story = "Persist before advancing.",
+        )
+        val nextSession = initial.elderSession.copy(questionIndex = 1)
+        handle.store.updateData { current ->
+            advanceElderState(
+                current = current,
+                interviewId = interviewId,
+                questionId = "heat",
+                answer = answer,
+                session = nextSession,
+            )
+        }
+
+        val emitted = nextQuestion.await()
+        assertEquals(1, emitted.elderSession.questionIndex)
+        assertEquals(answer, emitted.interviews.single().answers["heat"])
+        handle.close()
+
+        val reopened = newStore(file)
+        val persisted = reopened.store.data.first()
+        assertEquals("elders", persisted.currentTab)
+        assertEquals(1, persisted.elderSession.questionIndex)
+        assertEquals(answer, persisted.interviews.single().answers["heat"])
+        reopened.close()
     }
 
     @Test

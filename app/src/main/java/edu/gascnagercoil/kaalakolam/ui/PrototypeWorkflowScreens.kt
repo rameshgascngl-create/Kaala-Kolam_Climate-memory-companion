@@ -265,6 +265,7 @@ private fun WfIconButton(
 private fun WfSegments(
     labels: List<String>,
     selected: Int,
+    tagPrefix: String = "segment",
     onSelect: (Int) -> Unit = {},
 ) {
     val p = PrototypeTheme.palette
@@ -275,7 +276,7 @@ private fun WfSegments(
         labels.forEachIndexed { index, label ->
             val active = index == selected
             FidelityTouchTarget(
-                tag = "segment.$index",
+                tag = "$tagPrefix.$index",
                 modifier = Modifier.weight(1f),
                 onClick = { onSelect(index) },
             ) {
@@ -764,6 +765,7 @@ fun ElderPrototypeScreen(
     onCreateInterview: (String, Int, Int, String) -> Unit = { _, _, _, _ -> },
     onDeleteInterview: (String) -> Unit = {},
     onAnswerChange: (String, String, InterviewAnswer) -> Unit = { _, _, _ -> },
+    onAdvance: (String, String, InterviewAnswer?, ElderSession) -> Unit = { _, _, _, _ -> },
     initialDeletePendingId: String? = null,
 ) {
     val context = LocalContext.current
@@ -805,19 +807,18 @@ fun ElderPrototypeScreen(
                     onSessionChange(ElderSession())
                 }
             },
-            onForward = { answered ->
+            onForward = { answer ->
                 val index = appState.elderSession.questionIndex
                 val last = index == asset.elderQuestions.lastIndex
-                if (last) {
-                    onSessionChange(
-                        appState.elderSession.copy(
-                            mode = ElderMode.RESULT,
-                            questionIndex = index,
-                        ),
+                val nextSession = if (last) {
+                    appState.elderSession.copy(
+                        mode = ElderMode.RESULT,
+                        questionIndex = index,
                     )
                 } else {
-                    onSessionChange(appState.elderSession.copy(questionIndex = index + 1))
+                    appState.elderSession.copy(questionIndex = index + 1)
                 }
+                onAdvance(activeInterview.id, question.id, answer, nextSession)
             },
         )
         return
@@ -843,7 +844,7 @@ fun ElderPrototypeScreen(
             text = content.start.text(lang),
             filled = true,
             enabled = !atLimit,
-            tag = "screen.primary-button",
+            tag = "elder-start",
             onClick = { onSessionChange(ElderSession(mode = ElderMode.SETUP)) },
         )
         if (atLimit) {
@@ -911,7 +912,7 @@ private fun ElderAskScreen(
     content: ElderSliceCContent,
     onAnswerChange: (String, InterviewAnswer) -> Unit,
     onBack: () -> Unit,
-    onForward: (Boolean) -> Unit,
+    onForward: (InterviewAnswer?) -> Unit,
 ) {
     val p = PrototypeTheme.palette
     val answer = interview.answers[question.id]
@@ -925,6 +926,7 @@ private fun ElderAskScreen(
             text = interview.nickname + " · " + (questionIndex + 1) + " / " + questionCount,
             muted = true,
             bottom = 4,
+            tag = "elder-progress-label",
         )
         Box(
             modifier = Modifier
@@ -952,7 +954,9 @@ private fun ElderAskScreen(
             fontFamily = MaterialTheme.typography.headlineMedium.fontFamily,
             fontSize = 20.8.sp,
             lineHeight = 28.08.sp,
-            modifier = Modifier.padding(bottom = 12.dp),
+            modifier = Modifier
+                .padding(bottom = 12.dp)
+                .fidelityTag("elder-question"),
         )
 
         Row(
@@ -963,6 +967,7 @@ private fun ElderAskScreen(
         ) {
             (-2..2).forEachIndexed { index, value ->
                 ElderScaleButton(
+                    tag = "elder-answer.$value",
                     glyph = content.scaleGlyphs[index],
                     label = content.ratingLabels[index].text(lang),
                     background = wfHexColor(content.scaleColours[index]),
@@ -1008,6 +1013,7 @@ private fun ElderAskScreen(
             WfSegments(
                 labels = content.confidenceLabels.map { it.text(lang) },
                 selected = (answer?.confidence ?: 0) - 1,
+                tagPrefix = "elder-confidence",
                 onSelect = { selected ->
                     onAnswerChange(
                         question.id,
@@ -1044,6 +1050,7 @@ private fun ElderAskScreen(
             WfButton(
                 text = content.back.text(lang),
                 modifier = Modifier.weight(1f),
+                tag = "elder-back",
                 onClick = onBack,
             )
             val forwardText = if (last) {
@@ -1059,7 +1066,8 @@ private fun ElderAskScreen(
                 modifier = Modifier.weight(1f),
                 filled = true,
                 enabled = forwardEnabled,
-                onClick = { onForward(isAnswered) },
+                tag = "elder-forward",
+                onClick = { onForward(answer?.takeIf { it.answered }) },
             )
         }
     }
@@ -1067,6 +1075,7 @@ private fun ElderAskScreen(
 
 @Composable
 private fun ElderScaleButton(
+    tag: String,
     glyph: String,
     label: String,
     background: Color,
@@ -1077,7 +1086,7 @@ private fun ElderScaleButton(
 ) {
     val p = PrototypeTheme.palette
     FidelityTouchTarget(
-        tag = "elder-scale.$glyph",
+        tag = tag,
         modifier = modifier,
         onClick = onClick,
     ) {
@@ -1174,6 +1183,7 @@ private fun ElderStoryField(
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(min = 96.dp)
+            .fidelityTag("elder-story")
             .background(p.ground, RoundedCornerShape(10.dp))
             .border(1.dp, p.line, RoundedCornerShape(10.dp))
             .padding(horizontal = 12.dp, vertical = 10.dp),
@@ -1247,6 +1257,7 @@ private fun ElderSetupScreen(
                     modifier = Modifier.weight(1f),
                     filled = true,
                     enabled = !atLimit,
+                    tag = "elder-setup-start",
                     onClick = {
                         onCreateInterview(
                             nickname,
@@ -1259,6 +1270,7 @@ private fun ElderSetupScreen(
                 WfButton(
                     text = content.back.text(lang),
                     modifier = Modifier.weight(1f),
+                    tag = "elder-setup-back",
                     onClick = onBack,
                 )
             }

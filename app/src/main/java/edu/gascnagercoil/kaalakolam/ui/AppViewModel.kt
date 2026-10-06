@@ -53,6 +53,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch { stateRepository.setThemeMode(themeMode) }
     }
 
+    fun setCurrentTab(tab: String) {
+        viewModelScope.launch { stateRepository.setCurrentTab(tab) }
+    }
+
     fun setPredictionAnswer(id: String, answer: PredictionState) {
         viewModelScope.launch { stateRepository.setPredictionAnswer(id, answer) }
     }
@@ -89,6 +93,17 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun setElderAnswer(interviewId: String, questionId: String, answer: InterviewAnswer) {
         viewModelScope.launch {
             stateRepository.setElderAnswer(interviewId, questionId, answer)
+        }
+    }
+
+    fun advanceElderQuestion(
+        interviewId: String,
+        questionId: String,
+        answer: InterviewAnswer?,
+        session: ElderSession,
+    ) {
+        viewModelScope.launch {
+            stateRepository.advanceElderQuestion(interviewId, questionId, answer, session)
         }
     }
 

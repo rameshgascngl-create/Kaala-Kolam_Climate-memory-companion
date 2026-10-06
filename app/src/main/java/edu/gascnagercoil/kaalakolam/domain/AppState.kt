@@ -21,6 +21,7 @@ data class AppState(
     val schemaVersion: Int = CURRENT_SCHEMA,
     val language: String = "en",
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
+    val currentTab: String = "home",
     val learnedTopicIds: Set<String> = emptySet(),
     val memoryFlags: Map<String, Boolean> = emptyMap(),
     val predictionAnswers: Map<String, PredictionState> = emptyMap(),
@@ -37,6 +38,9 @@ data class AppState(
 
 fun AppState.repair(): AppState {
     val repairedLanguage = if (language == "ta") "ta" else "en"
+    val repairedCurrentTab = currentTab.takeIf {
+        it in setOf("home", "learn", "elders", "class", "council", "predict")
+    } ?: "home"
     val repairedTopics = learnedTopicIds
         .asSequence()
         .filter { it.isNotBlank() && it.length <= 64 }
@@ -68,6 +72,7 @@ fun AppState.repair(): AppState {
     return copy(
         schemaVersion = AppState.CURRENT_SCHEMA,
         language = repairedLanguage,
+        currentTab = repairedCurrentTab,
         learnedTopicIds = repairedTopics,
         memoryFlags = repairedFlags,
         predictionAnswers = repairedPredictions,

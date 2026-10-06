@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +44,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.TextAlign
@@ -93,6 +95,7 @@ fun KaalaKolamApp(
     widthSizeClass: WindowWidthSizeClass,
     onLanguageChange: (String) -> Unit,
     onThemeChange: (ThemeMode) -> Unit,
+    onCurrentTabChange: (String) -> Unit = {},
     onBackup: (AppState) -> String,
     onValidateBackup: (String) -> AppState?,
     onRestore: (AppState) -> Unit,
@@ -103,6 +106,8 @@ fun KaalaKolamApp(
     onCreateElderInterview: (String, Int, Int, String) -> Unit = { _, _, _, _ -> },
     onDeleteElderInterview: (String) -> Unit = {},
     onElderAnswerChange: (String, String, InterviewAnswer) -> Unit = { _, _, _ -> },
+    onAdvanceElderQuestion: (String, String, InterviewAnswer?, ElderSession) -> Unit =
+        { _, _, _, _ -> },
     initialRoute: String = Destination.HOME.route,
 ) {
     val navController = rememberNavController()
@@ -116,6 +121,7 @@ fun KaalaKolamApp(
     val fontScale = listOf(1f, 1.2f, 1.42f)[zoom]
 
     fun navigatePrimary(destination: Destination) {
+        onCurrentTabChange(destination.route)
         navController.navigate(destination.route) {
             popUpTo(navController.graph.findStartDestination().id) { saveState = true }
             launchSingleTop = true
@@ -123,10 +129,31 @@ fun KaalaKolamApp(
         }
     }
 
+    LaunchedEffect(uiState.appState.currentTab, initialRoute) {
+        if (initialRoute == Destination.HOME.route) {
+            val restored = Destination.entries.firstOrNull {
+                it.route == uiState.appState.currentTab
+            }
+            val visibleRoute = navController.currentDestination?.route
+            if (
+                restored != null &&
+                visibleRoute != restored.route &&
+                visibleRoute != ABOUT_ROUTE
+            ) {
+                navController.navigate(restored.route) {
+                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+        }
+    }
+
     BackHandler(enabled = currentRoute != Destination.HOME.route) {
         if (currentRoute == ABOUT_ROUTE) {
             navController.popBackStack()
         } else {
+            onCurrentTabChange(Destination.HOME.route)
             navController.navigate(Destination.HOME.route) {
                 popUpTo(Destination.HOME.route) { inclusive = false }
                 launchSingleTop = true
@@ -138,6 +165,7 @@ fun KaalaKolamApp(
         LocalDensity provides Density(baseDensity.density, baseDensity.fontScale * fontScale),
     ) {
         Scaffold(
+            modifier = Modifier.semantics { testTagsAsResourceId = true },
             containerColor = PrototypeTheme.palette.ground,
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
             topBar = {
@@ -192,6 +220,7 @@ fun KaalaKolamApp(
                         onCreateInterview = onCreateElderInterview,
                         onDeleteInterview = onDeleteElderInterview,
                         onAnswerChange = onElderAnswerChange,
+                        onAdvance = onAdvanceElderQuestion,
                     )
                 }
                 composable(Destination.CLASS.route) {
