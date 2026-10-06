@@ -492,11 +492,19 @@ private fun LearnTopicPrototype(lang: String, deep: Boolean, onBack: () -> Unit)
                 tint = PrototypeTheme.palette.turmeric,
                 modifier = Modifier.size(44.dp),
             )
+            val topicHeading = wfText(lang, "Sun, seasons and why places differ", "சூரியன், பருவங்கள், இடங்கள் ஏன் வேறுபடுகின்றன")
             Text(
-                wfText(lang, "Sun, seasons and why places differ", "சூரியன், பருவங்கள், இடங்கள் ஏன் வேறுபடுகின்றன"),
+                topicHeading,
                 color = PrototypeTheme.palette.flour,
-                style = MaterialTheme.typography.headlineLarge,
-                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    platformStyle = PlatformTextStyle(includeFontPadding = false),
+                ),
+                modifier = Modifier.weight(1f).fidelityTag("screen.heading"),
+                onTextLayout = fidelityTextLayout(
+                    tag = "screen.heading",
+                    kind = "heading",
+                    text = topicHeading,
+                ),
             )
         }
         WfSegments(
@@ -526,7 +534,7 @@ private fun LearnTopicPrototype(lang: String, deep: Boolean, onBack: () -> Unit)
                 "பூமி சாய்வாக உள்ளது. சூரியனைச் சுற்றும்போது ஆண்டின் வெவ்வேறு காலங்களில் வெவ்வேறு இடங்களில் சூரிய ஒளி நேராகவோ சாய்வாகவோ விழுகிறது; இதனால் பருவங்கள் உண்டாகின்றன. நிலநடுக்கோட்டுக்கு அருகில் ஆண்டு முழுவதும் சூரிய ஒளி வலுவாக இருப்பதால் முக்கிய பருவ மாற்றம் மழையே, வெப்பநிலை அல்ல. தொலைவில் உள்ள இடங்களில் கோடையும் குளிர்காலமும் மிகவும் வேறுபடும். இந்திய வானிலைத் துறை குளிர்காலம், கோடைக்காலம், தென்மேற்குப் பருவமழை, பருவமழைக்குப் பிந்தைய மாதங்கள் என நான்கு பருவங்களை வகுக்கிறது.",
             )
         }
-        WfParagraph(text)
+        WfParagraph(text, tag = "screen.body.primary")
     }
 }
 
@@ -592,13 +600,19 @@ private fun LearnGamePrototype(lang: String, onBack: () -> Unit) {
             Box(Modifier.fillMaxWidth(.1f).height(6.dp).background(p.turmeric, RoundedCornerShape(99.dp)))
         }
         Spacer(Modifier.height(14.dp))
+        val gamePrompt = wfText(lang, "It rained heavily in my town last night.", "நேற்றிரவு என் ஊரில் கனமழை பெய்தது.")
         Text(
-            wfText(lang, "It rained heavily in my town last night.", "நேற்றிரவு என் ஊரில் கனமழை பெய்தது."),
+            gamePrompt,
             color = p.flour,
             fontFamily = MaterialTheme.typography.headlineMedium.fontFamily,
             fontSize = 20.8.sp,
             lineHeight = 28.08.sp,
-            modifier = Modifier.padding(bottom = 13.dp),
+            modifier = Modifier.padding(bottom = 13.dp).fidelityTag("screen.body.primary"),
+            onTextLayout = fidelityTextLayout(
+                tag = "screen.body.primary",
+                kind = "body",
+                text = gamePrompt,
+            ),
         )
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             WfButton(wfText(lang, "Weather", "வானிலை"), Modifier.weight(1f).heightIn(min = 64.dp))
@@ -629,6 +643,7 @@ private fun LearnWordsPrototype(lang: String, onBack: () -> Unit) {
                 "The Tamil terms used in this app. A ⚠ mark means the term is a draft: please check it with a Tamil language expert or the Tamil Nadu textbook glossary before printing.",
                 "இந்தச் செயலியில் பயன்படுத்தப்படும் தமிழ்ச் சொற்கள். ⚠ குறியிட்ட சொல் வரைவு நிலையில் உள்ளது: அச்சிடும் முன் தமிழ் மொழி வல்லுநரிடம் அல்லது தமிழ்நாடுப் பாடநூல் கலைச்சொல் பட்டியலுடன் சரிபாருங்கள்.",
             ),
+            tag = "screen.body.primary",
         )
         WfInput(query, wfText(lang, "Search a word", "சொல்லைத் தேடுங்கள்"), onValueChange = { query = it })
         Spacer(Modifier.height(10.dp))
