@@ -70,7 +70,10 @@ object EldersDomain {
 
     fun repairInterview(interview: Interview): Interview? {
         val id = interview.id.trim()
+        val nickname = interview.nickname.trim().ifBlank { "Elder" }
         if (id.isEmpty() || id.length > 12) return null
+        if (nickname.length > MAX_NICKNAME_CHARS) return null
+        if (interview.reaction.length > MAX_FREE_TEXT_CHARS) return null
         if (interview.place !in 0..4 || interview.birthDecade !in 0..5) return null
 
         val repairedAnswers = linkedMapOf<String, InterviewAnswer>()
@@ -78,6 +81,7 @@ object EldersDomain {
             val answer = interview.answers[questionId] ?: return@forEach
             if (!answer.answered) return@forEach
             if (answer.rating != null && answer.rating !in -2..2) return@forEach
+            if (answer.story.length > MAX_FREE_TEXT_CHARS) return null
             val confidence = if (answer.rating != null && answer.confidence in 1..3) {
                 answer.confidence
             } else {
@@ -86,21 +90,15 @@ object EldersDomain {
             repairedAnswers[questionId] = answer.copy(
                 answered = true,
                 confidence = confidence,
-                story = if (answer.rating == null) {
-                    ""
-                } else {
-                    answer.story.take(MAX_FREE_TEXT_CHARS)
-                },
+                story = if (answer.rating == null) "" else answer.story,
             )
         }
 
         return interview.copy(
             id = id,
-            nickname = interview.nickname.trim()
-                .take(MAX_NICKNAME_CHARS)
-                .ifBlank { "Elder" },
+            nickname = nickname,
             answers = repairedAnswers,
-            reaction = interview.reaction.take(MAX_FREE_TEXT_CHARS),
+            reaction = interview.reaction,
             createdAt = interview.createdAt.coerceAtLeast(0L),
         )
     }
