@@ -70,7 +70,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         place: Int,
         defaultNickname: String,
     ) {
-        val id = UUID.randomUUID().toString().replace("-", "").take(12)
+        val id = Integer.toUnsignedString(UUID.randomUUID().hashCode(), 36)
         val interview = Interview(
             id = id,
             nickname = nickname.trim().ifBlank { defaultNickname },
