@@ -940,10 +940,10 @@ private fun ElderResultScreen(
     val answered = questions.mapNotNull { question ->
         interview.answers[question.id]?.takeIf { it.answered }?.let { question to it }
     }
-    val ranked = answered
+    val rankedCandidates = answered
         .filter { (_, answer) -> answer.rating != null && answer.rating != 0 }
         .sortedByDescending { (_, answer) -> kotlin.math.abs(requireNotNull(answer.rating)) }
-        .take(3)
+    val ranked = rankedCandidates.subList(0, minOf(3, rankedCandidates.size))
     val comparable = answered.filter { (question, answer) ->
         question.exp != 0 && answer.rating != null && answer.rating != 0
     }
