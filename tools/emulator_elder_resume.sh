@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -euxo pipefail
 
 PKG="edu.gascnagercoil.kaalakolam.debug"
 COMPONENT="$PKG/edu.gascnagercoil.kaalakolam.MainActivity"

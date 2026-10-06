@@ -53,6 +53,7 @@ class EldersSliceCTest {
         assertTrue(cannotSay.answers.values.all { it.answered && it.rating == null })
         assertEquals(0, EldersDomain.answeredCount(zero))
         assertTrue(zero.answers.isEmpty())
+        assertEquals(9, fixture("zero-answers").elderSession.questionIndex)
     }
 
     @Test
