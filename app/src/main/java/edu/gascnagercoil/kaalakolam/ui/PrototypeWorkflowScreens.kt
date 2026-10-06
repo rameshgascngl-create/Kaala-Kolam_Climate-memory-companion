@@ -493,13 +493,20 @@ private fun LearnTopicPrototype(lang: String, deep: Boolean, onBack: () -> Unit)
                 modifier = Modifier.size(44.dp),
             )
             val topicHeading = wfText(lang, "Sun, seasons and why places differ", "சூரியன், பருவங்கள், இடங்கள் ஏன் வேறுபடுகின்றன")
+            val topicHeadingWidth = if (
+                lang == "ta" && LocalConfiguration.current.screenWidthDp >= 360
+            ) {
+                Modifier.widthIn(max = 234.dp)
+            } else {
+                Modifier.weight(1f)
+            }
             Text(
                 topicHeading,
                 color = PrototypeTheme.palette.flour,
                 style = MaterialTheme.typography.headlineLarge.copy(
                     platformStyle = PlatformTextStyle(includeFontPadding = false),
                 ),
-                modifier = Modifier.weight(1f).fidelityTag("screen.heading"),
+                modifier = topicHeadingWidth.fidelityTag("screen.heading"),
                 onTextLayout = fidelityTextLayout(
                     tag = "screen.heading",
                     kind = "heading",
@@ -519,6 +526,15 @@ private fun LearnTopicPrototype(lang: String, deep: Boolean, onBack: () -> Unit)
         Spacer(Modifier.height(14.dp))
         WfCard {
             WfH2(wfText(lang, "Watch the animation", "அனிமேஷனைப் பாருங்கள்"))
+            WfParagraph(
+                wfText(
+                    lang,
+                    "Watch for: Where Earth is on its path, and which way its axis leans.",
+                    "கவனியுங்கள்: பூமி அதன் பாதையில் எங்கே இருக்கிறது, அதன் அச்சு எந்தப் பக்கம் சாய்ந்துள்ளது என்று பாருங்கள்.",
+                ),
+                bottom = 8,
+                tag = "screen.body.primary",
+            )
             AnimationPreview(lang)
         }
         val text = when (level) {
@@ -534,7 +550,7 @@ private fun LearnTopicPrototype(lang: String, deep: Boolean, onBack: () -> Unit)
                 "பூமி சாய்வாக உள்ளது. சூரியனைச் சுற்றும்போது ஆண்டின் வெவ்வேறு காலங்களில் வெவ்வேறு இடங்களில் சூரிய ஒளி நேராகவோ சாய்வாகவோ விழுகிறது; இதனால் பருவங்கள் உண்டாகின்றன. நிலநடுக்கோட்டுக்கு அருகில் ஆண்டு முழுவதும் சூரிய ஒளி வலுவாக இருப்பதால் முக்கிய பருவ மாற்றம் மழையே, வெப்பநிலை அல்ல. தொலைவில் உள்ள இடங்களில் கோடையும் குளிர்காலமும் மிகவும் வேறுபடும். இந்திய வானிலைத் துறை குளிர்காலம், கோடைக்காலம், தென்மேற்குப் பருவமழை, பருவமழைக்குப் பிந்தைய மாதங்கள் என நான்கு பருவங்களை வகுக்கிறது.",
             )
         }
-        WfParagraph(text, tag = "screen.body.primary")
+        WfParagraph(text)
     }
 }
 
