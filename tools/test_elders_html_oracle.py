@@ -21,11 +21,12 @@ window.__ELDERS_KK1_ORACLE__ = {
   poolImports: () => JSON.parse(JSON.stringify(S.pool.imports))
 };
 """
-idx = html.rfind("</script>")
+needle = "boot();\n})();"
+idx = html.rfind(needle)
 if idx < 0:
-    raise SystemExit("Authoritative HTML has no closing script tag")
+    raise SystemExit("Authoritative HTML boot/IIFE marker not found")
 out.parent.mkdir(parents=True, exist_ok=True)
-out.write_text(html[:idx] + expose + html[idx:], encoding="utf-8")
+out.write_text(html[:idx] + expose + "\n" + html[idx:], encoding="utf-8")
 
 fixture = json.loads(fixture_path.read_text(encoding="utf-8"))
 with sync_playwright() as p:
