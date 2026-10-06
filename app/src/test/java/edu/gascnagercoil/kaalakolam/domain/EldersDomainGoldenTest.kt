@@ -93,22 +93,30 @@ class EldersDomainGoldenTest {
         val valid = (0 until 50).map { index ->
             Interview(
                 id = "iv" + index.toString().padStart(4, '0'),
-                nickname = "N".repeat(40),
+                nickname = "N".repeat(EldersDomain.MAX_NICKNAME_CHARS),
                 birthDecade = index % 6,
                 place = index % 5,
                 createdAt = index.toLong(),
             )
         }
-        val invalid = Interview(
-            id = "too-long-interview-id",
-            nickname = "bad",
-            birthDecade = 9,
-            place = 9,
+        val invalid = listOf(
+            Interview(
+                id = "too-long-interview-id",
+                nickname = "bad",
+                birthDecade = 9,
+                place = 9,
+            ),
+            Interview(
+                id = "ivover",
+                nickname = "N".repeat(EldersDomain.MAX_NICKNAME_CHARS + 1),
+                birthDecade = 1,
+                place = 1,
+            ),
         )
         val repaired = EldersDomain.repairInterviews(valid + invalid)
 
         assertEquals(50, repaired.size)
-        assertTrue(repaired.all { it.nickname.length <= EldersDomain.MAX_NICKNAME_CHARS })
+        assertTrue(repaired.all { it.nickname.length == EldersDomain.MAX_NICKNAME_CHARS })
         assertEquals(49L, repaired.last().createdAt)
     }
 
