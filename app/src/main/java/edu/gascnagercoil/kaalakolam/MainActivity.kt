@@ -53,6 +53,7 @@ class MainActivity : AppCompatActivity() {
                     onElderSessionChange = viewModel::setElderSession,
                     onCreateElderInterview = viewModel::createElderInterview,
                     onDeleteElderInterview = viewModel::deleteElderInterview,
+                    onElderAnswerChange = viewModel::setElderAnswer,
                 )
             }
         }

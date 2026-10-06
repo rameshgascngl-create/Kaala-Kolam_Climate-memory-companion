@@ -20,25 +20,25 @@ adb shell "run-as $PKG mkdir -p files/datastore"
 STATE_B64="$(base64 -w0 "$STATE_FILE")"
 adb shell "run-as $PKG sh -c 'echo $STATE_B64 | base64 -d > files/datastore/kaala_kolam_state.json'"
 
-launch_elders() {
-  adb shell am start -W -n "$COMPONENT" >/tmp/kaala-kolam-start.txt
-  sleep 2
-  # 390 dp viewport at 160 dpi; Elders is the third of six bottom tabs.
-  adb shell input tap 162 780
-  sleep 1
+dump_window() {
+  adb shell uiautomator dump /sdcard/kaala-kolam-window.xml >/dev/null
+  adb shell cat /sdcard/kaala-kolam-window.xml > /tmp/kaala-kolam-window.xml
 }
 
 assert_question_five() {
-  adb shell uiautomator dump /sdcard/kaala-kolam-window.xml >/dev/null
-  adb shell cat /sdcard/kaala-kolam-window.xml > /tmp/kaala-kolam-window.xml
+  dump_window
   grep -F "$QUESTION" /tmp/kaala-kolam-window.xml
   grep -F "Resume Elder" /tmp/kaala-kolam-window.xml
 }
 
-launch_elders
+adb shell am start -W -n "$COMPONENT" >/tmp/kaala-kolam-start.txt
+sleep 2
+# 390 dp viewport at 160 dpi; Elders is the third of six bottom tabs.
+adb shell input tap 162 780
+sleep 1
 assert_question_five
 
-# Rotation must preserve the persisted question/session and the same live screen.
+# Rotation must retain the same persisted question/session.
 adb shell settings put system user_rotation 1
 sleep 2
 assert_question_five
@@ -46,14 +46,24 @@ adb shell settings put system user_rotation 0
 sleep 2
 assert_question_five
 
+# Simulate OS process death rather than clearing app data/task state.
+adb shell input keyevent KEYCODE_HOME
+sleep 1
 PID_BEFORE="$(adb shell pidof "$PKG" | tr -d '\r')"
 test -n "$PID_BEFORE"
-adb shell am force-stop "$PKG"
-sleep 1
-PID_AFTER="$(adb shell pidof "$PKG" | tr -d '\r' || true)"
-test -z "$PID_AFTER"
+adb shell am kill "$PKG"
 
-launch_elders
+for _ in 1 2 3 4 5; do
+  PID_AFTER="$(adb shell pidof "$PKG" | tr -d '\r' || true)"
+  test -z "$PID_AFTER" && break
+  sleep 1
+done
+test -z "$(adb shell pidof "$PKG" | tr -d '\r' || true)"
+
+# Relaunch from the launcher. The restored task must return to the same Elders question;
+# no navigation tap is allowed after process death.
+adb shell monkey -p "$PKG" -c android.intent.category.LAUNCHER 1 >/tmp/kaala-kolam-relaunch.txt
+sleep 3
 assert_question_five
 
 echo "ELDERS_PROCESS_DEATH_RESUME_PASS questionIndex=4 api=34"

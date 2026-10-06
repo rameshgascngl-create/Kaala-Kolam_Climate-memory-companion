@@ -6,8 +6,10 @@ import androidx.datastore.core.Serializer
 import androidx.datastore.dataStore
 import edu.gascnagercoil.kaalakolam.domain.AppState
 import edu.gascnagercoil.kaalakolam.domain.ElderSession
+import edu.gascnagercoil.kaalakolam.domain.ElderMode
 import edu.gascnagercoil.kaalakolam.domain.EldersDomain
 import edu.gascnagercoil.kaalakolam.domain.Interview
+import edu.gascnagercoil.kaalakolam.domain.InterviewAnswer
 import edu.gascnagercoil.kaalakolam.domain.PredictionState
 import edu.gascnagercoil.kaalakolam.domain.ThemeMode
 import edu.gascnagercoil.kaalakolam.domain.repair
@@ -96,9 +98,31 @@ class AppStateRepository(context: Context) {
             } else {
                 current.copy(
                     interviews = current.interviews + interview,
-                    elderSession = ElderSession(),
+                    elderSession = ElderSession(
+                        mode = ElderMode.ASK,
+                        activeId = interview.id,
+                        questionIndex = 0,
+                    ),
                 ).repair()
             }
+        }
+    }
+
+    suspend fun setElderAnswer(
+        interviewId: String,
+        questionId: String,
+        answer: InterviewAnswer,
+    ) {
+        store.updateData { current ->
+            current.copy(
+                interviews = current.interviews.map { interview ->
+                    if (interview.id == interviewId && questionId in EldersDomain.questionIds) {
+                        interview.copy(answers = interview.answers + (questionId to answer))
+                    } else {
+                        interview
+                    }
+                },
+            ).repair()
         }
     }
 

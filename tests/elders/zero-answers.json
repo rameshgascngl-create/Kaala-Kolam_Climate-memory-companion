@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 2,
+  "language": "en",
+  "interviews": [
+    {
+      "id": "ivzero",
+      "nickname": "Zero",
+      "birthDecade": 1,
+      "place": 0,
+      "answers": {},
+      "createdAt": 5
+    }
+  ],
+  "elderSession": {
+    "mode": "ASK",
+    "activeId": "ivzero",
+    "questionIndex": 0
+  }
+}

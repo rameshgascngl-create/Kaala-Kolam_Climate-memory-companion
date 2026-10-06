@@ -1,5 +1,7 @@
 package edu.gascnagercoil.kaalakolam.domain
 
+import java.text.BreakIterator
+import java.util.Locale
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -39,6 +41,7 @@ data class ElderSession(
 object EldersDomain {
     const val MAX_INTERVIEWS = 50
     const val MAX_NICKNAME_CHARS = 30
+    const val MAX_STORY_GRAPHEMES = 500
     const val MAX_FREE_TEXT_CHARS = 500
 
     val questionIds: List<String> = listOf(
@@ -56,6 +59,40 @@ object EldersDomain {
 
     fun answeredCount(interview: Interview): Int =
         questionIds.count { interview.answers[it]?.answered == true }
+
+    fun graphemeCount(text: String, locale: Locale = Locale.ROOT): Int {
+        val iterator = BreakIterator.getCharacterInstance(locale)
+        iterator.setText(text)
+        var count = 0
+        var boundary = iterator.first()
+        while (boundary != BreakIterator.DONE) {
+            val next = iterator.next()
+            if (next == BreakIterator.DONE) break
+            count++
+            boundary = next
+        }
+        return count
+    }
+
+    fun graphemePrefix(
+        text: String,
+        maxGraphemes: Int = MAX_STORY_GRAPHEMES,
+        locale: Locale = Locale.ROOT,
+    ): String {
+        require(maxGraphemes >= 0)
+        if (text.isEmpty() || maxGraphemes == 0) return ""
+        val iterator = BreakIterator.getCharacterInstance(locale)
+        iterator.setText(text)
+        var boundary = iterator.first()
+        var count = 0
+        while (count < maxGraphemes) {
+            val next = iterator.next()
+            if (next == BreakIterator.DONE) return text
+            boundary = next
+            count++
+        }
+        return text.subSequence(0, boundary).toString()
+    }
 
     fun repairInterviews(interviews: List<Interview>): List<Interview> {
         val byId = linkedMapOf<String, Interview>()
@@ -81,16 +118,11 @@ object EldersDomain {
             val answer = interview.answers[questionId] ?: return@forEach
             if (!answer.answered) return@forEach
             if (answer.rating != null && answer.rating !in -2..2) return@forEach
-            if (answer.story.length > MAX_FREE_TEXT_CHARS) return null
-            val confidence = if (answer.rating != null && answer.confidence in 1..3) {
-                answer.confidence
-            } else {
-                null
-            }
+            val confidence = answer.confidence?.takeIf { it in 1..3 }
             repairedAnswers[questionId] = answer.copy(
                 answered = true,
                 confidence = confidence,
-                story = if (answer.rating == null) "" else answer.story,
+                story = graphemePrefix(answer.story),
             )
         }
 

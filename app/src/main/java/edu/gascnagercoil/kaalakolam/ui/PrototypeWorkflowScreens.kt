@@ -35,6 +35,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,18 +47,27 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import edu.gascnagercoil.kaalakolam.content.ContentRepository
+import edu.gascnagercoil.kaalakolam.content.ElderQuestionContent
 import edu.gascnagercoil.kaalakolam.content.ElderSliceBContent
+import edu.gascnagercoil.kaalakolam.content.ElderSliceCContent
 import edu.gascnagercoil.kaalakolam.domain.AppState
 import edu.gascnagercoil.kaalakolam.domain.ElderMode
 import edu.gascnagercoil.kaalakolam.domain.ElderSession
 import edu.gascnagercoil.kaalakolam.domain.EldersDomain
+import edu.gascnagercoil.kaalakolam.domain.Interview
+import edu.gascnagercoil.kaalakolam.domain.InterviewAnswer
 import edu.gascnagercoil.kaalakolam.domain.M2Domain
 import edu.gascnagercoil.kaalakolam.domain.PredictionState
+import edu.gascnagercoil.kaalakolam.text.TextSafety
 import edu.gascnagercoil.kaalakolam.ui.theme.PrototypeTheme
+import java.util.Locale
 import kotlinx.coroutines.delay
 
 private fun wfText(lang: String, en: String, ta: String): String = if (lang == "ta") ta else en
@@ -753,11 +763,16 @@ fun ElderPrototypeScreen(
     onSessionChange: (ElderSession) -> Unit = {},
     onCreateInterview: (String, Int, Int, String) -> Unit = { _, _, _, _ -> },
     onDeleteInterview: (String) -> Unit = {},
+    onAnswerChange: (String, String, InterviewAnswer) -> Unit = { _, _, _ -> },
     initialDeletePendingId: String? = null,
 ) {
     val context = LocalContext.current
-    val content = remember(context) {
-        ContentRepository(context).loadElderSliceB()
+    val asset = remember(context) {
+        ContentRepository(context).loadElders()
+    }
+    val content = asset.sliceB
+    val activeInterview = appState.elderSession.activeId?.let { activeId ->
+        appState.interviews.firstOrNull { it.id == activeId }
     }
 
     if (appState.elderSession.mode == ElderMode.SETUP) {
@@ -767,6 +782,43 @@ fun ElderPrototypeScreen(
             atLimit = appState.interviews.size >= EldersDomain.MAX_INTERVIEWS,
             onBack = { onSessionChange(ElderSession()) },
             onCreateInterview = onCreateInterview,
+        )
+        return
+    }
+
+    if (appState.elderSession.mode == ElderMode.ASK && activeInterview != null) {
+        ElderAskScreen(
+            lang = lang,
+            interview = activeInterview,
+            question = asset.elderQuestions[appState.elderSession.questionIndex],
+            questionIndex = appState.elderSession.questionIndex,
+            questionCount = asset.elderQuestions.size,
+            content = asset.sliceC,
+            onAnswerChange = { questionId, answer ->
+                onAnswerChange(activeInterview.id, questionId, answer)
+            },
+            onBack = {
+                val index = appState.elderSession.questionIndex
+                if (index > 0) {
+                    onSessionChange(appState.elderSession.copy(questionIndex = index - 1))
+                } else {
+                    onSessionChange(ElderSession())
+                }
+            },
+            onForward = { answered ->
+                val index = appState.elderSession.questionIndex
+                val last = index == asset.elderQuestions.lastIndex
+                if (last) {
+                    onSessionChange(
+                        appState.elderSession.copy(
+                            mode = ElderMode.RESULT,
+                            questionIndex = index,
+                        ),
+                    )
+                } else {
+                    onSessionChange(appState.elderSession.copy(questionIndex = index + 1))
+                }
+            },
         )
         return
     }
@@ -847,6 +899,300 @@ fun ElderPrototypeScreen(
         }
         WfFooter(lang)
     }
+}
+
+@Composable
+private fun ElderAskScreen(
+    lang: String,
+    interview: Interview,
+    question: ElderQuestionContent,
+    questionIndex: Int,
+    questionCount: Int,
+    content: ElderSliceCContent,
+    onAnswerChange: (String, InterviewAnswer) -> Unit,
+    onBack: () -> Unit,
+    onForward: (Boolean) -> Unit,
+) {
+    val p = PrototypeTheme.palette
+    val answer = interview.answers[question.id]
+    val isAnswered = answer?.answered == true
+    val rating = if (isAnswered) answer?.rating else null
+    val last = questionIndex == questionCount - 1
+    val progress = (questionIndex + 1).toFloat() / questionCount.toFloat()
+
+    WorkflowPage {
+        WfParagraph(
+            text = interview.nickname + " · " + (questionIndex + 1) + " / " + questionCount,
+            muted = true,
+            bottom = 4,
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(6.dp)
+                .background(p.ground3, RoundedCornerShape(99.dp)),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(progress)
+                    .height(6.dp)
+                    .background(p.turmeric, RoundedCornerShape(99.dp)),
+            )
+        }
+        Spacer(Modifier.height(14.dp))
+        WfH2(question.title.text(lang))
+        WfParagraph(
+            text = content.askAloud.text(lang),
+            muted = true,
+            bottom = 4,
+        )
+        Text(
+            text = question.ask.text(lang),
+            color = p.flour,
+            fontFamily = MaterialTheme.typography.headlineMedium.fontFamily,
+            fontSize = 20.8.sp,
+            lineHeight = 28.08.sp,
+            modifier = Modifier.padding(bottom = 12.dp),
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .semantics { contentDescription = content.answerGroupLabel.text(lang) },
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            (-2..2).forEachIndexed { index, value ->
+                ElderScaleButton(
+                    glyph = content.scaleGlyphs[index],
+                    label = content.ratingLabels[index].text(lang),
+                    background = wfHexColor(content.scaleColours[index]),
+                    foreground = wfHexColor(content.scaleTextColours[index]),
+                    selected = isAnswered && rating == value,
+                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        onAnswerChange(
+                            question.id,
+                            (answer ?: InterviewAnswer()).copy(
+                                answered = true,
+                                rating = value,
+                            ),
+                        )
+                    },
+                )
+            }
+        }
+        Spacer(Modifier.height(8.dp))
+        ElderCannotSayButton(
+            text = content.cannotSay.text(lang),
+            selected = isAnswered && rating == null,
+            onClick = {
+                onAnswerChange(
+                    question.id,
+                    (answer ?: InterviewAnswer()).copy(
+                        answered = true,
+                        rating = null,
+                    ),
+                )
+            },
+        )
+
+        if (isAnswered && rating != null) {
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = content.memoryClarity.text(lang),
+                color = p.flour,
+                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(bottom = 4.dp),
+            )
+            WfSegments(
+                labels = content.confidenceLabels.map { it.text(lang) },
+                selected = (answer?.confidence ?: 0) - 1,
+                onSelect = { selected ->
+                    onAnswerChange(
+                        question.id,
+                        requireNotNull(answer).copy(confidence = selected + 1),
+                    )
+                },
+            )
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = content.storyLabel.text(lang),
+                color = p.flour,
+                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(bottom = 4.dp),
+            )
+            ElderStoryField(
+                lang = lang,
+                interviewId = interview.id,
+                questionId = question.id,
+                persistedStory = answer?.story.orEmpty(),
+                onStoryChange = { story ->
+                    onAnswerChange(
+                        question.id,
+                        requireNotNull(answer).copy(story = story),
+                    )
+                },
+            )
+        }
+
+        Row(
+            modifier = Modifier.padding(top = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            WfButton(
+                text = content.back.text(lang),
+                modifier = Modifier.weight(1f),
+                onClick = onBack,
+            )
+            val forwardText = if (last) {
+                content.finish.text(lang)
+            } else if (isAnswered) {
+                content.next.text(lang)
+            } else {
+                content.skip.text(lang)
+            }
+            val forwardEnabled = !(last && !isAnswered && EldersDomain.answeredCount(interview) < 3)
+            WfButton(
+                text = forwardText,
+                modifier = Modifier.weight(1f),
+                filled = true,
+                enabled = forwardEnabled,
+                onClick = { onForward(isAnswered) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun ElderScaleButton(
+    glyph: String,
+    label: String,
+    background: Color,
+    foreground: Color,
+    selected: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    val p = PrototypeTheme.palette
+    FidelityTouchTarget(
+        tag = "elder-scale.$glyph",
+        modifier = modifier,
+        onClick = onClick,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 64.dp)
+                .background(background, RoundedCornerShape(12.dp))
+                .border(
+                    width = if (selected) 2.dp else 2.dp,
+                    color = if (selected) p.flour else Color.Transparent,
+                    shape = RoundedCornerShape(12.dp),
+                )
+                .padding(horizontal = 2.dp, vertical = 6.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                text = glyph,
+                color = foreground,
+                fontWeight = FontWeight.Bold,
+                fontSize = 17.6.sp,
+            )
+            Text(
+                text = label,
+                color = foreground,
+                fontSize = 10.56.sp,
+                lineHeight = 11.62.sp,
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
+}
+
+@Composable
+private fun ElderCannotSayButton(
+    text: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    val p = PrototypeTheme.palette
+    FidelityTouchTarget(
+        tag = "elder-cannot-say",
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onClick,
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 46.dp)
+                .border(
+                    1.dp,
+                    if (selected) p.turmeric else p.line,
+                    RoundedCornerShape(12.dp),
+                )
+                .padding(horizontal = 18.dp, vertical = 8.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(text = text, color = p.flour, style = MaterialTheme.typography.bodyLarge)
+        }
+    }
+}
+
+@Composable
+private fun ElderStoryField(
+    lang: String,
+    interviewId: String,
+    questionId: String,
+    persistedStory: String,
+    onStoryChange: (String) -> Unit,
+) {
+    val p = PrototypeTheme.palette
+    val locale = if (lang == "ta") Locale("ta", "IN") else Locale.ENGLISH
+    var value by rememberSaveable(
+        interviewId,
+        questionId,
+        stateSaver = TextFieldValue.Saver,
+    ) {
+        mutableStateOf(TextFieldValue(EldersDomain.graphemePrefix(persistedStory, locale = locale)))
+    }
+
+    BasicTextField(
+        value = value,
+        onValueChange = { proposed ->
+            val limited = TextSafety.limitTextFieldValue(
+                proposed,
+                EldersDomain.MAX_STORY_GRAPHEMES,
+                locale,
+            )
+            value = limited
+            onStoryChange(limited.text)
+        },
+        textStyle = MaterialTheme.typography.bodyLarge.copy(color = p.flour),
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 96.dp)
+            .background(p.ground, RoundedCornerShape(10.dp))
+            .border(1.dp, p.line, RoundedCornerShape(10.dp))
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+    )
+}
+
+private fun wfHexColor(hex: String): Color {
+    val raw = hex.removePrefix("#")
+    val expanded = if (raw.length == 3) {
+        buildString {
+            raw.forEach { digit ->
+                append(digit)
+                append(digit)
+            }
+        }
+    } else {
+        raw
+    }
+    return Color(0xFF000000L or expanded.toLong(16))
 }
 
 @Composable

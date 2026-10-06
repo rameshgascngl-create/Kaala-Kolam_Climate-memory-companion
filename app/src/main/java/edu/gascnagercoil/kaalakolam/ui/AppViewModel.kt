@@ -10,6 +10,7 @@ import edu.gascnagercoil.kaalakolam.domain.AppState
 import edu.gascnagercoil.kaalakolam.domain.BackupCodec
 import edu.gascnagercoil.kaalakolam.domain.ElderSession
 import edu.gascnagercoil.kaalakolam.domain.Interview
+import edu.gascnagercoil.kaalakolam.domain.InterviewAnswer
 import edu.gascnagercoil.kaalakolam.domain.PredictionState
 import edu.gascnagercoil.kaalakolam.domain.ThemeMode
 import kotlinx.coroutines.Dispatchers
@@ -83,6 +84,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     fun deleteElderInterview(id: String) {
         viewModelScope.launch { stateRepository.deleteElderInterview(id) }
+    }
+
+    fun setElderAnswer(interviewId: String, questionId: String, answer: InterviewAnswer) {
+        viewModelScope.launch {
+            stateRepository.setElderAnswer(interviewId, questionId, answer)
+        }
     }
 
     fun backupCode(state: AppState): String = BackupCodec.encode(state)

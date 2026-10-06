@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 2,
+  "language": "en",
+  "interviews": [
+    {
+      "id": "ivdk",
+      "nickname": "DK",
+      "birthDecade": 1,
+      "place": 0,
+      "answers": {
+        "heat": {
+          "answered": true,
+          "rating": null
+        },
+        "nights": {
+          "answered": true,
+          "rating": null
+        },
+        "monsoon": {
+          "answered": true,
+          "rating": null
+        },
+        "downpour": {
+          "answered": true,
+          "rating": null
+        },
+        "water": {
+          "answered": true,
+          "rating": null
+        },
+        "coast": {
+          "answered": true,
+          "rating": null
+        },
+        "yield": {
+          "answered": true,
+          "rating": null
+        },
+        "birds": {
+          "answered": true,
+          "rating": null
+        },
+        "cold": {
+          "answered": true,
+          "rating": null
+        },
+        "storms": {
+          "answered": true,
+          "rating": null
+        }
+      },
+      "createdAt": 4
+    }
+  ],
+  "elderSession": {
+    "mode": "ASK",
+    "activeId": "ivdk",
+    "questionIndex": 9
+  }
+}

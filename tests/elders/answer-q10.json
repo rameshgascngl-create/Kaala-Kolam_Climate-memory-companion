@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 2,
+  "language": "en",
+  "interviews": [
+    {
+      "id": "ivq10",
+      "nickname": "Q10",
+      "birthDecade": 3,
+      "place": 2,
+      "answers": {
+        "heat": {
+          "answered": true,
+          "rating": 1,
+          "confidence": 2,
+          "story": ""
+        },
+        "nights": {
+          "answered": true,
+          "rating": 0,
+          "confidence": 2,
+          "story": ""
+        },
+        "monsoon": {
+          "answered": true,
+          "rating": -1,
+          "confidence": 2,
+          "story": ""
+        },
+        "downpour": {
+          "answered": true,
+          "rating": 2,
+          "confidence": 3,
+          "story": ""
+        },
+        "water": {
+          "answered": true,
+          "rating": -2,
+          "confidence": 2,
+          "story": ""
+        },
+        "coast": {
+          "answered": true,
+          "rating": null,
+          "confidence": null,
+          "story": ""
+        },
+        "yield": {
+          "answered": true,
+          "rating": 0,
+          "confidence": 2,
+          "story": ""
+        },
+        "birds": {
+          "answered": true,
+          "rating": -1,
+          "confidence": 3,
+          "story": ""
+        },
+        "cold": {
+          "answered": true,
+          "rating": -1,
+          "confidence": 2,
+          "story": ""
+        },
+        "storms": {
+          "answered": true,
+          "rating": 1,
+          "confidence": 2,
+          "story": ""
+        }
+      },
+      "createdAt": 3
+    }
+  ],
+  "elderSession": {
+    "mode": "ASK",
+    "activeId": "ivq10",
+    "questionIndex": 9
+  }
+}

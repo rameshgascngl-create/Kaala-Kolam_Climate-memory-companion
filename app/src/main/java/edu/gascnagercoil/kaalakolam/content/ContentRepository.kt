@@ -13,8 +13,10 @@ class ContentRepository(context: Context) {
         return json.decodeFromString(raw)
     }
 
-    fun loadElderSliceB(): ElderSliceBContent {
+    fun loadElders(): EldersAsset {
         val raw = assets.open("content/elders.json").bufferedReader(Charsets.UTF_8).use { it.readText() }
-        return json.decodeFromString<EldersAsset>(raw).sliceB
+        return json.decodeFromString(raw)
     }
+
+    fun loadElderSliceB(): ElderSliceBContent = loadElders().sliceB
 }

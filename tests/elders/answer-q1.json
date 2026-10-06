@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 2,
+  "language": "en",
+  "interviews": [
+    {
+      "id": "ivq1",
+      "nickname": "Q1",
+      "birthDecade": 1,
+      "place": 0,
+      "answers": {
+        "heat": {
+          "answered": true,
+          "rating": 1,
+          "confidence": 2,
+          "story": "warm afternoons"
+        }
+      },
+      "createdAt": 1
+    }
+  ],
+  "elderSession": {
+    "mode": "ASK",
+    "activeId": "ivq1",
+    "questionIndex": 0
+  }
+}

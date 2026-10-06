@@ -46,4 +46,16 @@ class ElderGeneratedContentContractTest {
             slice.places.map { it.ta },
         )
     }
+
+    @Test
+    fun questionFlowCopyAndScaleComeFromGeneratedPrototypeContent() {
+        val asset = asset()
+        val slice = asset.sliceC
+        assertEquals(10, asset.elderQuestions.size)
+        assertEquals(listOf("−−", "−", "=", "+", "++"), slice.scaleGlyphs)
+        assertEquals(listOf("#1f6f8b", "#6bb3c4", "#d8d2c4", "#eba46d", "#c8452c"), slice.scaleColours)
+        assertEquals("Cannot say", slice.cannotSay.en)
+        assertEquals("சொல்ல இயலாது", slice.cannotSay.ta)
+        assertEquals(400, slice.webStoryMaxUtf16)
+    }
 }

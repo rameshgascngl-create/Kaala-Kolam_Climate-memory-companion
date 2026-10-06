@@ -31,6 +31,9 @@ window.__KK_EXTRACT__ = {
   places: PLACES,
   decades: DECADES,
   verdicts: VERD,
+  scaleColours: SC,
+  scaleTextColours: TXT,
+  scaleGlyphs: GLY,
   elderQuestions: Q,
   predictions: PRED,
   councilGroups: GR,
@@ -115,6 +118,41 @@ def build_elder_slice_b(data: dict[str, Any]) -> dict[str, Any]:
             "ta": "பிறந்த பத்தாண்டு ",
         },
         "start": data["ui"]["start"],
+    }
+
+
+
+def build_elder_slice_c(data: dict[str, Any]) -> dict[str, Any]:
+    """Build the Slice-C interview-question UI copy from the audited prototype."""
+    ui = data["ui"]
+    return {
+        "askAloud": {
+            "en": "Ask this aloud:",
+            "ta": "இதை உரக்கக் கேளுங்கள்:",
+        },
+        "answerGroupLabel": {
+            "en": "Their answer",
+            "ta": "அவர் பதில்",
+        },
+        "ratingLabels": [ui[key] for key in ("less2", "less1", "same", "more1", "more2")],
+        "scaleColours": data["scaleColours"],
+        "scaleTextColours": data["scaleTextColours"],
+        "scaleGlyphs": data["scaleGlyphs"],
+        "cannotSay": ui["dk"],
+        "memoryClarity": {
+            "en": "How clear is this memory?",
+            "ta": "இந்த நினைவு எவ்வளவு தெளிவு?",
+        },
+        "confidenceLabels": [ui[key] for key in ("c1", "c2", "c3")],
+        "storyLabel": {
+            "en": "A story or example they gave (optional)",
+            "ta": "அவர் சொன்ன கதை அல்லது எடுத்துக்காட்டு (விருப்பம்)",
+        },
+        "back": ui["back"],
+        "next": ui["next"],
+        "skip": ui["skip"],
+        "finish": ui["finish"],
+        "webStoryMaxUtf16": 400,
     }
 
 
@@ -444,6 +482,7 @@ def main() -> int:
     data = apply_path_replacements(data, overrides.get("pathReplacements", []))
     data = apply_draft_tamil(data, overrides.get("draftTamil", []))
     data["elderSliceB"] = build_elder_slice_b(data)
+    data["elderSliceC"] = build_elder_slice_c(data)
 
     bilingual_errors = validate_bilingual(data)
     if bilingual_errors:
@@ -470,7 +509,7 @@ def main() -> int:
     assets: dict[str, Any] = {
         "manifest.json": {"schemaVersion": 1, "source": source, "counts": counts},
         "shared.json": {"schemaVersion": 1, "source": source, "data": {k: data[k] for k in ("ui", "places", "decades", "verdicts", "categories", "levels", "demoIds")}},
-        "elders.json": {"schemaVersion": 1, "source": source, "elderQuestions": data["elderQuestions"], "sliceB": data["elderSliceB"]},
+        "elders.json": {"schemaVersion": 1, "source": source, "elderQuestions": data["elderQuestions"], "sliceB": data["elderSliceB"], "sliceC": data["elderSliceC"]},
         "predictions.json": {"schemaVersion": 1, "source": source, "predictions": data["predictions"]},
         "council.json": {"schemaVersion": 1, "source": source, "groups": data["councilGroups"], "options": data["councilOptions"], "scenarios": data["councilScenarios"], "roles": data["councilRoles"]},
         "games.json": {"schemaVersion": 1, "source": source, "games": data["games"]},

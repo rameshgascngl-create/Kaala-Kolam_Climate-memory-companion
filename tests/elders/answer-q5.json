@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 2,
+  "language": "ta",
+  "interviews": [
+    {
+      "id": "ivq5",
+      "nickname": "பாட்டி",
+      "birthDecade": 2,
+      "place": 1,
+      "answers": {
+        "heat": {
+          "answered": true,
+          "rating": 1,
+          "confidence": 2,
+          "story": ""
+        },
+        "nights": {
+          "answered": true,
+          "rating": 0,
+          "confidence": 1,
+          "story": ""
+        },
+        "monsoon": {
+          "answered": true,
+          "rating": -1,
+          "confidence": 2,
+          "story": ""
+        },
+        "downpour": {
+          "answered": true,
+          "rating": 2,
+          "confidence": 3,
+          "story": ""
+        },
+        "water": {
+          "answered": true,
+          "rating": -2,
+          "confidence": 2,
+          "story": "கிணற்றில் நீர் குறைந்தது"
+        }
+      },
+      "createdAt": 2
+    }
+  ],
+  "elderSession": {
+    "mode": "ASK",
+    "activeId": "ivq5",
+    "questionIndex": 4
+  }
+}

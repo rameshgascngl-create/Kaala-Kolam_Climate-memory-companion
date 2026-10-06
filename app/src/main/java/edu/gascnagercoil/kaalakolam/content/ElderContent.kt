@@ -33,7 +33,35 @@ data class ElderSliceBContent(
 )
 
 @Serializable
+data class ElderQuestionContent(
+    val id: String,
+    val title: LocalizedContent,
+    val ask: LocalizedContent,
+)
+
+@Serializable
+data class ElderSliceCContent(
+    val askAloud: LocalizedContent,
+    val answerGroupLabel: LocalizedContent,
+    val ratingLabels: List<LocalizedContent>,
+    val scaleColours: List<String>,
+    val scaleTextColours: List<String>,
+    val scaleGlyphs: List<String>,
+    val cannotSay: LocalizedContent,
+    val memoryClarity: LocalizedContent,
+    val confidenceLabels: List<LocalizedContent>,
+    val storyLabel: LocalizedContent,
+    val back: LocalizedContent,
+    val next: LocalizedContent,
+    val skip: LocalizedContent,
+    val finish: LocalizedContent,
+    val webStoryMaxUtf16: Int,
+)
+
+@Serializable
 data class EldersAsset(
     val schemaVersion: Int,
+    val elderQuestions: List<ElderQuestionContent>,
     val sliceB: ElderSliceBContent,
+    val sliceC: ElderSliceCContent,
 )

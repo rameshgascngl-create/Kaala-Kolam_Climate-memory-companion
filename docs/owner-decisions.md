@@ -12,3 +12,10 @@ Decision needed: choose the preferred Tamil wording for “cooling shelters” a
 ## Refrigerator terminology
 
 `குளிர்சாதனப் பெட்டி` / `குளிர்சாதனப் பெட்டிகள்` is explicitly allowed when it means refrigerator(s). The banned term policy applies to **குளிர்சாதனம்** when used for an air conditioner; the approved air-conditioner term remains **குளிரூட்டி**.
+
+## Elders story-length rule
+
+The audited web prototype uses `maxlength="400"` on the elder-story textarea, which counts browser string/code-unit length. For native Elders Slice C, the owner-approved rule is **500 grapheme clusters** instead.
+
+The native app therefore uses `BreakIterator.getCharacterInstance(...)` to count and limit the story field. Ordinary IME updates preserve the complete `TextFieldValue`, including its composing region. When an imported or restored backup contains a story beyond 500 grapheme clusters, validation trims only at a BreakIterator boundary; it must never cut the UTF-16 string with `take()` or an arbitrary code-unit boundary. This is an intentional native deviation from the v1.0 HTML reference.
+

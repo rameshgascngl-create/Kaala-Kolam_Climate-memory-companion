@@ -61,6 +61,7 @@ import edu.gascnagercoil.kaalakolam.domain.ElderMode
 import edu.gascnagercoil.kaalakolam.domain.ElderSession
 import edu.gascnagercoil.kaalakolam.domain.EldersDomain
 import edu.gascnagercoil.kaalakolam.domain.Interview
+import edu.gascnagercoil.kaalakolam.domain.InterviewAnswer
 import edu.gascnagercoil.kaalakolam.domain.PredictionState
 import edu.gascnagercoil.kaalakolam.domain.ThemeMode
 import edu.gascnagercoil.kaalakolam.speech.rememberSpeechController
@@ -101,6 +102,7 @@ fun KaalaKolamApp(
     onElderSessionChange: (ElderSession) -> Unit = {},
     onCreateElderInterview: (String, Int, Int, String) -> Unit = { _, _, _, _ -> },
     onDeleteElderInterview: (String) -> Unit = {},
+    onElderAnswerChange: (String, String, InterviewAnswer) -> Unit = { _, _, _ -> },
     initialRoute: String = Destination.HOME.route,
 ) {
     val navController = rememberNavController()
@@ -189,6 +191,7 @@ fun KaalaKolamApp(
                         onSessionChange = onElderSessionChange,
                         onCreateInterview = onCreateElderInterview,
                         onDeleteInterview = onDeleteElderInterview,
+                        onAnswerChange = onElderAnswerChange,
                     )
                 }
                 composable(Destination.CLASS.route) {
