@@ -5,6 +5,47 @@ PKG="edu.gascnagercoil.kaalakolam.debug"
 COMPONENT="$PKG/edu.gascnagercoil.kaalakolam.MainActivity"
 STATE_FILE="tests/emulator/elder-q5-state.json"
 QUESTION="How much water do wells and ponds hold in the dry months, compared with before?"
+EVIDENCE_ROOT="app/build/emulator-evidence"
+mkdir -p "$EVIDENCE_ROOT"
+
+capture_evidence() {
+  local stage="$1"
+  local dir="$EVIDENCE_ROOT/$stage"
+  mkdir -p "$dir"
+  set +e
+
+  adb exec-out screencap -p >"$dir/screenshot.png" 2>"$dir/screenshot.err"
+
+  adb shell uiautomator dump /sdcard/kaala-kolam-window.xml >"$dir/uiautomator-command.txt" 2>&1
+  adb exec-out cat /sdcard/kaala-kolam-window.xml >"$dir/uiautomator.xml" 2>"$dir/uiautomator.err"
+
+  adb shell "run-as $PKG sh -c 'echo === files ===; ls -la files; echo === files/datastore ===; ls -la files/datastore 2>&1; echo === datastore contents ===; for f in files/datastore/*; do echo --- \"\$f\"; ls -l \"\$f\"; cat \"\$f\"; echo; done'"     >"$dir/storage.txt" 2>&1
+
+  local pid
+  pid="$(adb shell pidof "$PKG" | tr -d '\r')"
+  {
+    echo "=== app process logcat pid=$pid ==="
+    if [ -n "$pid" ]; then
+      adb logcat -d --pid="$pid"
+    fi
+    echo "=== AndroidRuntime ==="
+    adb logcat -d AndroidRuntime:E '*:S'
+  } >"$dir/logcat.txt" 2>&1
+
+  adb shell dumpsys activity activities >"$dir/activities.txt" 2>&1
+  adb shell dumpsys window windows >"$dir/windows.txt" 2>&1
+  set -e
+}
+
+on_exit() {
+  local status=$?
+  trap - EXIT
+  if [ "$status" -ne 0 ]; then
+    capture_evidence "failure"
+  fi
+  exit "$status"
+}
+trap on_exit EXIT
 
 APK="$(find app/build -type f -name 'app-debug.apk' -print -quit)"
 test -n "$APK"
@@ -33,9 +74,13 @@ assert_question_five() {
 
 adb shell am start -W -n "$COMPONENT" >/tmp/kaala-kolam-start.txt
 sleep 2
-# 390 dp viewport at 160 dpi; Elders is the third of six bottom tabs.
+capture_evidence "after-restored-launch"
+
+# Diagnostic-only navigation retained for this evidence run. The next revision
+# replaces this coordinate with stable Compose semantics after classification.
 adb shell input tap 162 780
 sleep 1
+capture_evidence "after-legacy-navigation"
 assert_question_five
 
 # Rotation must retain the same persisted question/session.
@@ -64,6 +109,7 @@ test -z "$(adb shell pidof "$PKG" | tr -d '\r' || true)"
 # no navigation tap is allowed after process death.
 adb shell monkey -p "$PKG" -c android.intent.category.LAUNCHER 1 >/tmp/kaala-kolam-relaunch.txt
 sleep 3
+capture_evidence "after-process-death-relaunch"
 assert_question_five
 
 echo "ELDERS_PROCESS_DEATH_RESUME_PASS questionIndex=4 api=34"

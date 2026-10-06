@@ -726,3 +726,11 @@ jobs:
           profile: pixel_2
           disable-animations: true
           script: bash tools/emulator_elder_resume.sh
+
+      - name: Upload Elders emulator evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-elders-emulator-evidence
+          path: app/build/emulator-evidence/
+          if-no-files-found: warn
