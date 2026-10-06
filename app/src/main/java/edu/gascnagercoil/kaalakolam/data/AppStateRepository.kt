@@ -80,6 +80,36 @@ class AppStateRepository(context: Context) {
         }
     }
 
+    suspend fun setElderSession(session: ElderSession) {
+        store.updateData { current ->
+            current.copy(elderSession = session).repair()
+        }
+    }
+
+    suspend fun addElderInterview(interview: Interview) {
+        store.updateData { current ->
+            if (
+                current.interviews.size >= EldersDomain.MAX_INTERVIEWS ||
+                current.interviews.any { it.id == interview.id }
+            ) {
+                current
+            } else {
+                current.copy(
+                    interviews = current.interviews + interview,
+                    elderSession = ElderSession(),
+                ).repair()
+            }
+        }
+    }
+
+    suspend fun deleteElderInterview(id: String) {
+        store.updateData { current ->
+            current.copy(
+                interviews = current.interviews.filterNot { it.id == id },
+            ).repair()
+        }
+    }
+
     suspend fun replace(validated: AppState) {
         store.updateData { validated.repair() }
     }
