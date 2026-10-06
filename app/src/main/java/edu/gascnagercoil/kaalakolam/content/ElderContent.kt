@@ -37,6 +37,11 @@ data class ElderQuestionContent(
     val id: String,
     val title: LocalizedContent,
     val ask: LocalizedContent,
+    val sci: LocalizedContent,
+    val conf: LocalizedContent,
+    val check: LocalizedContent,
+    val exp: Int,
+    val verdict: String,
 )
 
 @Serializable

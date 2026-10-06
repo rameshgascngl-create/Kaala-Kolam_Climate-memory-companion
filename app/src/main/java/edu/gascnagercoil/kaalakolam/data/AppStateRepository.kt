@@ -165,6 +165,20 @@ class AppStateRepository(context: Context) {
         }
     }
 
+    suspend fun setElderReaction(interviewId: String, reaction: String) {
+        store.updateData { current ->
+            current.copy(
+                interviews = current.interviews.map { interview ->
+                    if (interview.id == interviewId) {
+                        interview.copy(reaction = reaction.take(EldersDomain.MAX_FREE_TEXT_CHARS))
+                    } else {
+                        interview
+                    }
+                },
+            ).repair()
+        }
+    }
+
     suspend fun deleteElderInterview(id: String) {
         store.updateData { current ->
             current.copy(

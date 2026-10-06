@@ -107,6 +107,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun setElderReaction(interviewId: String, reaction: String) {
+        viewModelScope.launch {
+            stateRepository.setElderReaction(interviewId, reaction)
+        }
+    }
+
     fun backupCode(state: AppState): String = BackupCodec.encode(state)
 
     fun validateBackup(code: String): AppState? = BackupCodec.decode(code).getOrNull()

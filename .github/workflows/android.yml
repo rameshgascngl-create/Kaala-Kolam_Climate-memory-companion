@@ -112,6 +112,10 @@ jobs:
         id: m2_golden
         run: python3 tools/capture_m2_golden.py
 
+      - name: Verify Elders bidirectional KK1 against HTML oracle
+        if: needs.compile.result == 'success'
+        run: python3 tools/test_elders_html_oracle.py
+
       - name: Capture SSIM negative control
         if: needs.compile.result == 'success'
         id: ssim_control

@@ -1,0 +1,6 @@
+{"cases":[
+{"name":"zero answers","record":{"t":"I","i":"zero01","p":0,"b":1,"a":"0000000000"},"nativeCode":"KK1.eyJ0IjoiSSIsImkiOiJ6ZXJvMDEiLCJwIjowLCJiIjoxLCJhIjoiMDAwMDAwMDAwMCJ9.3e9aed","nickname":"Elder","reaction":"must stay private"},
+{"name":"all cannot say","record":{"t":"I","i":"cannot01","p":4,"b":2,"a":"0000000000"},"nativeCode":"KK1.eyJ0IjoiSSIsImkiOiJjYW5ub3QwMSIsInAiOjQsImIiOjIsImEiOiIwMDAwMDAwMDAwIn0.6b572e","nickname":"Paati","reaction":"private reaction"},
+{"name":"mixed","record":{"t":"I","i":"mixed01","p":2,"b":3,"a":"1542300145"},"nativeCode":"KK1.eyJ0IjoiSSIsImkiOiJtaXhlZDAxIiwicCI6MiwiYiI6MywiYSI6IjE1NDIzMDAxNDUifQ.60979f","nickname":"Mixed","reaction":"private"},
+{"name":"Tamil private text","record":{"t":"I","i":"tamil01","p":1,"b":0,"a":"3514021503"},"nativeCode":"KK1.eyJ0IjoiSSIsImkiOiJ0YW1pbDAxIiwicCI6MSwiYiI6MCwiYSI6IjM1MTQwMjE1MDMifQ.5fe52e","nickname":"பாட்டி","reaction":"தமிழ் பதில்"}
+]}

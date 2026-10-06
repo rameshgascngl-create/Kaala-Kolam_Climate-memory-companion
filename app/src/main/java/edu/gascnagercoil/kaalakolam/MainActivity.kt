@@ -56,6 +56,7 @@ class MainActivity : AppCompatActivity() {
                     onDeleteElderInterview = viewModel::deleteElderInterview,
                     onElderAnswerChange = viewModel::setElderAnswer,
                     onAdvanceElderQuestion = viewModel::advanceElderQuestion,
+                    onElderReactionChange = viewModel::setElderReaction,
                 )
             }
         }

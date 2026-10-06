@@ -39,12 +39,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -771,6 +773,7 @@ fun ElderPrototypeScreen(
     onDeleteInterview: (String) -> Unit = {},
     onAnswerChange: (String, String, InterviewAnswer) -> Unit = { _, _, _ -> },
     onAdvance: (String, String, InterviewAnswer?, ElderSession) -> Unit = { _, _, _, _ -> },
+    onReactionChange: (String, String) -> Unit = { _, _ -> },
     initialDeletePendingId: String? = null,
 ) {
     val context = LocalContext.current
@@ -789,6 +792,19 @@ fun ElderPrototypeScreen(
             atLimit = appState.interviews.size >= EldersDomain.MAX_INTERVIEWS,
             onBack = { onSessionChange(ElderSession()) },
             onCreateInterview = onCreateInterview,
+        )
+        return
+    }
+
+    if (appState.elderSession.mode == ElderMode.RESULT && activeInterview != null) {
+        ElderResultScreen(
+            lang = lang,
+            interview = activeInterview,
+            questions = asset.elderQuestions,
+            content = content,
+            onReactionChange = { reaction -> onReactionChange(activeInterview.id, reaction) },
+            onAllInterviews = { onSessionChange(ElderSession()) },
+            onNewInterview = { onSessionChange(ElderSession(mode = ElderMode.SETUP)) },
         )
         return
     }
@@ -907,6 +923,195 @@ fun ElderPrototypeScreen(
         }
         WfFooter(lang)
     }
+}
+
+@Composable
+private fun ElderResultScreen(
+    lang: String,
+    interview: Interview,
+    questions: List<ElderQuestionContent>,
+    content: ElderSliceBContent,
+    onReactionChange: (String) -> Unit,
+    onAllInterviews: () -> Unit,
+    onNewInterview: () -> Unit,
+) {
+    val p = PrototypeTheme.palette
+    val clipboard = LocalClipboardManager.current
+    val answered = questions.mapNotNull { question ->
+        interview.answers[question.id]?.takeIf { it.answered }?.let { question to it }
+    }
+    val ranked = answered
+        .filter { (_, answer) -> answer.rating != null && answer.rating != 0 }
+        .sortedByDescending { (_, answer) -> kotlin.math.abs(requireNotNull(answer.rating)) }
+        .take(3)
+    val comparable = answered.filter { (question, answer) ->
+        question.exp != 0 && answer.rating != null && answer.rating != 0
+    }
+    val matching = comparable.count { (question, answer) ->
+        Integer.signum(requireNotNull(answer.rating)) == Integer.signum(question.exp)
+    }
+    val shareCode = if (EldersDomain.answeredCount(interview) >= 3) {
+        EldersDomain.exportShareCode(interview)
+    } else null
+
+    WorkflowPage {
+        WfH1(interview.nickname)
+        WfParagraph(
+            text = content.places.getOrElse(interview.place) { content.places.first() }.text(lang) +
+                " · " + content.bornPrefix.text(lang) +
+                content.decades.getOrElse(interview.birthDecade) { content.decades.first() },
+            muted = true,
+            tag = "elder-result-meta",
+        )
+        WfCard(tag = "elder-result-stripes") {
+            WfH2(wfText(lang, "Memory stripes", "நினைவுக் கோடுகள்"))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                questions.forEach { question ->
+                    val answer = interview.answers[question.id]
+                    val colour = when (answer?.rating) {
+                        -2 -> wfHexColor("#1f6f8b")
+                        -1 -> wfHexColor("#6bb3c4")
+                        0 -> wfHexColor("#d8d2c4")
+                        1 -> wfHexColor("#eba46d")
+                        2 -> wfHexColor("#c8452c")
+                        else -> p.ground3
+                    }
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(34.dp)
+                            .background(colour, RoundedCornerShape(5.dp))
+                            .semantics { contentDescription = question.title.text(lang) },
+                    )
+                }
+            }
+            Spacer(Modifier.height(10.dp))
+            WfParagraph(
+                wfText(
+                    lang,
+                    "Each stripe is one thing your elder said about change. Cross-check it against the evidence below.",
+                    "ஒவ்வொரு கோடும் மாற்றம் பற்றி உங்கள் மூத்தவர் சொன்ன ஒரு விஷயம். கீழே உள்ள சான்றுகளுடன் அதை ஒப்பிடுங்கள்.",
+                ),
+                bottom = 0,
+            )
+        }
+        if (ranked.isNotEmpty()) {
+            WfParagraph(
+                text = wfText(lang, "Biggest changes they noticed: ", "அவர் கவனித்த மிகப் பெரிய மாற்றங்கள்: ") +
+                    ranked.joinToString("; ") { (question, answer) ->
+                        question.title.text(lang) + " (" + elderRatingText(lang, answer.rating) + ")"
+                    } + ".",
+                tag = "elder-result-biggest",
+            )
+        }
+        if (comparable.size >= 3) {
+            WfNote(
+                wfText(
+                    lang,
+                    "On $matching of ${comparable.size} comparable questions, the memory points in the same direction as the instrument record.",
+                    "ஒப்பிடக்கூடிய ${comparable.size} கேள்விகளில் $matching-இல், நினைவு கருவிப் பதிவுகளின் திசையிலேயே உள்ளது.",
+                ),
+            )
+        }
+        WfH2(wfText(lang, "Cross-check each memory", "நினைவை சான்றுடன் ஒப்பிடு"))
+        answered.forEach { (question, answer) ->
+            WfCard(tag = "elder-result-evidence.${question.id}") {
+                WfH3(question.title.text(lang))
+                WfParagraph(
+                    wfText(lang, "Your elder: ", "உங்கள் மூத்தவர்: ") + elderRatingText(lang, answer.rating),
+                    muted = true,
+                )
+                if (answer.story.isNotBlank()) WfParagraph("“${answer.story}”")
+                WfParagraph(
+                    wfText(lang, "Verdict: ", "முடிவு: ") + elderVerdictText(lang, question.verdict),
+                    muted = true,
+                )
+                WfH3(wfText(lang, "What instruments and studies say", "கருவிகளும் ஆய்வுகளும் சொல்வது"))
+                WfParagraph(question.sci.text(lang))
+                WfH3(wfText(lang, "What else could explain it", "வேறு என்ன காரணமாக இருக்கலாம்"))
+                WfParagraph(question.conf.text(lang))
+                WfH3(wfText(lang, "How you can check", "நீங்களே சோதிக்க"))
+                WfParagraph(question.check.text(lang), bottom = 0)
+            }
+        }
+        WfCard(tag = "elder-result-reaction") {
+            WfH2(wfText(lang, "Take it back to your elder", "மூத்தவரிடம் திரும்பிச் சொல்லுங்கள்"))
+            WfParagraph(
+                wfText(
+                    lang,
+                    "Tell your elder one thing the evidence matched or challenged, then record their reply.",
+                    "சான்றுகள் பொருந்திய அல்லது சவால் செய்த ஒன்றை மூத்தவரிடம் சொல்லி, அவர் பதிலைப் பதிவு செய்யுங்கள்.",
+                ),
+            )
+            WfInput(
+                value = interview.reaction,
+                placeholder = wfText(lang, "What they said", "அவர் சொன்னது"),
+                minHeight = 84,
+                onValueChange = onReactionChange,
+            )
+        }
+        if (shareCode != null) {
+            WfCard(tag = "elder-result-share") {
+                WfH2(wfText(lang, "Share with your class", "வகுப்புடன் பகிர"))
+                WfParagraph(
+                    wfText(
+                        lang,
+                        "This code contains only place type, birth decade and answers. It contains no nickname, stories, reaction, notes or reflection.",
+                        "இந்தக் குறியீட்டில் இட வகை, பிறந்த பத்தாண்டு, பதில்கள் மட்டுமே உள்ளன. செல்லப்பெயர், கதைகள், பதில், குறிப்புகள் அல்லது பிரதிபலிப்பு இல்லை.",
+                    ),
+                )
+                Text(
+                    text = shareCode,
+                    color = p.flour,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fidelityTag("elder-share-code")
+                        .background(p.ground, RoundedCornerShape(10.dp))
+                        .border(1.dp, p.line, RoundedCornerShape(10.dp))
+                        .padding(12.dp),
+                )
+                Spacer(Modifier.height(8.dp))
+                WfButton(
+                    text = wfText(lang, "Copy", "நகலெடு"),
+                    filled = true,
+                    tag = "elder-copy-code",
+                    onClick = { clipboard.setText(AnnotatedString(shareCode)) },
+                )
+            }
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            WfButton(
+                text = wfText(lang, "All interviews", "அனைத்து நேர்காணல்கள்"),
+                modifier = Modifier.weight(1f),
+                tag = "elder-result-all",
+                onClick = onAllInterviews,
+            )
+            WfButton(
+                text = wfText(lang, "New interview", "புதிய நேர்காணல்"),
+                modifier = Modifier.weight(1f),
+                tag = "elder-result-new",
+                onClick = onNewInterview,
+            )
+        }
+        WfFooter(lang)
+    }
+}
+
+private fun elderRatingText(lang: String, rating: Int?): String = when (rating) {
+    null -> wfText(lang, "Cannot say", "சொல்ல இயலாது")
+    -2 -> wfText(lang, "Much less", "மிகக் குறைவு")
+    -1 -> wfText(lang, "Less", "குறைவு")
+    0 -> wfText(lang, "Same", "அதே அளவு")
+    1 -> wfText(lang, "More", "அதிகம்")
+    else -> wfText(lang, "Much more", "மிக அதிகம்")
+}
+
+private fun elderVerdictText(lang: String, verdict: String): String = when (verdict) {
+    "consistent" -> wfText(lang, "Consistent", "ஒத்துப்போகிறது")
+    "mixed" -> wfText(lang, "Mixed", "கலப்பு")
+    "confounded" -> wfText(lang, "Several causes", "பல காரணங்கள்")
+    else -> verdict
 }
 
 @Composable

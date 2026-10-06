@@ -108,6 +108,7 @@ fun KaalaKolamApp(
     onElderAnswerChange: (String, String, InterviewAnswer) -> Unit = { _, _, _ -> },
     onAdvanceElderQuestion: (String, String, InterviewAnswer?, ElderSession) -> Unit =
         { _, _, _, _ -> },
+    onElderReactionChange: (String, String) -> Unit = { _, _ -> },
     initialRoute: String = Destination.HOME.route,
 ) {
     val navController = rememberNavController()
@@ -221,6 +222,7 @@ fun KaalaKolamApp(
                         onDeleteInterview = onDeleteElderInterview,
                         onAnswerChange = onElderAnswerChange,
                         onAdvance = onAdvanceElderQuestion,
+                        onReactionChange = onElderReactionChange,
                     )
                 }
                 composable(Destination.CLASS.route) {
