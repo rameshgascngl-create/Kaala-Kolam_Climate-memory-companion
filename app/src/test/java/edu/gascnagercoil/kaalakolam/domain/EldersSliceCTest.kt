@@ -3,6 +3,7 @@ package edu.gascnagercoil.kaalakolam.domain
 import java.io.File
 import java.util.Base64
 import java.util.Locale
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
