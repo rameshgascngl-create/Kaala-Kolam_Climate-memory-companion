@@ -753,6 +753,7 @@ fun ElderPrototypeScreen(
     onSessionChange: (ElderSession) -> Unit = {},
     onCreateInterview: (String, Int, Int, String) -> Unit = { _, _, _, _ -> },
     onDeleteInterview: (String) -> Unit = {},
+    initialDeletePendingId: String? = null,
 ) {
     val context = LocalContext.current
     val content = remember(context) {
@@ -770,7 +771,7 @@ fun ElderPrototypeScreen(
         return
     }
 
-    var deletePendingId by remember { mutableStateOf<String?>(null) }
+    var deletePendingId by remember(initialDeletePendingId) { mutableStateOf(initialDeletePendingId) }
     LaunchedEffect(deletePendingId) {
         val armedId = deletePendingId ?: return@LaunchedEffect
         delay(3_000)

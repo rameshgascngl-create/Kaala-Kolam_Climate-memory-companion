@@ -332,6 +332,7 @@ jobs:
             app/build/fidelity/
             app/build/visual-native/
             app/build/visual-tamil/
+            app/build/visual-elders/
           if-no-files-found: warn
 
       - name: Upload debug APK
@@ -694,3 +695,34 @@ jobs:
           name: KaalaKolam-ci-results-contact-sheet
           path: app/build/ci-results/contact-sheet/ci-results.json
           if-no-files-found: error
+
+  emulator-process-death:
+    name: API 34 Elders process-death resume
+    needs: verify
+    if: ${{ needs.verify.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Download debug APK
+        uses: actions/download-artifact@v5
+        with:
+          name: KaalaKolam-native-v2-debug-apk
+          path: app/build/outputs/apk/debug
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Launch API 34 emulator and verify process-death resume
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          disable-animations: true
+          script: bash tools/emulator_elder_resume.sh

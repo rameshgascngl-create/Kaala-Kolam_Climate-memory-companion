@@ -57,7 +57,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import edu.gascnagercoil.kaalakolam.R
 import edu.gascnagercoil.kaalakolam.domain.AppState
+import edu.gascnagercoil.kaalakolam.domain.ElderMode
 import edu.gascnagercoil.kaalakolam.domain.ElderSession
+import edu.gascnagercoil.kaalakolam.domain.EldersDomain
+import edu.gascnagercoil.kaalakolam.domain.Interview
 import edu.gascnagercoil.kaalakolam.domain.PredictionState
 import edu.gascnagercoil.kaalakolam.domain.ThemeMode
 import edu.gascnagercoil.kaalakolam.speech.rememberSpeechController
@@ -230,8 +233,39 @@ fun KaalaKolamVisualFixture(
     fidelityRecorder: FidelityRecorder? = null,
 ) {
     val lang = uiState.appState.language
-    val primaryRoute = when (visualState) {
-        "learn-topic", "learn-deep", "learn-game", "learn-words" -> Destination.LEARN.route
+    val visualInterview = Interview(
+        id = "visualelder",
+        nickname = if (lang == "ta") "பாட்டி" else "Paati",
+        birthDecade = 1,
+        place = 0,
+        createdAt = 1L,
+    )
+    val visualAppState = when (visualState) {
+        "elders-list", "elders-delete" -> uiState.appState.copy(
+            interviews = listOf(visualInterview),
+            elderSession = ElderSession(),
+        )
+        "elders-setup" -> uiState.appState.copy(
+            elderSession = ElderSession(mode = ElderMode.SETUP),
+        )
+        "elders-limit" -> uiState.appState.copy(
+            interviews = List(EldersDomain.MAX_INTERVIEWS) { index ->
+                Interview(
+                    id = "visual$index",
+                    nickname = if (lang == "ta") "மூத்தவர் ${index + 1}" else "Elder ${index + 1}",
+                    birthDecade = index % 6,
+                    place = index % 5,
+                    createdAt = index.toLong(),
+                )
+            },
+            elderSession = ElderSession(),
+        )
+        else -> uiState.appState
+    }
+    val primaryRoute = when {
+        visualState in setOf("learn-topic", "learn-deep", "learn-game", "learn-words") ->
+            Destination.LEARN.route
+        visualState.startsWith("elders-") -> Destination.ELDERS.route
         else -> visualState
     }
     CompositionLocalProvider(LocalFidelityRecorder provides fidelityRecorder) {
@@ -271,9 +305,11 @@ fun KaalaKolamVisualFixture(
                 "learn-deep" -> LearnPrototypeScreen(lang = lang, initialMode = "deep")
                 "learn-game" -> LearnPrototypeScreen(lang = lang, initialMode = "game")
                 "learn-words" -> LearnPrototypeScreen(lang = lang, initialMode = "words")
-                Destination.ELDERS.route -> ElderPrototypeScreen(
+                Destination.ELDERS.route, "elders-empty", "elders-list", "elders-setup",
+                "elders-delete", "elders-limit" -> ElderPrototypeScreen(
                     lang = lang,
-                    appState = uiState.appState,
+                    appState = visualAppState,
+                    initialDeletePendingId = if (visualState == "elders-delete") visualInterview.id else null,
                 )
                 Destination.CLASS.route -> ClassPoolPrototypeScreen(lang = lang)
                 Destination.COUNCIL.route -> CouncilPrototypeScreen(lang = lang)

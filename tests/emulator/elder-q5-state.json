@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 2,
+  "language": "en",
+  "themeMode": "DARK",
+  "interviews": [
+    {
+      "id": "ivresume5",
+      "nickname": "Resume Elder",
+      "birthDecade": 1,
+      "place": 0,
+      "answers": {
+        "heat": {"answered": true, "rating": 1, "confidence": 2, "story": ""},
+        "nights": {"answered": true, "rating": 0, "confidence": 2, "story": ""},
+        "monsoon": {"answered": true, "rating": -1, "confidence": 2, "story": ""},
+        "downpour": {"answered": true, "rating": 2, "confidence": 3, "story": ""}
+      },
+      "reaction": "",
+      "createdAt": 1234
+    }
+  ],
+  "elderSession": {
+    "mode": "ASK",
+    "activeId": "ivresume5",
+    "questionIndex": 4
+  }
+}
