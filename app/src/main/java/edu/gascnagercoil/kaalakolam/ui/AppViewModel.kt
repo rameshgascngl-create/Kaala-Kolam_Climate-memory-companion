@@ -8,6 +8,8 @@ import edu.gascnagercoil.kaalakolam.content.GapManifest
 import edu.gascnagercoil.kaalakolam.data.AppStateRepository
 import edu.gascnagercoil.kaalakolam.domain.AppState
 import edu.gascnagercoil.kaalakolam.domain.BackupCodec
+import edu.gascnagercoil.kaalakolam.domain.ElderSession
+import edu.gascnagercoil.kaalakolam.domain.Interview
 import edu.gascnagercoil.kaalakolam.domain.PredictionState
 import edu.gascnagercoil.kaalakolam.domain.ThemeMode
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +18,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 data class AppUiState(
     val appState: AppState = AppState(),
@@ -55,6 +58,31 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     fun clearPredictionAnswers() {
         viewModelScope.launch { stateRepository.clearPredictionAnswers() }
+    }
+
+    fun setElderSession(session: ElderSession) {
+        viewModelScope.launch { stateRepository.setElderSession(session) }
+    }
+
+    fun createElderInterview(
+        nickname: String,
+        birthDecade: Int,
+        place: Int,
+        defaultNickname: String,
+    ) {
+        val id = UUID.randomUUID().toString().replace("-", "").take(12)
+        val interview = Interview(
+            id = id,
+            nickname = nickname.trim().ifBlank { defaultNickname },
+            birthDecade = birthDecade,
+            place = place,
+            createdAt = System.currentTimeMillis(),
+        )
+        viewModelScope.launch { stateRepository.addElderInterview(interview) }
+    }
+
+    fun deleteElderInterview(id: String) {
+        viewModelScope.launch { stateRepository.deleteElderInterview(id) }
     }
 
     fun backupCode(state: AppState): String = BackupCodec.encode(state)

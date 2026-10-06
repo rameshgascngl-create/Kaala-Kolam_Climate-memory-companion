@@ -57,6 +57,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import edu.gascnagercoil.kaalakolam.R
 import edu.gascnagercoil.kaalakolam.domain.AppState
+import edu.gascnagercoil.kaalakolam.domain.ElderSession
 import edu.gascnagercoil.kaalakolam.domain.PredictionState
 import edu.gascnagercoil.kaalakolam.domain.ThemeMode
 import edu.gascnagercoil.kaalakolam.speech.rememberSpeechController
@@ -94,6 +95,9 @@ fun KaalaKolamApp(
     onReset: () -> Unit,
     onPredictionAnswer: (String, PredictionState) -> Unit = { _, _ -> },
     onClearPredictions: () -> Unit = {},
+    onElderSessionChange: (ElderSession) -> Unit = {},
+    onCreateElderInterview: (String, Int, Int, String) -> Unit = { _, _, _, _ -> },
+    onDeleteElderInterview: (String) -> Unit = {},
     initialRoute: String = Destination.HOME.route,
 ) {
     val navController = rememberNavController()
@@ -176,7 +180,13 @@ fun KaalaKolamApp(
                     LearnPrototypeScreen(lang = lang)
                 }
                 composable(Destination.ELDERS.route) {
-                    ElderPrototypeScreen(lang = lang)
+                    ElderPrototypeScreen(
+                        lang = lang,
+                        appState = uiState.appState,
+                        onSessionChange = onElderSessionChange,
+                        onCreateInterview = onCreateElderInterview,
+                        onDeleteInterview = onDeleteElderInterview,
+                    )
                 }
                 composable(Destination.CLASS.route) {
                     ClassPoolPrototypeScreen(lang = lang)
@@ -261,7 +271,10 @@ fun KaalaKolamVisualFixture(
                 "learn-deep" -> LearnPrototypeScreen(lang = lang, initialMode = "deep")
                 "learn-game" -> LearnPrototypeScreen(lang = lang, initialMode = "game")
                 "learn-words" -> LearnPrototypeScreen(lang = lang, initialMode = "words")
-                Destination.ELDERS.route -> ElderPrototypeScreen(lang = lang)
+                Destination.ELDERS.route -> ElderPrototypeScreen(
+                    lang = lang,
+                    appState = uiState.appState,
+                )
                 Destination.CLASS.route -> ClassPoolPrototypeScreen(lang = lang)
                 Destination.COUNCIL.route -> CouncilPrototypeScreen(lang = lang)
                 Destination.PREDICT.route -> PredictPrototypeScreen(

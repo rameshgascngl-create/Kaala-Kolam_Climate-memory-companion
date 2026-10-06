@@ -48,6 +48,76 @@ window.__KK_EXTRACT__ = {
 """
 
 
+def build_elder_slice_b(data: dict[str, Any]) -> dict[str, Any]:
+    """Build the Slice-B UI copy from the audited prototype tables/copy.
+
+    Kotlin consumes this generated payload rather than duplicating bilingual
+    strings in composables. The lists come directly from PLACES and DECADES.
+    """
+    return {
+        "back": data["ui"]["back"],
+        "consent": {
+            "en": "Say this aloud first: “I am learning how our weather and nature have changed. May I ask you some questions? I will not write your name.”",
+            "ta": "முதலில் இப்படிச் சொல்லுங்கள்: “நம் வானிலையும் இயற்கையும் எப்படி மாறியுள்ளன என்று கற்கிறேன். சில கேள்விகள் கேட்கலாமா? உங்கள் பெயரை எழுத மாட்டேன்.”",
+        },
+        "decadeLabel": {
+            "en": "Decade they were born",
+            "ta": "பிறந்த பத்தாண்டு",
+        },
+        "decades": data["decades"],
+        "defaultNickname": {
+            "en": "Elder",
+            "ta": "மூத்தவர்",
+        },
+        "delete": {
+            "en": "Delete",
+            "ta": "நீக்கு",
+        },
+        "deleteConfirm": {
+            "en": "Tap again to delete",
+            "ta": "உறுதி செய்ய மீண்டும் தொடு",
+        },
+        "empty": {
+            "en": "No interviews yet. Try asking your grandparent first.",
+            "ta": "இன்னும் நேர்காணல்கள் இல்லை. முதலில் உங்கள் தாத்தா அல்லது பாட்டியிடம் கேட்டுப் பாருங்கள்.",
+        },
+        "intro": {
+            "en": "Sit with someone who has lived in your place for decades. Ask permission first. Listen more than you talk. You will record how things changed, how sure they are, and a story if they offer one.",
+            "ta": "பல பத்தாண்டுகள் உங்கள் ஊரில் வாழ்ந்தவருடன் அமருங்கள். முதலில் அனுமதி கேளுங்கள். பேசுவதைவிட அதிகம் கேளுங்கள். மாற்றங்கள், அவர் எவ்வளவு உறுதியாகச் சொல்கிறார், அவர் விரும்பினால் ஒரு கதை ஆகியவற்றைப் பதிவு செய்வீர்கள்.",
+        },
+        "limitMessage": {
+            "en": "You can keep up to 50 interviews. Delete one before starting another.",
+            "ta": "அதிகபட்சம் 50 நேர்காணல்களை வைத்திருக்கலாம். புதியதைத் தொடங்குவதற்கு முன் ஒன்றை நீக்குங்கள்.",
+        },
+        "listTitle": {
+            "en": "Elder interviews",
+            "ta": "மூத்தோர் நேர்காணல்",
+        },
+        "newTitle": {
+            "en": "New interview",
+            "ta": "புதிய நேர்காணல்",
+        },
+        "nicknameLabel": {
+            "en": "Nickname (not a real name)",
+            "ta": "செல்லப்பெயர் (உண்மைப் பெயர் வேண்டாம்)",
+        },
+        "nicknamePlaceholder": {
+            "en": "e.g. Paati, Colachel",
+            "ta": "எ.கா. பாட்டி, கொளச்சல்",
+        },
+        "placeLabel": {
+            "en": "Where they have lived most",
+            "ta": "அவர் அதிகம் வாழ்ந்த இடம்",
+        },
+        "places": data["places"],
+        "bornPrefix": {
+            "en": "born ",
+            "ta": "பிறந்த பத்தாண்டு ",
+        },
+        "start": data["ui"]["start"],
+    }
+
+
 def load_overrides(path: Path) -> dict[str, Any]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     if payload.get("schemaVersion") != 1:
@@ -373,6 +443,7 @@ def main() -> int:
     data = apply_replacements(data, overrides["replacements"])
     data = apply_path_replacements(data, overrides.get("pathReplacements", []))
     data = apply_draft_tamil(data, overrides.get("draftTamil", []))
+    data["elderSliceB"] = build_elder_slice_b(data)
 
     bilingual_errors = validate_bilingual(data)
     if bilingual_errors:
@@ -399,7 +470,7 @@ def main() -> int:
     assets: dict[str, Any] = {
         "manifest.json": {"schemaVersion": 1, "source": source, "counts": counts},
         "shared.json": {"schemaVersion": 1, "source": source, "data": {k: data[k] for k in ("ui", "places", "decades", "verdicts", "categories", "levels", "demoIds")}},
-        "elders.json": {"schemaVersion": 1, "source": source, "elderQuestions": data["elderQuestions"]},
+        "elders.json": {"schemaVersion": 1, "source": source, "elderQuestions": data["elderQuestions"], "sliceB": data["elderSliceB"]},
         "predictions.json": {"schemaVersion": 1, "source": source, "predictions": data["predictions"]},
         "council.json": {"schemaVersion": 1, "source": source, "groups": data["councilGroups"], "options": data["councilOptions"], "scenarios": data["councilScenarios"], "roles": data["councilRoles"]},
         "games.json": {"schemaVersion": 1, "source": source, "games": data["games"]},

@@ -23,12 +23,15 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Slider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -45,9 +49,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import edu.gascnagercoil.kaalakolam.content.ContentRepository
+import edu.gascnagercoil.kaalakolam.content.ElderSliceBContent
+import edu.gascnagercoil.kaalakolam.domain.AppState
+import edu.gascnagercoil.kaalakolam.domain.ElderMode
+import edu.gascnagercoil.kaalakolam.domain.ElderSession
+import edu.gascnagercoil.kaalakolam.domain.EldersDomain
 import edu.gascnagercoil.kaalakolam.domain.M2Domain
 import edu.gascnagercoil.kaalakolam.domain.PredictionState
 import edu.gascnagercoil.kaalakolam.ui.theme.PrototypeTheme
+import kotlinx.coroutines.delay
 
 private fun wfText(lang: String, en: String, ta: String): String = if (lang == "ta") ta else en
 
@@ -689,20 +700,226 @@ private fun LearnWordsPrototype(lang: String, onBack: () -> Unit) {
 }
 
 @Composable
-fun ElderPrototypeScreen(lang: String) {
+private fun ElderSelect(
+    label: String,
+    options: List<String>,
+    selected: Int,
+    onSelect: (Int) -> Unit,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val p = PrototypeTheme.palette
+    val safeIndex = selected.coerceIn(0, options.lastIndex)
+    Text(
+        text = label,
+        color = p.flour,
+        style = MaterialTheme.typography.bodyMedium,
+        modifier = Modifier.padding(bottom = 6.dp),
+    )
+    Box(modifier = Modifier.fillMaxWidth()) {
+        WfButton(
+            text = options[safeIndex],
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { expanded = true },
+        )
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.background(p.ground2),
+        ) {
+            options.forEachIndexed { index, option ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = option,
+                            color = p.flour,
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    },
+                    onClick = {
+                        onSelect(index)
+                        expanded = false
+                    },
+                    modifier = Modifier.heightIn(min = 48.dp),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ElderPrototypeScreen(
+    lang: String,
+    appState: AppState = AppState(language = lang),
+    onSessionChange: (ElderSession) -> Unit = {},
+    onCreateInterview: (String, Int, Int, String) -> Unit = { _, _, _, _ -> },
+    onDeleteInterview: (String) -> Unit = {},
+) {
+    val context = LocalContext.current
+    val content = remember(context) {
+        ContentRepository(context).loadElderSliceB()
+    }
+
+    if (appState.elderSession.mode == ElderMode.SETUP) {
+        ElderSetupScreen(
+            lang = lang,
+            content = content,
+            atLimit = appState.interviews.size >= EldersDomain.MAX_INTERVIEWS,
+            onBack = { onSessionChange(ElderSession()) },
+            onCreateInterview = onCreateInterview,
+        )
+        return
+    }
+
+    var deletePendingId by remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(deletePendingId) {
+        val armedId = deletePendingId ?: return@LaunchedEffect
+        delay(3_000)
+        if (deletePendingId == armedId) {
+            deletePendingId = null
+        }
+    }
+
+    val atLimit = appState.interviews.size >= EldersDomain.MAX_INTERVIEWS
     WorkflowPage {
-        WfH1(wfText(lang, "Elder interviews", "மூத்தோர் நேர்காணல்"))
+        WfH1(content.listTitle.text(lang))
         WfParagraph(
-            wfText(
-                lang,
-                "Sit with someone who has lived in your place for decades. Ask permission first. Listen more than you talk. You will record how things changed, how sure they are, and a story if they offer one.",
-                "பல பத்தாண்டுகள் உங்கள் ஊரில் வாழ்ந்தவருடன் அமருங்கள். முதலில் அனுமதி கேளுங்கள். பேசுவதைவிட அதிகம் கேளுங்கள். மாற்றங்கள், அவர் எவ்வளவு உறுதியாகச் சொல்கிறார், அவர் விரும்பினால் ஒரு கதை ஆகியவற்றைப் பதிவு செய்வீர்கள்.",
-            ),
+            content.intro.text(lang),
             tag = "screen.body.primary",
         )
-        WfButton(wfText(lang, "Start an interview", "நேர்காணலைத் தொடங்கு"), filled = true, tag = "screen.primary-button")
-        WfNote(wfText(lang, "No interviews yet. Try asking your grandparent first.", "இன்னும் நேர்காணல்கள் இல்லை. முதலில் உங்கள் தாத்தா அல்லது பாட்டியிடம் கேட்டுப் பாருங்கள்."))
+        WfButton(
+            text = content.start.text(lang),
+            filled = true,
+            enabled = !atLimit,
+            tag = "screen.primary-button",
+            onClick = { onSessionChange(ElderSession(mode = ElderMode.SETUP)) },
+        )
+        if (atLimit) {
+            WfNote(content.limitMessage.text(lang))
+        }
+
+        if (appState.interviews.isEmpty()) {
+            WfNote(content.empty.text(lang))
+        } else {
+            Spacer(Modifier.height(12.dp))
+            appState.interviews.asReversed().forEach { interview ->
+                val place = content.places
+                    .getOrElse(interview.place) { content.places.first() }
+                    .text(lang)
+                val decade = content.decades
+                    .getOrElse(interview.birthDecade) { content.decades.first() }
+                val metadata = buildString {
+                    append(place)
+                    append(" · ")
+                    append(content.bornPrefix.text(lang))
+                    append(decade)
+                    append(" · ")
+                    append(EldersDomain.answeredCount(interview))
+                    append("/")
+                    append(EldersDomain.questionIds.size)
+                }
+                WfCard {
+                    WfH3(interview.nickname)
+                    WfParagraph(
+                        text = metadata,
+                        muted = true,
+                        bottom = 8,
+                    )
+                    val armed = deletePendingId == interview.id
+                    WfButton(
+                        text = if (armed) {
+                            content.deleteConfirm.text(lang)
+                        } else {
+                            content.delete.text(lang)
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+                            if (armed) {
+                                deletePendingId = null
+                                onDeleteInterview(interview.id)
+                            } else {
+                                deletePendingId = interview.id
+                            }
+                        },
+                    )
+                }
+            }
+        }
         WfFooter(lang)
+    }
+}
+
+@Composable
+private fun ElderSetupScreen(
+    lang: String,
+    content: ElderSliceBContent,
+    atLimit: Boolean,
+    onBack: () -> Unit,
+    onCreateInterview: (String, Int, Int, String) -> Unit,
+) {
+    var nickname by remember { mutableStateOf("") }
+    var decade by remember { mutableStateOf(1) }
+    var place by remember { mutableStateOf(0) }
+
+    WorkflowPage {
+        WfH1(content.newTitle.text(lang))
+        WfCard(tag = "screen.first-card") {
+            Text(
+                text = content.nicknameLabel.text(lang),
+                color = PrototypeTheme.palette.flour,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(bottom = 6.dp),
+            )
+            WfInput(
+                value = nickname,
+                placeholder = content.nicknamePlaceholder.text(lang),
+                minHeight = 48,
+                onValueChange = { value ->
+                    if (value.length <= EldersDomain.MAX_NICKNAME_CHARS) {
+                        nickname = value
+                    }
+                },
+            )
+            Spacer(Modifier.height(12.dp))
+            ElderSelect(
+                label = content.decadeLabel.text(lang),
+                options = content.decades,
+                selected = decade,
+                onSelect = { decade = it },
+            )
+            Spacer(Modifier.height(12.dp))
+            ElderSelect(
+                label = content.placeLabel.text(lang),
+                options = content.places.map { it.text(lang) },
+                selected = place,
+                onSelect = { place = it },
+            )
+            Spacer(Modifier.height(16.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                WfButton(
+                    text = content.start.text(lang),
+                    modifier = Modifier.weight(1f),
+                    filled = true,
+                    enabled = !atLimit,
+                    onClick = {
+                        onCreateInterview(
+                            nickname,
+                            decade,
+                            place,
+                            content.defaultNickname.text(lang),
+                        )
+                    },
+                )
+                WfButton(
+                    text = content.back.text(lang),
+                    modifier = Modifier.weight(1f),
+                    onClick = onBack,
+                )
+            }
+        }
+        if (atLimit) {
+            WfNote(content.limitMessage.text(lang))
+        }
+        WfNote(content.consent.text(lang))
     }
 }
 

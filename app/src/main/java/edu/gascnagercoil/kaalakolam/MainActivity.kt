@@ -50,6 +50,9 @@ class MainActivity : AppCompatActivity() {
                     onReset = viewModel::reset,
                     onPredictionAnswer = viewModel::setPredictionAnswer,
                     onClearPredictions = viewModel::clearPredictionAnswers,
+                    onElderSessionChange = viewModel::setElderSession,
+                    onCreateElderInterview = viewModel::createElderInterview,
+                    onDeleteElderInterview = viewModel::deleteElderInterview,
                 )
             }
         }
