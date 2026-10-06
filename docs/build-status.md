@@ -16,7 +16,7 @@ Status meanings:
 |---|---|---|---|
 | Home | **PARTIAL** | Native hero, entry cards, kolam/progress, route cards, note and footer exist. | HARD/PARITY must pass; shared chrome/card geometry still needs correction and device QA. |
 | Learn | **PARTIAL** | Learn home, one topic-detail scaffold, one game scaffold and a short word-list scaffold exist. | Full 24-topic/clip parity, all demos, both functional games, full word list, topic navigation/player controls and fidelity gates. |
-| Elders | **PARTIAL** | Introductory screen and start-interview control exist. | Interview setup/questions, confidence/story capture, review, code export/import and prototype parity. |
+| Elders | **PARTIAL** | Slice A is committed: pure Kotlin interview/answer/session models, validated DataStore persistence, corrupt-state fallback, web-compatible ivRecord/KK1 export-import, and JVM golden tests. | Slices B-D: list/setup/delete; 10-question capture/resume; results/evidence/reaction/share UI; then focused Elders audit and prototype parity. |
 | Class | **PARTIAL** | Code-entry/sample-data scaffold exists. | Real code parsing, pooled aggregation, grouping/summary behaviour and prototype parity. |
 | Council | **PARTIAL** | Role, scenario and budget scaffolds exist. | Full role/scenario consequences, selectable interventions, budget mechanics, deliberation result/export and prototype parity. |
 | Predict | **PARTIAL** | The full eight-question sequence, stepped slider input, confidence choice, persisted answers, reveal cards, calibration buckets/message and reset flow are implemented against the M2 web-derived prediction specs. | Current-head unit/golden CI, HARD checks, accessibility/device QA and final prototype visual parity must pass before DONE. |

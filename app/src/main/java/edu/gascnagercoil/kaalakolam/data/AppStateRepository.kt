@@ -5,6 +5,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.Serializer
 import androidx.datastore.dataStore
 import edu.gascnagercoil.kaalakolam.domain.AppState
+import edu.gascnagercoil.kaalakolam.domain.ElderSession
+import edu.gascnagercoil.kaalakolam.domain.Interview
 import edu.gascnagercoil.kaalakolam.domain.PredictionState
 import edu.gascnagercoil.kaalakolam.domain.ThemeMode
 import edu.gascnagercoil.kaalakolam.domain.repair
@@ -66,6 +68,15 @@ class AppStateRepository(context: Context) {
 
     suspend fun clearPredictionAnswers() {
         store.updateData { current -> current.copy(predictionAnswers = emptyMap()).repair() }
+    }
+
+    suspend fun setElderState(interviews: List<Interview>, session: ElderSession) {
+        store.updateData { current ->
+            current.copy(
+                interviews = interviews,
+                elderSession = session,
+            ).repair()
+        }
     }
 
     suspend fun replace(validated: AppState) {

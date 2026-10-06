@@ -24,6 +24,8 @@ data class AppState(
     val learnedTopicIds: Set<String> = emptySet(),
     val memoryFlags: Map<String, Boolean> = emptyMap(),
     val predictionAnswers: Map<String, PredictionState> = emptyMap(),
+    val interviews: List<Interview> = emptyList(),
+    val elderSession: ElderSession = ElderSession(),
     val elderAlias: String = "",
     val notes: String = "",
     val reflection: String = "",
@@ -60,6 +62,8 @@ fun AppState.repair(): AppState {
             }
         }
     }.toMap()
+    val repairedInterviews = EldersDomain.repairInterviews(interviews)
+    val repairedSession = EldersDomain.repairSession(elderSession, repairedInterviews)
 
     return copy(
         schemaVersion = AppState.CURRENT_SCHEMA,
@@ -67,5 +71,7 @@ fun AppState.repair(): AppState {
         learnedTopicIds = repairedTopics,
         memoryFlags = repairedFlags,
         predictionAnswers = repairedPredictions,
+        interviews = repairedInterviews,
+        elderSession = repairedSession,
     )
 }
