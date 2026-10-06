@@ -170,7 +170,7 @@ class AppStateRepository(context: Context) {
             current.copy(
                 interviews = current.interviews.map { interview ->
                     if (interview.id == interviewId) {
-                        interview.copy(reaction = reaction.take(EldersDomain.MAX_FREE_TEXT_CHARS))
+                        interview.copy(reaction = EldersDomain.graphemePrefix(reaction, EldersDomain.MAX_FREE_TEXT_CHARS))
                     } else {
                         interview
                     }
