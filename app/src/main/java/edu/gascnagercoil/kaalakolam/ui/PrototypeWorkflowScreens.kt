@@ -178,6 +178,7 @@ private fun WfButton(
     selected: Boolean = false,
     enabled: Boolean = true,
     tag: String? = null,
+    fidelityMetricTag: String? = null,
     onClick: () -> Unit = {},
 ) {
     val p = PrototypeTheme.palette
@@ -186,6 +187,7 @@ private fun WfButton(
     val border = if (useFill) p.turmeric else p.line
     val fg = if (useFill) Color(0xFF17120A).copy(alpha = if (enabled) 1f else .45f) else p.flour
     val effectiveTag = tag ?: "button.${text.hashCode()}"
+    val effectiveMetricTag = fidelityMetricTag ?: effectiveTag
     FidelityTouchTarget(
         tag = effectiveTag,
         modifier = modifier,
@@ -194,7 +196,10 @@ private fun WfButton(
     ) {
         Box(
             modifier = Modifier
-                .fidelityTag(effectiveTag)
+                .fidelityTag(
+                    tag = effectiveTag,
+                    metricTag = effectiveMetricTag,
+                )
                 .heightIn(min = 46.dp)
                 .background(bg, RoundedCornerShape(12.dp))
                 .border(1.dp, border, RoundedCornerShape(12.dp))
@@ -208,7 +213,7 @@ private fun WfButton(
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyLarge,
                 onTextLayout = fidelityTextLayout(
-                    tag = "$effectiveTag.label",
+                    tag = "$effectiveMetricTag.label",
                     kind = "button",
                     text = text,
                 ),
@@ -846,6 +851,7 @@ fun ElderPrototypeScreen(
             filled = true,
             enabled = !atLimit,
             tag = "elder-start",
+            fidelityMetricTag = "screen.primary-button",
             onClick = { onSessionChange(ElderSession(mode = ElderMode.SETUP)) },
         )
         if (atLimit) {

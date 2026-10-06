@@ -45,6 +45,7 @@ internal val LocalFidelityRecorder = staticCompositionLocalOf<FidelityRecorder?>
 internal fun Modifier.fidelityTag(
     tag: String,
     interactive: Boolean = false,
+    metricTag: String = tag,
 ): Modifier = composed {
     val recorder = LocalFidelityRecorder.current
     val density = LocalDensity.current.density
@@ -53,7 +54,7 @@ internal fun Modifier.fidelityTag(
         .onGloballyPositioned { coordinates ->
             val position = coordinates.positionInRoot()
             recorder?.recordBox(
-                tag = tag,
+                tag = metricTag,
                 leftDp = position.x / density,
                 topDp = position.y / density,
                 widthDp = coordinates.size.width / density,
