@@ -51,15 +51,20 @@ import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import edu.gascnagercoil.kaalakolam.content.ClassPoolCopy
 import edu.gascnagercoil.kaalakolam.content.ContentRepository
 import edu.gascnagercoil.kaalakolam.content.ElderQuestionContent
 import edu.gascnagercoil.kaalakolam.content.ElderSliceBContent
 import edu.gascnagercoil.kaalakolam.content.ElderSliceCContent
 import edu.gascnagercoil.kaalakolam.domain.AppState
+import edu.gascnagercoil.kaalakolam.domain.ClassGroupBy
+import edu.gascnagercoil.kaalakolam.domain.ClassPoolDomain
 import edu.gascnagercoil.kaalakolam.domain.ElderMode
 import edu.gascnagercoil.kaalakolam.domain.ElderSession
 import edu.gascnagercoil.kaalakolam.domain.EldersDomain
@@ -1501,39 +1506,400 @@ private fun ElderSetupScreen(
 }
 
 @Composable
-fun ClassPoolPrototypeScreen(lang: String) {
-    var code by remember { mutableStateOf("") }
-    var sample by remember { mutableStateOf(false) }
+fun ClassPoolPrototypeScreen(
+    lang: String,
+    appState: AppState = AppState(language = lang),
+    onImportCodes: (String) -> Unit = {},
+    onSampleChange: (Boolean) -> Unit = {},
+    onGroupByChange: (ClassGroupBy) -> Unit = {},
+    onPoolUsed: () -> Unit = {},
+) {
+    val context = LocalContext.current
+    val elders = remember(context) { ContentRepository(context).loadElders() }
+    val copy = ClassPoolCopy
+    val clipboard = LocalClipboardManager.current
+    var code by rememberSaveable { mutableStateOf("") }
+    var lastFound by rememberSaveable { mutableStateOf(-1) }
+    var lastAdded by rememberSaveable { mutableStateOf(0) }
+    var lastDuplicates by rememberSaveable { mutableStateOf(0) }
+    var lastRejected by rememberSaveable { mutableStateOf(0) }
+
+    val records = ClassPoolDomain.allInterviewRecords(appState)
+    val plans = ClassPoolDomain.allPlanRecords(appState)
+    val mine = appState.interviews.filter { EldersDomain.answeredCount(it) >= 3 }
+    val groupBy = appState.classPool.groupBy
+
     WorkflowPage {
-        WfH1(wfText(lang, "Class pool", "வகுப்புத் தொகுப்பு"))
-        WfParagraph(
-            wfText(
-                lang,
-                "Everyone shares a code. One person pastes all the codes here. No server is needed: send codes by WhatsApp, Bluetooth or on paper.",
-                "ஒவ்வொருவரும் ஒரு குறியீட்டைப் பகிர்கிறார்கள். ஒருவர் அனைத்தையும் இங்கே ஒட்டுகிறார். சேவையகம் தேவையில்லை: வாட்ஸ்அப், புளூடூத் அல்லது காகிதத்தில் குறியீடுகளை அனுப்பலாம்.",
-            ),
-            tag = "screen.body.primary",
-        )
+        WfH1(copy.title.text(lang))
+        WfParagraph(copy.intro.text(lang), tag = "screen.body.primary")
         WfCard(tag = "screen.first-card") {
-            WfH2(wfText(lang, "Add codes", "குறியீடுகளைச் சேர்"))
+            WfH2(copy.addCodes.text(lang))
             WfInput(
-                code,
-                wfText(lang, "Paste codes here (each starts with KK1. or KP1.)", "குறியீடுகளை இங்கே ஒட்டுங்கள் (ஒவ்வொன்றும் KK1. அல்லது KP1. எனத் தொடங்கும்)"),
+                value = code,
+                placeholder = copy.pastePlaceholder.text(lang),
                 minHeight = 64,
                 onValueChange = { code = it },
+                accessibilityLabel = copy.pastePlaceholder.text(lang),
             )
             Spacer(Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                WfButton(wfText(lang, "Add", "சேர்"), filled = true, tag = "screen.primary-button")
                 WfButton(
-                    if (sample) wfText(lang, "Remove sample data", "மாதிரித் தரவை நீக்கு")
-                    else wfText(lang, "Try sample data (synthetic)", "மாதிரித் தரவைப் பார் (செயற்கை)"),
-                    onClick = { sample = !sample },
+                    text = copy.add.text(lang),
+                    filled = true,
+                    tag = "screen.primary-button",
+                    onClick = {
+                        val summary = ClassPoolDomain.importCodes(code, appState.classPool).summary
+                        lastFound = summary.found
+                        lastAdded = summary.added
+                        lastDuplicates = summary.duplicates
+                        lastRejected = summary.rejected
+                        if (summary.found > 0) {
+                            onImportCodes(code)
+                            code = ""
+                        }
+                    },
+                )
+                WfButton(
+                    text = if (appState.classPool.sample) {
+                        copy.removeSample.text(lang)
+                    } else {
+                        copy.trySample.text(lang)
+                    },
+                    onClick = { onSampleChange(!appState.classPool.sample) },
                 )
             }
+            if (lastFound >= 0) {
+                Spacer(Modifier.height(8.dp))
+                val statusText = if (lastFound == 0) {
+                    if (lang == "ta") {
+                        "செல்லுபடியாகும் குறியீடு கிடைக்கவில்லை."
+                    } else {
+                        "No valid codes found. Each code starts with KK1. or KP1."
+                    }
+                } else if (lang == "ta") {
+                    "சேர்க்கப்பட்டது " + lastAdded + ", மீண்டும் வந்தவை " + lastDuplicates +
+                        ", செல்லாதவை " + lastRejected + "."
+                } else {
+                    "Added " + lastAdded + ", duplicates " + lastDuplicates +
+                        ", rejected " + lastRejected + "."
+                }
+                Text(
+                    text = statusText,
+                    color = PrototypeTheme.palette.faint,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier
+                        .semantics { liveRegion = LiveRegionMode.Polite }
+                        .fidelityTag("class-import-status"),
+                )
+            }
+            if (appState.classPool.sample) {
+                Spacer(Modifier.height(8.dp))
+                ClassWarningNote(copy.sampleWarning.text(lang))
+            }
         }
-        WfNote(wfText(lang, "No pooled interviews yet. Finish an interview and copy its code, or try the sample data.", "தொகுக்கப்பட்ட நேர்காணல்கள் இல்லை. ஒரு நேர்காணலை முடித்து அதன் குறியீட்டை நகலெடுங்கள், அல்லது மாதிரித் தரவை முயலுங்கள்."))
+
+        if (records.isEmpty() && plans.isEmpty()) {
+            WfNote(copy.noPooled.text(lang))
+        } else {
+            if (records.isNotEmpty()) {
+                WfCard(tag = "class-memory-summary") {
+                    WfH2(
+                        if (lang == "ta") {
+                            "நினைவுகள்: " + records.size + " நேர்காணல்கள்"
+                        } else {
+                            "Memories: " + records.size + " interviews"
+                        },
+                    )
+                    Text(
+                        text = copy.splitBy.text(lang),
+                        color = PrototypeTheme.palette.flour,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(bottom = 6.dp),
+                    )
+                    WfSegments(
+                        labels = copy.groupLabels.map { it.text(lang) },
+                        selected = groupBy.ordinal,
+                        tagPrefix = "class-group",
+                        onSelect = { index ->
+                            onGroupByChange(ClassGroupBy.entries[index])
+                        },
+                    )
+                    Spacer(Modifier.height(10.dp))
+                    ClassLegend(lang)
+                }
+
+                val strongest = ClassPoolDomain.strongestSharedMemories(records)
+                if (strongest.isNotEmpty()) {
+                    WfCard(tag = "class-strongest") {
+                        WfH2(copy.strongest.text(lang))
+                        strongest.forEach { shared ->
+                            val question = elders.elderQuestions[shared.questionIndex]
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                Text(
+                                    text = "• " + question.title.text(lang),
+                                    color = PrototypeTheme.palette.flour,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    modifier = Modifier.weight(1f),
+                                )
+                                Text(
+                                    text = classMean(shared.row.mean) + " · n=" + shared.row.n,
+                                    color = PrototypeTheme.palette.faint,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                )
+                            }
+                            ClassVerdictChip(question.verdict, lang)
+                        }
+                        if (strongest.any { elders.elderQuestions[it.questionIndex].verdict == "confounded" }) {
+                            Spacer(Modifier.height(8.dp))
+                            ClassWarningNote(copy.agreementWarning.text(lang))
+                        }
+                    }
+                }
+
+                elders.elderQuestions.forEachIndexed { questionIndex, question ->
+                    val rows = ClassPoolDomain.aggregate(records, questionIndex, groupBy)
+                        .filter { it.n > 0 }
+                    WfCard(tag = "class-question." + question.id) {
+                        WfH3(question.title.text(lang))
+                        ClassVerdictChip(question.verdict, lang)
+                        Spacer(Modifier.height(8.dp))
+                        if (rows.isEmpty()) {
+                            WfParagraph(copy.noAnswers.text(lang), muted = true, bottom = 0)
+                        } else {
+                            rows.forEachIndexed { rowIndex, row ->
+                                ClassDistributionRow(
+                                    lang = lang,
+                                    label = classGroupLabel(
+                                        lang = lang,
+                                        groupBy = groupBy,
+                                        rowLabel = row.label,
+                                        elders = elders,
+                                    ),
+                                    row = row,
+                                )
+                            }
+                            if (rows.any { it.n < 8 }) {
+                                WfParagraph(
+                                    text = copy.smallGroupWarning.text(lang),
+                                    muted = true,
+                                    bottom = 0,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (plans.isNotEmpty()) {
+                val summary = ClassPoolDomain.planSummary(plans)
+                WfCard(tag = "class-plan-summary") {
+                    WfH2(copy.councilPlans.text(lang) + ": " + plans.size)
+                    ClassPoolCopy.planOptions.forEachIndexed { index, option ->
+                        val count = summary.optionCounts[index]
+                        val percent = ((count.toDouble() / plans.size.toDouble()) * 100.0 + 0.5).toInt()
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            Text(
+                                text = option.title.text(lang),
+                                color = PrototypeTheme.palette.flour,
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.weight(1f),
+                            )
+                            Text(
+                                text = percent.toString() + "%",
+                                color = PrototypeTheme.palette.faint,
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                        }
+                    }
+                    WfParagraph(
+                        text = if (lang == "ta") {
+                            summary.plansLeavingSomeoneUnprotected.toString() + " / " + plans.size +
+                                " திட்டங்கள் குறைந்தது ஒரு குழுவுக்கு எந்தப் பாதுகாப்பும் தரவில்லை."
+                        } else {
+                            summary.plansLeavingSomeoneUnprotected.toString() + " of " + plans.size +
+                                " plans left at least one group with no protection at all."
+                        },
+                    )
+                    WfParagraph(copy.planCompare.text(lang), bottom = 0)
+                }
+            }
+
+            if (mine.isNotEmpty()) {
+                WfCard(tag = "class-my-codes") {
+                    WfH2(copy.myCodes.text(lang))
+                    mine.forEach { interview ->
+                        val shareCode = EldersDomain.exportShareCode(interview)
+                        Text(
+                            text = interview.nickname,
+                            color = PrototypeTheme.palette.faint,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(top = 4.dp, bottom = 4.dp),
+                        )
+                        Text(
+                            text = shareCode,
+                            color = PrototypeTheme.palette.flour,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .semantics { contentDescription = interview.nickname }
+                                .background(PrototypeTheme.palette.ground, RoundedCornerShape(10.dp))
+                                .border(1.dp, PrototypeTheme.palette.line, RoundedCornerShape(10.dp))
+                                .padding(12.dp),
+                        )
+                        Spacer(Modifier.height(6.dp))
+                        WfButton(
+                            text = copy.copy.text(lang),
+                            tag = "class-copy." + interview.id,
+                            onClick = {
+                                clipboard.setText(AnnotatedString(shareCode))
+                                onPoolUsed()
+                            },
+                        )
+                        Spacer(Modifier.height(8.dp))
+                    }
+                }
+            }
+        }
         WfFooter(lang)
+    }
+}
+
+private fun classMean(mean: Double?): String {
+    if (mean == null) return "—"
+    val value = String.format(Locale.ROOT, "%.1f", mean)
+    return if (mean > 0.0) "+" + value else value
+}
+
+private fun classGroupLabel(
+    lang: String,
+    groupBy: ClassGroupBy,
+    rowLabel: String,
+    elders: edu.gascnagercoil.kaalakolam.content.EldersAsset,
+): String = when (groupBy) {
+    ClassGroupBy.ALL -> ClassPoolCopy.groupLabels[0].text(lang)
+    ClassGroupBy.PLACE -> {
+        val index = rowLabel.removePrefix("p").toIntOrNull() ?: 0
+        elders.sliceB.places.getOrElse(index) { elders.sliceB.places.first() }.text(lang)
+    }
+    ClassGroupBy.DECADE -> {
+        val index = rowLabel.removePrefix("d").toIntOrNull() ?: 0
+        elders.sliceB.decades.getOrElse(index) { elders.sliceB.decades.first() }
+    }
+}
+
+@Composable
+private fun ClassLegend(lang: String) {
+    val colours = listOf("#1f6f8b", "#6bb3c4", "#d8d2c4", "#eba46d", "#c8452c")
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(5.dp),
+    ) {
+        Text(ClassPoolCopy.less.text(lang), color = PrototypeTheme.palette.faint, fontSize = 11.5.sp)
+        colours.forEach { colour ->
+            Box(
+                modifier = Modifier
+                    .size(15.dp)
+                    .background(wfHexColor(colour), RoundedCornerShape(3.dp)),
+            )
+        }
+        Text(ClassPoolCopy.more.text(lang), color = PrototypeTheme.palette.faint, fontSize = 11.5.sp)
+    }
+    Text(
+        text = ClassPoolCopy.colourMeaning.text(lang),
+        color = PrototypeTheme.palette.faint,
+        fontSize = 11.5.sp,
+        lineHeight = 16.sp,
+        modifier = Modifier.padding(top = 4.dp),
+    )
+}
+
+@Composable
+private fun ClassVerdictChip(verdict: String, lang: String) {
+    val text = ClassPoolCopy.verdicts[verdict]?.text(lang) ?: verdict
+    val border = if (verdict == "confounded") PrototypeTheme.palette.vermilion else PrototypeTheme.palette.line
+    Text(
+        text = text,
+        color = PrototypeTheme.palette.flour,
+        fontSize = 11.2.sp,
+        lineHeight = 15.sp,
+        modifier = Modifier
+            .border(1.dp, border, RoundedCornerShape(99.dp))
+            .padding(horizontal = 8.dp, vertical = 3.dp),
+    )
+}
+
+@Composable
+private fun ClassWarningNote(text: String) {
+    val p = PrototypeTheme.palette
+    Text(
+        text = text,
+        color = p.flour,
+        style = MaterialTheme.typography.bodyMedium,
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(p.vermilion.copy(alpha = 0.10f), RoundedCornerShape(10.dp))
+            .border(1.dp, p.vermilion, RoundedCornerShape(10.dp))
+            .padding(10.dp),
+    )
+}
+
+@Composable
+private fun ClassDistributionRow(
+    lang: String,
+    label: String,
+    row: M2Domain.AggregateRow,
+) {
+    val p = PrototypeTheme.palette
+    val glyphs = listOf("−−", "−", "=", "+", "++")
+    val colours = listOf("#1f6f8b", "#6bb3c4", "#d8d2c4", "#eba46d", "#c8452c")
+    val description = ClassPoolCopy.distributionPrefix.text(lang) +
+        glyphs.indices.joinToString(", ") { index -> glyphs[index] + " " + row.counts[index] }
+
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(7.dp),
+    ) {
+        Text(
+            text = label,
+            color = p.flour,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.widthIn(min = 76.dp, max = 116.dp),
+        )
+        Row(
+            modifier = Modifier
+                .weight(1f)
+                .height(18.dp)
+                .semantics { contentDescription = description }
+                .background(p.ground3, RoundedCornerShape(5.dp))
+                .border(1.dp, p.line, RoundedCornerShape(5.dp)),
+        ) {
+            row.counts.forEachIndexed { index, count ->
+                if (count > 0) {
+                    Box(
+                        modifier = Modifier
+                            .weight(count.toFloat())
+                            .fillMaxSize()
+                            .background(wfHexColor(colours[index])),
+                    )
+                }
+            }
+        }
+        Text(
+            text = classMean(row.mean) + " · n=" + row.n,
+            color = p.faint,
+            fontSize = 11.2.sp,
+            modifier = Modifier.widthIn(min = 60.dp),
+        )
     }
 }
 

@@ -108,6 +108,11 @@ class AppStateRepository(context: Context) {
         store.updateData { current ->
             current.copy(
                 classPool = current.classPool.copy(sample = enabled),
+                memoryFlags = if (enabled) {
+                    current.memoryFlags + ("pool" to true)
+                } else {
+                    current.memoryFlags
+                },
             ).repair()
         }
     }
@@ -125,9 +130,22 @@ class AppStateRepository(context: Context) {
         store.updateData { current ->
             val update = ClassPoolDomain.importCodes(text, current.classPool)
             summary = update.summary
-            current.copy(classPool = update.state).repair()
+            current.copy(
+                classPool = update.state,
+                memoryFlags = if (update.summary.added > 0) {
+                    current.memoryFlags + ("pool" to true)
+                } else {
+                    current.memoryFlags
+                },
+            ).repair()
         }
         return summary
+    }
+
+    suspend fun markClassPoolUsed() {
+        store.updateData { current ->
+            current.copy(memoryFlags = current.memoryFlags + ("pool" to true)).repair()
+        }
     }
 
     suspend fun setElderState(interviews: List<Interview>, session: ElderSession) {

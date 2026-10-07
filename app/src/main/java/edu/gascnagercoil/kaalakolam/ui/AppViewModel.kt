@@ -8,6 +8,7 @@ import edu.gascnagercoil.kaalakolam.content.GapManifest
 import edu.gascnagercoil.kaalakolam.data.AppStateRepository
 import edu.gascnagercoil.kaalakolam.domain.AppState
 import edu.gascnagercoil.kaalakolam.domain.BackupCodec
+import edu.gascnagercoil.kaalakolam.domain.ClassGroupBy
 import edu.gascnagercoil.kaalakolam.domain.ElderSession
 import edu.gascnagercoil.kaalakolam.domain.Interview
 import edu.gascnagercoil.kaalakolam.domain.InterviewAnswer
@@ -63,6 +64,22 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     fun clearPredictionAnswers() {
         viewModelScope.launch { stateRepository.clearPredictionAnswers() }
+    }
+
+    fun importClassCodes(text: String) {
+        viewModelScope.launch { stateRepository.importClassCodes(text) }
+    }
+
+    fun setClassSample(enabled: Boolean) {
+        viewModelScope.launch { stateRepository.setClassSample(enabled) }
+    }
+
+    fun setClassGroupBy(groupBy: ClassGroupBy) {
+        viewModelScope.launch { stateRepository.setClassGroupBy(groupBy) }
+    }
+
+    fun markClassPoolUsed() {
+        viewModelScope.launch { stateRepository.markClassPoolUsed() }
     }
 
     fun setElderSession(session: ElderSession) {

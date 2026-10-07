@@ -59,6 +59,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import edu.gascnagercoil.kaalakolam.R
 import edu.gascnagercoil.kaalakolam.domain.AppState
+import edu.gascnagercoil.kaalakolam.domain.ClassGroupBy
 import edu.gascnagercoil.kaalakolam.domain.ElderMode
 import edu.gascnagercoil.kaalakolam.domain.ElderSession
 import edu.gascnagercoil.kaalakolam.domain.EldersDomain
@@ -102,6 +103,10 @@ fun KaalaKolamApp(
     onReset: () -> Unit,
     onPredictionAnswer: (String, PredictionState) -> Unit = { _, _ -> },
     onClearPredictions: () -> Unit = {},
+    onClassImportCodes: (String) -> Unit = {},
+    onClassSampleChange: (Boolean) -> Unit = {},
+    onClassGroupByChange: (ClassGroupBy) -> Unit = {},
+    onClassPoolUsed: () -> Unit = {},
     onElderSessionChange: (ElderSession) -> Unit = {},
     onCreateElderInterview: (String, Int, Int, String) -> Unit = { _, _, _, _ -> },
     onDeleteElderInterview: (String) -> Unit = {},
@@ -226,7 +231,14 @@ fun KaalaKolamApp(
                     )
                 }
                 composable(Destination.CLASS.route) {
-                    ClassPoolPrototypeScreen(lang = lang)
+                    ClassPoolPrototypeScreen(
+                        lang = lang,
+                        appState = uiState.appState,
+                        onImportCodes = onClassImportCodes,
+                        onSampleChange = onClassSampleChange,
+                        onGroupByChange = onClassGroupByChange,
+                        onPoolUsed = onClassPoolUsed,
+                    )
                 }
                 composable(Destination.COUNCIL.route) {
                     CouncilPrototypeScreen(lang = lang)
@@ -345,7 +357,10 @@ fun KaalaKolamVisualFixture(
                     appState = visualAppState,
                     initialDeletePendingId = if (visualState == "elders-delete") visualInterview.id else null,
                 )
-                Destination.CLASS.route -> ClassPoolPrototypeScreen(lang = lang)
+                Destination.CLASS.route -> ClassPoolPrototypeScreen(
+                    lang = lang,
+                    appState = visualAppState,
+                )
                 Destination.COUNCIL.route -> CouncilPrototypeScreen(lang = lang)
                 Destination.PREDICT.route -> PredictPrototypeScreen(
                     lang = lang,
