@@ -5,6 +5,9 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.Serializer
 import androidx.datastore.dataStore
 import edu.gascnagercoil.kaalakolam.domain.AppState
+import edu.gascnagercoil.kaalakolam.domain.ClassGroupBy
+import edu.gascnagercoil.kaalakolam.domain.ClassImportSummary
+import edu.gascnagercoil.kaalakolam.domain.ClassPoolDomain
 import edu.gascnagercoil.kaalakolam.domain.ElderSession
 import edu.gascnagercoil.kaalakolam.domain.ElderMode
 import edu.gascnagercoil.kaalakolam.domain.EldersDomain
@@ -99,6 +102,32 @@ class AppStateRepository(context: Context) {
 
     suspend fun clearPredictionAnswers() {
         store.updateData { current -> current.copy(predictionAnswers = emptyMap()).repair() }
+    }
+
+    suspend fun setClassSample(enabled: Boolean) {
+        store.updateData { current ->
+            current.copy(
+                classPool = current.classPool.copy(sample = enabled),
+            ).repair()
+        }
+    }
+
+    suspend fun setClassGroupBy(groupBy: ClassGroupBy) {
+        store.updateData { current ->
+            current.copy(
+                classPool = current.classPool.copy(groupBy = groupBy),
+            ).repair()
+        }
+    }
+
+    suspend fun importClassCodes(text: String): ClassImportSummary {
+        var summary = ClassImportSummary()
+        store.updateData { current ->
+            val update = ClassPoolDomain.importCodes(text, current.classPool)
+            summary = update.summary
+            current.copy(classPool = update.state).repair()
+        }
+        return summary
     }
 
     suspend fun setElderState(interviews: List<Interview>, session: ElderSession) {

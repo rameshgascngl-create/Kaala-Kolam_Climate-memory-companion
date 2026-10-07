@@ -27,12 +27,13 @@ data class AppState(
     val predictionAnswers: Map<String, PredictionState> = emptyMap(),
     val interviews: List<Interview> = emptyList(),
     val elderSession: ElderSession = ElderSession(),
+    val classPool: ClassPoolState = ClassPoolState(),
     val elderAlias: String = "",
     val notes: String = "",
     val reflection: String = "",
 ) {
     companion object {
-        const val CURRENT_SCHEMA = 2
+        const val CURRENT_SCHEMA = 3
     }
 }
 
@@ -68,6 +69,7 @@ fun AppState.repair(): AppState {
     }.toMap()
     val repairedInterviews = EldersDomain.repairInterviews(interviews)
     val repairedSession = EldersDomain.repairSession(elderSession, repairedInterviews)
+    val repairedClassPool = ClassPoolDomain.repair(classPool)
 
     return copy(
         schemaVersion = AppState.CURRENT_SCHEMA,
@@ -78,5 +80,6 @@ fun AppState.repair(): AppState {
         predictionAnswers = repairedPredictions,
         interviews = repairedInterviews,
         elderSession = repairedSession,
+        classPool = repairedClassPool,
     )
 }

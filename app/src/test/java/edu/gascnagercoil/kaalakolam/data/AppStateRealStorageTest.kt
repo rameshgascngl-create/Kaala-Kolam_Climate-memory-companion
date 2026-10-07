@@ -3,10 +3,13 @@ package edu.gascnagercoil.kaalakolam.data
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import edu.gascnagercoil.kaalakolam.domain.AppState
+import edu.gascnagercoil.kaalakolam.domain.ClassGroupBy
+import edu.gascnagercoil.kaalakolam.domain.ClassPoolState
 import edu.gascnagercoil.kaalakolam.domain.ElderMode
 import edu.gascnagercoil.kaalakolam.domain.ElderSession
 import edu.gascnagercoil.kaalakolam.domain.Interview
 import edu.gascnagercoil.kaalakolam.domain.InterviewAnswer
+import edu.gascnagercoil.kaalakolam.domain.M2Domain
 import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -64,6 +67,16 @@ class AppStateRealStorageTest {
                 mode = ElderMode.SETUP,
                 activeId = "iv000001",
                 questionIndex = 0,
+            ),
+            classPool = ClassPoolState(
+                imports = listOf(
+                    M2Domain.InterviewRecord("I", "pool01", 1, 2, "1234501234"),
+                ),
+                plans = listOf(
+                    M2Domain.PlanRecord("P", "plan01", 1, listOf(0, 3)),
+                ),
+                sample = true,
+                groupBy = ClassGroupBy.DECADE,
             ),
             notes = "persist me",
         )
@@ -178,7 +191,7 @@ class AppStateRealStorageTest {
     }
 
     @Test
-    fun v1FixtureMigratesToV2WithoutLosingKnownFields() = runBlocking {
+    fun v1FixtureMigratesToCurrentSchemaWithoutLosingKnownFields() = runBlocking {
         val fixture = requireNotNull(
             javaClass.classLoader?.getResource("fixtures/app-state-v1.json"),
         ).readText()
@@ -189,7 +202,7 @@ class AppStateRealStorageTest {
         val migrated = handle.store.data.first()
         handle.close()
 
-        assertEquals(2, migrated.schemaVersion)
+        assertEquals(AppState.CURRENT_SCHEMA, migrated.schemaVersion)
         assertEquals("ta", migrated.language)
         assertEquals("பாட்டி", migrated.elderAlias)
         assertEquals("v1 note", migrated.notes)
