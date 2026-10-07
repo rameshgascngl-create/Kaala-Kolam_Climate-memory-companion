@@ -13,4 +13,13 @@ for phrase in ("Memory stripes showing climate change over time", "Kolam learnin
 for label in ("முகப்பு","கற்க","மூத்தோர்","வகுப்பு","ஊர்சபை","கணிப்பு"):
     if label not in test:
         raise SystemExit("ACCESSIBILITY_FAIL semantics test label missing: " + label)
-print("ACCESSIBILITY_STATIC_PASS six-tab semantics test present icons-and-charts-described")
+workflow = (ROOT / "app/src/main/java/edu/gascnagercoil/kaalakolam/ui/PrototypeWorkflowScreens.kt").read_text(encoding="utf-8")
+for snippet, label in (
+    ("accessibilityLabel = content.nicknameLabel.text(lang)", "Elders nickname field"),
+    ("accessibilityLabel = content.storyLabel.text(lang)", "Elders story field"),
+    ("accessibilityLabel?.let { contentDescription = it }", "generic input semantics"),
+    (".semantics { contentDescription = accessibilityLabel }", "Elders story semantics"),
+):
+    if snippet not in workflow:
+        raise SystemExit("ACCESSIBILITY_FAIL missing explicit TalkBack label: " + label)
+print("ACCESSIBILITY_STATIC_PASS six-tab semantics test present icons-and-charts-described elders-inputs-labelled")

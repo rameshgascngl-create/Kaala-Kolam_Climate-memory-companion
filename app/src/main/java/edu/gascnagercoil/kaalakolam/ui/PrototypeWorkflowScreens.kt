@@ -375,6 +375,7 @@ private fun WfInput(
     placeholder: String,
     minHeight: Int = 46,
     onValueChange: (String) -> Unit = {},
+    accessibilityLabel: String? = null,
 ) {
     val p = PrototypeTheme.palette
     BasicTextField(
@@ -384,6 +385,7 @@ private fun WfInput(
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(min = minHeight.dp)
+            .semantics { accessibilityLabel?.let { contentDescription = it } }
             .background(p.ground, RoundedCornerShape(10.dp))
             .border(1.dp, p.line, RoundedCornerShape(10.dp))
             .padding(horizontal = 12.dp, vertical = 10.dp),
@@ -1246,6 +1248,7 @@ private fun ElderAskScreen(
                 interviewId = interview.id,
                 questionId = question.id,
                 persistedStory = answer?.story.orEmpty(),
+                accessibilityLabel = content.storyLabel.text(lang),
                 onStoryChange = { story ->
                     onAnswerChange(
                         question.id,
@@ -1368,6 +1371,7 @@ private fun ElderStoryField(
     interviewId: String,
     questionId: String,
     persistedStory: String,
+    accessibilityLabel: String,
     onStoryChange: (String) -> Unit,
 ) {
     val p = PrototypeTheme.palette
@@ -1396,6 +1400,7 @@ private fun ElderStoryField(
             .fillMaxWidth()
             .heightIn(min = 96.dp)
             .fidelityTag("elder-story")
+            .semantics { contentDescription = accessibilityLabel }
             .background(p.ground, RoundedCornerShape(10.dp))
             .border(1.dp, p.line, RoundedCornerShape(10.dp))
             .padding(horizontal = 12.dp, vertical = 10.dp),
@@ -1447,6 +1452,7 @@ private fun ElderSetupScreen(
                         nickname = value
                     }
                 },
+                accessibilityLabel = content.nicknameLabel.text(lang),
             )
             Spacer(Modifier.height(12.dp))
             ElderSelect(
