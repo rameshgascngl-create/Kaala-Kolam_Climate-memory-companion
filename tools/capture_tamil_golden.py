@@ -87,21 +87,55 @@ def state_for(name: str, theme: str) -> dict:
     return state
 
 
-def load(page: Page, state: dict, font_scale: int) -> None:
+def page_metrics(page: Page, stage: str) -> dict:
+    values = page.evaluate(
+        """() => {
+            const root = document.documentElement;
+            const body = document.body;
+            const header = document.querySelector('header.top');
+            const app = document.querySelector('#app');
+            const active = document.activeElement;
+            return {
+                scrollY: window.scrollY,
+                scrollHeight: root.scrollHeight,
+                clientHeight: root.clientHeight,
+                rootFontSize: getComputedStyle(root).fontSize,
+                rootInlineFontSize: root.style.fontSize,
+                bodyTop: body ? body.getBoundingClientRect().top : null,
+                headerTop: header ? header.getBoundingClientRect().top : null,
+                headerBottom: header ? header.getBoundingClientRect().bottom : null,
+                appTop: app ? app.getBoundingClientRect().top : null,
+                activeTag: active ? active.tagName : null,
+                activeId: active ? active.id : null,
+                fontsStatus: document.fonts ? document.fonts.status : 'unsupported',
+            };
+        }"""
+    )
+    return {"stage": stage, **values}
+
+
+def load(page: Page, state: dict, font_scale: int) -> list[dict]:
+    trace = []
     page.goto(HTML.as_uri(), wait_until="load")
+    trace.append(page_metrics(page, "initial-load"))
     page.evaluate(
         "([key,value]) => { localStorage.clear(); localStorage.setItem(key, JSON.stringify(value)); }",
         [KEY, state],
     )
+    trace.append(page_metrics(page, "state-written"))
     page.reload(wait_until="load")
+    trace.append(page_metrics(page, "after-reload"))
     page.evaluate("scale => { document.documentElement.style.fontSize = scale + '%'; }", font_scale)
+    trace.append(page_metrics(page, "after-font-scale"))
     install_reference_fonts(page, "ta")
+    trace.append(page_metrics(page, "after-pinned-fonts-ready"))
+    return trace
 
 
 def open_game(page: Page) -> None:
     page.get_by_role("button", name="வானிலையா? காலநிலையா?", exact=True).evaluate("(el) => el.click()")
     page.wait_for_function(
-        "() => /1\s*\/\s*10/.test(document.querySelector('#app')?.textContent || '')"
+        "() => /1\\s*\\/\\s*10/.test(document.querySelector('#app')?.textContent || '')"
     )
 
 
@@ -127,8 +161,25 @@ def main() -> None:
                             )
                             page = context.new_page()
                             try:
-                                load(page, state_for(state_name, theme), scale)
-                                assert_scroll_zero(page, state_name)
+                                trace = load(page, state_for(state_name, theme), scale)
+                                try:
+                                    assert_scroll_zero(page, state_name)
+                                except AssertionError:
+                                    print(
+                                        "REFERENCE_STAGE_TRACE "
+                                        + json.dumps(
+                                            {
+                                                "viewport": f"{width}x{height}",
+                                                "fontScale": scale,
+                                                "theme": theme,
+                                                "state": state_name,
+                                                "trace": trace,
+                                            },
+                                            ensure_ascii=False,
+                                            sort_keys=True,
+                                        )
+                                    )
+                                    raise
                                 if state_name == "learn-game":
                                     open_game(page)
                                     assert_scroll_zero(page, state_name)
