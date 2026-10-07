@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'diag/reference-preflight-*'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -28,3 +29,11 @@ jobs:
 
       - name: Capture Tamil localisation golden matrix
         run: python3 tools/capture_tamil_golden.py
+
+      - name: Upload Tamil preflight evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-reference-preflight-tamil
+          path: tests/golden-tamil
+          if-no-files-found: error
