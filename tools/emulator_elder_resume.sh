@@ -168,10 +168,12 @@ PY
   return 1
 }
 
-assert_restored_state() {
+assert_q5_persisted_state() {
+  local phase="$1"
   read_state
-  python3 - <<'PY'
+  PHASE="$phase" python3 - <<'PY'
 import json
+import os
 
 with open("/tmp/kaala-kolam-state.json", encoding="utf-8") as fh:
     state = json.load(fh)
@@ -191,8 +193,116 @@ for question_id in expected_ids:
     assert answer is not None, question_id
     assert answer.get("answered") is True, (question_id, answer)
     assert answer.get("rating") == 0, (question_id, answer)
-print("ELDERS_STORAGE_RESTORE_PASS currentTab=elders questionIndex=4 answers=5")
+print(
+    "ELDERS_Q5_PERSISTED_PASS "
+    f"phase={os.environ['PHASE']} currentTab=elders questionIndex=4 answers=5"
+)
 PY
+}
+
+activity_manager_snapshot() {
+  local target="$1"
+  adb shell dumpsys activity processes "$PKG" | tr -d '\r' >"$target"
+}
+
+activity_manager_state_ok() {
+  local mode="$1"
+  local pid="$2"
+  local snapshot="$3"
+  MODE="$mode" PID="$pid" PKG="$PKG" SNAPSHOT="$snapshot" python3 - <<'PY'
+import os
+import re
+import sys
+
+mode = os.environ["MODE"]
+pid = os.environ["PID"]
+pkg = os.environ["PKG"]
+text = open(os.environ["SNAPSHOT"], encoding="utf-8", errors="replace").read()
+
+if not re.search(rf"\b{re.escape(pid)}:{re.escape(pkg)}(?:/|\b)", text):
+    sys.exit(1)
+
+adj_match = re.search(r"\bcurRaw=(-?\d+)", text)
+if not adj_match:
+    adj_match = re.search(r"\boom adj:.*?\bcur=(-?\d+)", text)
+if not adj_match:
+    sys.exit(1)
+adj = int(adj_match.group(1))
+
+state_name_match = re.search(r"state:\s*cur=([A-Z_]+)", text)
+state_name = state_name_match.group(1) if state_name_match else ""
+proc_state_match = re.search(r"\bcurProcState=(\d+)", text)
+proc_state = int(proc_state_match.group(1)) if proc_state_match else None
+
+if mode == "background":
+    ok = adj >= 700
+elif mode == "cached":
+    named_cached = "CACHED" in state_name
+    numeric_cached = proc_state is not None and proc_state >= 16
+    ok = adj >= 900 and (named_cached or numeric_cached)
+else:
+    raise SystemExit(f"Unknown ActivityManager mode: {mode}")
+
+if not ok:
+    sys.exit(1)
+
+print(
+    "ACTIVITY_MANAGER_STATE_PASS "
+    f"mode={mode} pid={pid} oomAdj={adj} "
+    f"stateName={state_name or 'unknown'} "
+    f"curProcState={proc_state if proc_state is not None else 'unknown'}"
+)
+PY
+}
+
+wait_for_activity_manager_state() {
+  local mode="$1"
+  local pid="$2"
+  local snapshot="/tmp/kaala-kolam-activity-processes.txt"
+  for _ in $(seq 1 40); do
+    activity_manager_snapshot "$snapshot"
+    if activity_manager_state_ok "$mode" "$pid" "$snapshot"; then
+      return 0
+    fi
+    sleep 0.5
+  done
+  echo "Timed out waiting for ActivityManager mode=$mode pid=$pid." >&2
+  cat "$snapshot" >&2 || true
+  return 1
+}
+
+wait_for_old_pid_gone() {
+  local old_pid="$1"
+  local current=""
+  local proc_exists=""
+  for _ in $(seq 1 20); do
+    current="$(adb shell pidof "$PKG" | tr -d '\r' || true)"
+    proc_exists="$(adb shell "if [ -d /proc/$old_pid ]; then echo yes; else echo no; fi" | tr -d '\r')"
+    if [ -z "$current" ] && [ "$proc_exists" = "no" ]; then
+      echo "OLD_PID_GONE_PASS pid=$old_pid"
+      return 0
+    fi
+    sleep 0.5
+  done
+  echo "Old PID did not disappear: old=$old_pid current=$current procExists=$proc_exists" >&2
+  return 1
+}
+
+wait_for_new_pid() {
+  local old_pid="$1"
+  local new_pid=""
+  for _ in $(seq 1 40); do
+    new_pid="$(adb shell pidof "$PKG" | tr -d '\r' || true)"
+    if [ -n "$new_pid" ] && [ "$new_pid" != "$old_pid" ]; then
+      if adb shell "test -d /proc/$new_pid"; then
+        printf '%s\n' "$new_pid"
+        return 0
+      fi
+    fi
+    sleep 0.25
+  done
+  echo "Timed out waiting for a new app PID after relaunch; old=$old_pid current=$new_pid" >&2
+  return 1
 }
 
 capture_evidence() {
@@ -218,6 +328,10 @@ capture_evidence() {
   } >"$dir/logcat.txt" 2>&1
 
   adb shell dumpsys activity activities >"$dir/activities.txt" 2>&1
+  adb shell dumpsys activity processes "$PKG" >"$dir/activity-processes.txt" 2>&1
+  if [ -n "$pid" ]; then
+    adb shell "cat /proc/$pid/oom_score_adj" >"$dir/oom-score-adj.txt" 2>&1
+  fi
   adb shell dumpsys window windows >"$dir/windows.txt" 2>&1
   set -e
 }
@@ -275,24 +389,44 @@ wait_for_idle
 wait_for_question "${QUESTIONS[4]}"
 capture_evidence "q5-before-process-death"
 
-# Real process death: HOME, am kill, then launcher relaunch with no navigation tap.
-adb shell input keyevent KEYCODE_HOME
-sleep 1
+# Prove Q5 and Q1-Q5 are durably committed before touching process state.
+assert_q5_persisted_state "before-home"
 PID_BEFORE="$(adb shell pidof "$PKG" | tr -d '\r')"
 test -n "$PID_BEFORE"
+
+# HOME must move the app out of TOP. ActivityManager is the authority.
+adb shell input keyevent KEYCODE_HOME
+wait_for_activity_manager_state "background" "$PID_BEFORE"
+capture_evidence "after-home-backgrounded"
+
+# HOME leaves the target as ActivityManager's LAST/PREV process (oom_adj 700).
+# One foreground replacement is not enough: that still leaves the target as
+# mPreviousProcess. Move through two distinct system processes so the previous
+# slot is occupied by something else, then require ActivityManager to report
+# the target as genuinely cached before 'am kill'.
+adb shell am start -W -a android.settings.SETTINGS >/tmp/kaala-kolam-cache-settle-settings.txt
+adb shell am start -W   -a android.intent.action.OPEN_DOCUMENT   -c android.intent.category.OPENABLE   -t text/plain >/tmp/kaala-kolam-cache-settle-documents.txt
+wait_for_activity_manager_state "cached" "$PID_BEFORE"
+activity_manager_snapshot "$EVIDENCE_ROOT/activity-manager-before-kill.txt"
+capture_evidence "before-process-kill-cached"
+
 adb shell am kill "$PKG"
 
-for _ in $(seq 1 10); do
-  PID_AFTER="$(adb shell pidof "$PKG" | tr -d '\r' || true)"
-  test -z "$PID_AFTER" && break
-  sleep 0.5
-done
+# Independently prove the original Linux process is gone before any relaunch.
+wait_for_old_pid_gone "$PID_BEFORE"
+activity_manager_snapshot "$EVIDENCE_ROOT/activity-manager-after-kill.txt"
 test -z "$(adb shell pidof "$PKG" | tr -d '\r' || true)"
 
-adb shell monkey -p "$PKG" -c android.intent.category.LAUNCHER 1 >/tmp/kaala-kolam-relaunch.txt
+# Relaunch the exact component, then require a different live PID.
+adb shell am start -W -n "$COMPONENT" >/tmp/kaala-kolam-relaunch.txt
+PID_NEW="$(wait_for_new_pid "$PID_BEFORE")"
+test -n "$PID_NEW"
+test "$PID_NEW" != "$PID_BEFORE"
+echo "NEW_PID_PASS old=$PID_BEFORE new=$PID_NEW"
+
 wait_for_idle
 wait_for_question "${QUESTIONS[4]}"
-assert_restored_state
+assert_q5_persisted_state "after-process-death-relaunch"
 capture_evidence "after-process-death-relaunch"
 
-echo "ELDERS_PROCESS_DEATH_RESUME_PASS api=34 currentTab=elders questionIndex=4 answers=5"
+echo "ELDERS_PROCESS_DEATH_RESUME_PASS api=34 oldPid=$PID_BEFORE newPid=$PID_NEW currentTab=elders questionIndex=4 answers=5"
