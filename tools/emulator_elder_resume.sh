@@ -399,11 +399,13 @@ adb shell input keyevent KEYCODE_HOME
 wait_for_activity_manager_state "background" "$PID_BEFORE"
 capture_evidence "after-home-backgrounded"
 
-# HOME normally leaves the previous app in LAST/PREV (oom_adj about 700), which
-# 'am kill' intentionally will not kill. Put another system activity on top so
-# the target process becomes genuinely cached, then prove that through
-# ActivityManager before executing the intended kill mechanism.
-adb shell am start -W -a android.settings.SETTINGS >/tmp/kaala-kolam-cache-settle.txt
+# HOME leaves the target as ActivityManager's LAST/PREV process (oom_adj 700).
+# One foreground replacement is not enough: that still leaves the target as
+# mPreviousProcess. Move through two distinct system processes so the previous
+# slot is occupied by something else, then require ActivityManager to report
+# the target as genuinely cached before 'am kill'.
+adb shell am start -W -a android.settings.SETTINGS >/tmp/kaala-kolam-cache-settle-settings.txt
+adb shell am start -W   -a android.intent.action.OPEN_DOCUMENT   -c android.intent.category.OPENABLE   -t text/plain >/tmp/kaala-kolam-cache-settle-documents.txt
 wait_for_activity_manager_state "cached" "$PID_BEFORE"
 activity_manager_snapshot "$EVIDENCE_ROOT/activity-manager-before-kill.txt"
 capture_evidence "before-process-kill-cached"
