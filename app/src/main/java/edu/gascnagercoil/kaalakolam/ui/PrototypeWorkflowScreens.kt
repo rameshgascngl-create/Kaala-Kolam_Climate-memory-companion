@@ -74,6 +74,8 @@ import edu.gascnagercoil.kaalakolam.domain.M2Domain
 import edu.gascnagercoil.kaalakolam.domain.PredictionState
 import edu.gascnagercoil.kaalakolam.text.TextSafety
 import edu.gascnagercoil.kaalakolam.ui.theme.PrototypeTheme
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.Locale
 import kotlinx.coroutines.delay
 
@@ -1774,7 +1776,9 @@ fun ClassPoolPrototypeScreen(
 
 private fun classMean(mean: Double?): String {
     if (mean == null) return "—"
-    val value = String.format(Locale.ROOT, "%.1f", mean)
+    val value = BigDecimal.valueOf(mean)
+        .setScale(1, RoundingMode.HALF_UP)
+        .toPlainString()
     return if (mean > 0.0) "+" + value else value
 }
 
