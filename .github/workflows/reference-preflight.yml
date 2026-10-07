@@ -3,7 +3,7 @@ name: Reference Capture Preflight
 on:
   push:
     branches:
-      - diag/reference-preflight-162
+      - 'diag/reference-preflight-*'
 
 permissions:
   contents: read
