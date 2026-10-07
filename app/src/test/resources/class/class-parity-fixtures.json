@@ -1,0 +1,482 @@
+{
+  "schemaVersion": 1,
+  "codeCases": [
+    {
+      "name": "boundaryInterview",
+      "kind": "K",
+      "record": {
+        "t": "I",
+        "i": "abcdefghijkl",
+        "p": 4,
+        "b": 5,
+        "a": "0123450123"
+      },
+      "code": "KK1.eyJ0IjoiSSIsImkiOiJhYmNkZWZnaGlqa2wiLCJwIjo0LCJiIjo1LCJhIjoiMDEyMzQ1MDEyMyJ9.335f1d"
+    },
+    {
+      "name": "tamilInterview",
+      "kind": "K",
+      "record": {
+        "t": "I",
+        "i": "தமிழ்1",
+        "p": 2,
+        "b": 3,
+        "a": "5032143051"
+      },
+      "code": "KK1.eyJ0IjoiSSIsImkiOiLgrqTgrq7grr_grrTgr40xIiwicCI6MiwiYiI6MywiYSI6IjUwMzIxNDMwNTEifQ.73824b"
+    },
+    {
+      "name": "emptyIdInterview",
+      "kind": "K",
+      "record": {
+        "t": "I",
+        "i": "",
+        "p": 0,
+        "b": 0,
+        "a": "0000000000"
+      },
+      "code": "KK1.eyJ0IjoiSSIsImkiOiIiLCJwIjowLCJiIjowLCJhIjoiMDAwMDAwMDAwMCJ9.748a0a"
+    },
+    {
+      "name": "maxPlan",
+      "kind": "P",
+      "record": {
+        "t": "P",
+        "i": "planmax00001",
+        "s": 2,
+        "o": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "code": "KP1.eyJ0IjoiUCIsImkiOiJwbGFubWF4MDAwMDEiLCJzIjoyLCJvIjpbMCwxLDIsMyw0LDUsNl19.b16e09"
+    },
+    {
+      "name": "sameIdPlan",
+      "kind": "P",
+      "record": {
+        "t": "P",
+        "i": "sameid",
+        "s": 0,
+        "o": [
+          0
+        ]
+      },
+      "code": "KP1.eyJ0IjoiUCIsImkiOiJzYW1laWQiLCJzIjowLCJvIjpbMF19.115112"
+    },
+    {
+      "name": "sameIdInterview",
+      "kind": "K",
+      "record": {
+        "t": "I",
+        "i": "sameid",
+        "p": 1,
+        "b": 2,
+        "a": "1234501234"
+      },
+      "code": "KK1.eyJ0IjoiSSIsImkiOiJzYW1laWQiLCJwIjoxLCJiIjoyLCJhIjoiMTIzNDUwMTIzNCJ9.782624"
+    }
+  ],
+  "invalidCodes": [
+    {
+      "name": "tooLongId",
+      "record": {
+        "t": "I",
+        "i": "thirteen_chars",
+        "p": 0,
+        "b": 0,
+        "a": "1234501234"
+      },
+      "code": "KK1.eyJ0IjoiSSIsImkiOiJ0aGlydGVlbl9jaGFycyIsInAiOjAsImIiOjAsImEiOiIxMjM0NTAxMjM0In0.9234ca"
+    },
+    {
+      "name": "badChecksum",
+      "code": "KK1.eyJ0IjoiSSIsImkiOiJhYmNkZWZnaGlqa2wiLCJwIjo0LCJiIjo1LCJhIjoiMDEyMzQ1MDEyMyJ9.335f10"
+    }
+  ],
+  "importCases": [
+    {
+      "name": "empty",
+      "existing": {
+        "imports": [],
+        "plans": []
+      },
+      "text": "No codes here — குறியீடு இல்லை",
+      "expected": {
+        "found": 0,
+        "added": 0,
+        "duplicates": 0,
+        "rejected": 0,
+        "importIds": [],
+        "planIds": []
+      }
+    },
+    {
+      "name": "tamil-surrounding-valid",
+      "existing": {
+        "imports": [],
+        "plans": []
+      },
+      "text": "தமிழ் தொடக்கம் KK1.eyJ0IjoiSSIsImkiOiLgrqTgrq7grr_grrTgr40xIiwicCI6MiwiYiI6MywiYSI6IjUwMzIxNDMwNTEifQ.73824b தமிழ் முடிவு",
+      "expected": {
+        "found": 1,
+        "added": 1,
+        "duplicates": 0,
+        "rejected": 0,
+        "importIds": [
+          "தமிழ்1"
+        ],
+        "planIds": []
+      }
+    },
+    {
+      "name": "boundary-and-max",
+      "existing": {
+        "imports": [],
+        "plans": []
+      },
+      "text": "KK1.eyJ0IjoiSSIsImkiOiJhYmNkZWZnaGlqa2wiLCJwIjo0LCJiIjo1LCJhIjoiMDEyMzQ1MDEyMyJ9.335f1d\nKP1.eyJ0IjoiUCIsImkiOiJwbGFubWF4MDAwMDEiLCJzIjoyLCJvIjpbMCwxLDIsMyw0LDUsNl19.b16e09",
+      "expected": {
+        "found": 2,
+        "added": 2,
+        "duplicates": 0,
+        "rejected": 0,
+        "importIds": [
+          "abcdefghijkl"
+        ],
+        "planIds": [
+          "planmax00001"
+        ]
+      }
+    },
+    {
+      "name": "cross-type-duplicate",
+      "existing": {
+        "imports": [
+          {
+            "t": "I",
+            "i": "sameid",
+            "p": 1,
+            "b": 2,
+            "a": "1234501234"
+          }
+        ],
+        "plans": []
+      },
+      "text": "KP1.eyJ0IjoiUCIsImkiOiJzYW1laWQiLCJzIjowLCJvIjpbMF19.115112",
+      "expected": {
+        "found": 1,
+        "added": 0,
+        "duplicates": 1,
+        "rejected": 0,
+        "importIds": [
+          "sameid"
+        ],
+        "planIds": []
+      }
+    },
+    {
+      "name": "mixed-malformed",
+      "existing": {
+        "imports": [],
+        "plans": []
+      },
+      "text": "KK1.eyJ0IjoiSSIsImkiOiIiLCJwIjowLCJiIjowLCJhIjoiMDAwMDAwMDAwMCJ9.748a0a\nKK1.eyJ0IjoiSSIsImkiOiJhYmNkZWZnaGlqa2wiLCJwIjo0LCJiIjo1LCJhIjoiMDEyMzQ1MDEyMyJ9.335f10\nKK1.eyJ0IjoiSSIsImkiOiJ0aGlydGVubl9jaGFycyIsInAiOjAsImIiOjAsImEiOiIxMjM0NTAxMjM0In0.9234ca\nKP1.eyJ0IjoiUCIsImkiOiJwbGFubWF4MDAwMDEiLCJzIjoyLCJvIjpbMCwxLDIsMyw0LDUsNl19.b16e09",
+      "expected": {
+        "found": 4,
+        "added": 2,
+        "duplicates": 0,
+        "rejected": 2,
+        "importIds": [
+          ""
+        ],
+        "planIds": [
+          "planmax00001"
+        ]
+      }
+    }
+  ],
+  "aggregateRecords": [
+    {
+      "t": "I",
+      "i": "r1",
+      "p": 0,
+      "b": 0,
+      "a": "5555555555"
+    },
+    {
+      "t": "I",
+      "i": "r2",
+      "p": 0,
+      "b": 1,
+      "a": "5555555555"
+    },
+    {
+      "t": "I",
+      "i": "r3",
+      "p": 1,
+      "b": 1,
+      "a": "4444444444"
+    },
+    {
+      "t": "I",
+      "i": "r4",
+      "p": 1,
+      "b": 2,
+      "a": "4444444444"
+    },
+    {
+      "t": "I",
+      "i": "r5",
+      "p": 2,
+      "b": 2,
+      "a": "3333333333"
+    },
+    {
+      "t": "I",
+      "i": "r6",
+      "p": 2,
+      "b": 3,
+      "a": "3333333333"
+    }
+  ],
+  "aggregates": {
+    "allQ0": [
+      {
+        "label": "all",
+        "counts": [
+          0,
+          0,
+          2,
+          2,
+          2
+        ],
+        "n": 6,
+        "mean": 1,
+        "agreement": 0.591751709536137
+      }
+    ],
+    "placeQ0": [
+      {
+        "label": "p0",
+        "counts": [
+          0,
+          0,
+          0,
+          0,
+          2
+        ],
+        "n": 2,
+        "mean": 2,
+        "agreement": 1
+      },
+      {
+        "label": "p1",
+        "counts": [
+          0,
+          0,
+          0,
+          2,
+          0
+        ],
+        "n": 2,
+        "mean": 1,
+        "agreement": 1
+      },
+      {
+        "label": "p2",
+        "counts": [
+          0,
+          0,
+          2,
+          0,
+          0
+        ],
+        "n": 2,
+        "mean": 0,
+        "agreement": 1
+      },
+      {
+        "label": "p3",
+        "counts": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "n": 0,
+        "mean": null,
+        "agreement": null
+      },
+      {
+        "label": "p4",
+        "counts": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "n": 0,
+        "mean": null,
+        "agreement": null
+      }
+    ],
+    "decadeQ0": [
+      {
+        "label": "d0",
+        "counts": [
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "n": 1,
+        "mean": 2,
+        "agreement": null
+      },
+      {
+        "label": "d1",
+        "counts": [
+          0,
+          0,
+          0,
+          1,
+          1
+        ],
+        "n": 2,
+        "mean": 1.5,
+        "agreement": 0.75
+      },
+      {
+        "label": "d2",
+        "counts": [
+          0,
+          0,
+          1,
+          1,
+          0
+        ],
+        "n": 2,
+        "mean": 0.5,
+        "agreement": 0.75
+      },
+      {
+        "label": "d3",
+        "counts": [
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        "n": 1,
+        "mean": 0,
+        "agreement": null
+      },
+      {
+        "label": "d4",
+        "counts": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "n": 0,
+        "mean": null,
+        "agreement": null
+      },
+      {
+        "label": "d5",
+        "counts": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "n": 0,
+        "mean": null,
+        "agreement": null
+      }
+    ]
+  },
+  "strongest": [
+    {
+      "questionIndex": 0,
+      "n": 6,
+      "mean": 1,
+      "agreement": 0.591751709536137,
+      "score": 0.591751709536137
+    },
+    {
+      "questionIndex": 1,
+      "n": 6,
+      "mean": 1,
+      "agreement": 0.591751709536137,
+      "score": 0.591751709536137
+    },
+    {
+      "questionIndex": 2,
+      "n": 6,
+      "mean": 1,
+      "agreement": 0.591751709536137,
+      "score": 0.591751709536137
+    }
+  ],
+  "planRecords": [
+    {
+      "t": "P",
+      "i": "p1",
+      "s": 0,
+      "o": [
+        0,
+        1
+      ]
+    },
+    {
+      "t": "P",
+      "i": "p2",
+      "s": 1,
+      "o": [
+        3,
+        5,
+        6
+      ]
+    },
+    {
+      "t": "P",
+      "i": "p3",
+      "s": 2,
+      "o": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    }
+  ],
+  "planSummary": {
+    "optionCounts": [
+      2,
+      2,
+      1,
+      2,
+      1,
+      2,
+      2
+    ],
+    "plansLeavingSomeoneUnprotected": 1
+  }
+}

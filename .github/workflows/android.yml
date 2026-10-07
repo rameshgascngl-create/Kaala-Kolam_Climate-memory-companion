@@ -116,6 +116,11 @@ jobs:
         if: needs.compile.result == 'success'
         run: python3 tools/test_elders_html_oracle.py
 
+      - name: Verify Class bidirectional codes and pooling against HTML oracle
+        if: needs.compile.result == 'success'
+        id: class_oracle
+        run: python3 tools/test_class_html_oracle.py
+
       - name: Capture SSIM negative control
         if: needs.compile.result == 'success'
         id: ssim_control
@@ -198,7 +203,7 @@ jobs:
         if: always() && needs.compile.result == 'success'
         env:
           STEPS_JSON: >-
-            {"Playwright":"${{ steps.playwright.outcome }}","Tokens":"${{ steps.tokens.outcome }}","Web references":"${{ steps.capture_web.outcome }}","Tamil references":"${{ steps.capture_tamil.outcome }}","Chromium text metrics":"${{ steps.text_metrics.outcome }}","Reference layout":"${{ steps.reference_layout.outcome }}","M2 web golden":"${{ steps.m2_golden.outcome }}","SSIM control":"${{ steps.ssim_control.outcome }}","SSIM calibration":"${{ steps.ssim_calibration.outcome }}","Matrix verification":"${{ steps.verify_matrix.outcome }}","Generated contract drift":"${{ steps.generated_drift.outcome }}"}
+            {"Playwright":"${{ steps.playwright.outcome }}","Tokens":"${{ steps.tokens.outcome }}","Web references":"${{ steps.capture_web.outcome }}","Tamil references":"${{ steps.capture_tamil.outcome }}","Chromium text metrics":"${{ steps.text_metrics.outcome }}","Reference layout":"${{ steps.reference_layout.outcome }}","M2 web golden":"${{ steps.m2_golden.outcome }}","Class HTML oracle":"${{ steps.class_oracle.outcome }}","SSIM control":"${{ steps.ssim_control.outcome }}","SSIM calibration":"${{ steps.ssim_calibration.outcome }}","Matrix verification":"${{ steps.verify_matrix.outcome }}","Generated contract drift":"${{ steps.generated_drift.outcome }}"}
         run: python3 tools/write_ci_results.py --job golden-web --head "$GITHUB_SHA" --steps-json "$STEPS_JSON"
 
       - name: Write reference-capture BLOCKED result
