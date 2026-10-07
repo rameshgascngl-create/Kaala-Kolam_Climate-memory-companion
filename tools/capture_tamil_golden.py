@@ -5,6 +5,12 @@ Matrix: 10 states x 2 viewports x 2 font scales x 2 themes = 80 PNG files.
 Every state uses a fresh browser context. Captures are accepted only when
 window.scrollY == 0 and the state-specific top element is visibly below the
 sticky header. The 200% scale remains an explicit accessibility stress case.
+
+The capture harness deliberately establishes the post-reflow top-of-page state
+once, after the requested font scale and pinned Tamil fonts are loaded. It then
+observes two independent two-frame samples without further scroll correction.
+This prevents Chromium scroll anchoring from making the 200% reference capture
+flaky while still failing if the page moves again after initialisation.
 """
 from __future__ import annotations
 
@@ -114,8 +120,26 @@ def page_metrics(page: Page, stage: str) -> dict:
     return {"stage": stage, **values}
 
 
-def load(page: Page, state: dict, font_scale: int) -> list[dict]:
-    trace = []
+def wait_two_frames(page: Page) -> None:
+    page.evaluate(
+        """() => new Promise(resolve => {
+            requestAnimationFrame(() => requestAnimationFrame(resolve));
+        })"""
+    )
+
+
+def layout_signature(metrics: dict) -> tuple:
+    return (
+        metrics["scrollHeight"],
+        metrics["clientHeight"],
+        metrics["rootFontSize"],
+        round(metrics["headerTop"] or 0.0, 3),
+        round(metrics["headerBottom"] or 0.0, 3),
+        round(metrics["appTop"] or 0.0, 3),
+    )
+
+
+def load(page: Page, state: dict, font_scale: int, trace: list[dict]) -> None:
     page.goto(HTML.as_uri(), wait_until="load")
     trace.append(page_metrics(page, "initial-load"))
     page.evaluate(
@@ -125,11 +149,52 @@ def load(page: Page, state: dict, font_scale: int) -> list[dict]:
     trace.append(page_metrics(page, "state-written"))
     page.reload(wait_until="load")
     trace.append(page_metrics(page, "after-reload"))
-    page.evaluate("scale => { document.documentElement.style.fontSize = scale + '%'; }", font_scale)
+
+    # Disable browser scroll restoration/anchoring before the deliberate 200%
+    # reflow. These properties do not change rendered pixels; they only prevent
+    # Chromium from inventing a non-zero scroll offset while layout is changing.
+    page.evaluate(
+        """scale => {
+            history.scrollRestoration = 'manual';
+            document.documentElement.style.overflowAnchor = 'none';
+            if (document.body) document.body.style.overflowAnchor = 'none';
+            document.documentElement.style.fontSize = scale + '%';
+        }""",
+        font_scale,
+    )
     trace.append(page_metrics(page, "after-font-scale"))
+
     install_reference_fonts(page, "ta")
     trace.append(page_metrics(page, "after-pinned-fonts-ready"))
-    return trace
+
+    # Establish the intended initial state once, after every deliberate source
+    # of reflow has completed. From this point onward there is no scroll reset:
+    # subsequent samples must remain at zero on their own.
+    page.evaluate("window.scrollTo(0, 0)")
+    trace.append(page_metrics(page, "after-initial-top-reset"))
+
+    wait_two_frames(page)
+    settled_a = page_metrics(page, "settled-a")
+    trace.append(settled_a)
+    wait_two_frames(page)
+    settled_b = page_metrics(page, "settled-b")
+    trace.append(settled_b)
+
+    if settled_a["fontsStatus"] != "loaded" or settled_b["fontsStatus"] != "loaded":
+        raise AssertionError(
+            "REFERENCE_FONT_STABILITY_FAIL "
+            f"statusA={settled_a['fontsStatus']} statusB={settled_b['fontsStatus']}"
+        )
+    if settled_a["scrollY"] != 0 or settled_b["scrollY"] != 0:
+        raise AssertionError(
+            "REFERENCE_SCROLL_STABILITY_FAIL "
+            f"scrollA={settled_a['scrollY']} scrollB={settled_b['scrollY']}"
+        )
+    if layout_signature(settled_a) != layout_signature(settled_b):
+        raise AssertionError(
+            "REFERENCE_LAYOUT_STABILITY_FAIL "
+            f"sigA={layout_signature(settled_a)} sigB={layout_signature(settled_b)}"
+        )
 
 
 def open_game(page: Page) -> None:
@@ -141,6 +206,31 @@ def open_game(page: Page) -> None:
 
 def sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def emit_trace(
+    trace: list[dict],
+    *,
+    width: int,
+    height: int,
+    scale: int,
+    theme: str,
+    state_name: str,
+) -> None:
+    print(
+        "REFERENCE_STAGE_TRACE "
+        + json.dumps(
+            {
+                "viewport": f"{width}x{height}",
+                "fontScale": scale,
+                "theme": theme,
+                "state": state_name,
+                "trace": trace,
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+    )
 
 
 def main() -> None:
@@ -160,31 +250,28 @@ def main() -> None:
                                 bypass_csp=True,
                             )
                             page = context.new_page()
+                            trace: list[dict] = []
                             try:
-                                trace = load(page, state_for(state_name, theme), scale)
                                 try:
+                                    load(page, state_for(state_name, theme), scale, trace)
+                                    assert_scroll_zero(page, state_name)
+                                    if state_name == "learn-game":
+                                        open_game(page)
+                                        assert_scroll_zero(page, state_name)
+                                    assert_visible_top(page, state_name, "ta")
+                                    page.wait_for_timeout(50)
                                     assert_scroll_zero(page, state_name)
                                 except AssertionError:
-                                    print(
-                                        "REFERENCE_STAGE_TRACE "
-                                        + json.dumps(
-                                            {
-                                                "viewport": f"{width}x{height}",
-                                                "fontScale": scale,
-                                                "theme": theme,
-                                                "state": state_name,
-                                                "trace": trace,
-                                            },
-                                            ensure_ascii=False,
-                                            sort_keys=True,
-                                        )
+                                    emit_trace(
+                                        trace,
+                                        width=width,
+                                        height=height,
+                                        scale=scale,
+                                        theme=theme,
+                                        state_name=state_name,
                                     )
                                     raise
-                                if state_name == "learn-game":
-                                    open_game(page)
-                                    assert_scroll_zero(page, state_name)
-                                assert_visible_top(page, state_name, "ta")
-                                page.wait_for_timeout(50)
+
                                 target = (
                                     OUT
                                     / f"{width}x{height}"
@@ -228,7 +315,11 @@ def main() -> None:
                 "fontScales": list(FONT_SCALES),
                 "language": "ta",
                 "themes": list(THEMES),
-                "capturePolicy": "fresh-context-per-state; scrollY=0; visible-top-element",
+                "capturePolicy": (
+                    "fresh-context-per-state; pinned-fonts-ready; "
+                    "post-reflow top reset once; two-sample layout stability; "
+                    "scrollY=0; visible-top-element"
+                ),
                 "captures": captures,
             },
             ensure_ascii=False,
