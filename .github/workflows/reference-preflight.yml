@@ -1,0 +1,111 @@
+name: Reference Capture Preflight
+
+on:
+  push:
+    branches:
+      - 'diag/reference-preflight-*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reference-preflight:
+    name: Reference capture preflight
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install Playwright Chromium
+        run: |
+          python -m pip install --disable-pip-version-check playwright==1.55.0
+          python -m playwright install --with-deps chromium
+
+      - name: Regenerate prototype visual tokens
+        run: python3 tools/extract_tokens.py
+
+      - name: Capture HTML prototype golden matrix
+        run: python3 tools/capture_golden_web.py
+
+      - name: Capture Tamil localisation golden matrix
+        run: python3 tools/capture_tamil_golden.py
+
+      - name: Capture pinned Chromium text metrics
+        run: python3 tools/capture_text_metrics.py
+
+      - name: Capture reference fidelity metrics
+        run: python3 tools/reference_fidelity_metrics.py
+
+      - name: Generate M2 web golden fixtures
+        run: python3 tools/capture_m2_golden.py
+
+      - name: Verify Elders bidirectional KK1 against HTML oracle
+        run: python3 tools/test_elders_html_oracle.py
+
+      - name: Capture SSIM negative control
+        run: python3 tools/capture_ssim_controls.py
+
+      - name: Calibrate SSIM preprocessing
+        run: |
+          python3 -m pip install --disable-pip-version-check pillow==11.3.0 numpy==2.3.3 scikit-image==0.25.2
+          python3 tools/ssim_calibration.py
+
+      - name: Verify golden matrices
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          manifest = json.loads(Path("tests/golden-web/manifest.json").read_text(encoding="utf-8"))
+          files = list(Path("tests/golden-web").glob("*/*/*/*.png"))
+          if manifest["captureCount"] != 72 or len(files) != 72:
+              raise SystemExit(
+                  f"Expected 72 golden PNGs; manifest={manifest['captureCount']}, files={len(files)}"
+              )
+          print("GOLDEN_WEB_MATRIX_PASS 72/72")
+
+          tamil = json.loads(Path("tests/golden-tamil/manifest.json").read_text(encoding="utf-8"))
+          tamil_files = list(Path("tests/golden-tamil").glob("*/*/*/*.png"))
+          if tamil["captureCount"] != 80 or len(tamil_files) != 80:
+              raise SystemExit(
+                  f"Expected 80 Tamil golden PNGs; manifest={tamil['captureCount']}, files={len(tamil_files)}"
+              )
+          print("GOLDEN_TAMIL_MATRIX_PASS 80/80")
+          PY
+
+      - name: Check generated-contract drift
+        shell: bash
+        run: |
+          set -euo pipefail
+          generated=(
+            app/src/main/java/edu/gascnagercoil/kaalakolam/ui/theme/Theme.kt
+            tests/golden-web
+            tests/m2/web-golden.json
+          )
+          git diff --exit-code -- "${generated[@]}"
+          if [ -n "$(git status --porcelain --untracked-files=all -- "${generated[@]}")" ]; then
+            echo "GENERATED_CONTRACT_DRIFT_FAIL untracked or unstaged generated files"
+            git status --short -- "${generated[@]}"
+            exit 1
+          fi
+          echo "GENERATED_CONTRACT_DRIFT_PASS"
+
+      - name: Upload reference preflight evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-reference-preflight-evidence
+          path: |
+            tests/golden-web/
+            tests/golden-tamil/
+            tests/reference-metrics/
+            tests/ssim-controls/
+            tests/m2/web-golden.json
+            docs/ssim-calibration.md
+          if-no-files-found: warn
