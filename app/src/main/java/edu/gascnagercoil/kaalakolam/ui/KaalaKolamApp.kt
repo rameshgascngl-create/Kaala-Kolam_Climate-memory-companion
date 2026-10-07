@@ -60,11 +60,13 @@ import androidx.navigation.compose.rememberNavController
 import edu.gascnagercoil.kaalakolam.R
 import edu.gascnagercoil.kaalakolam.domain.AppState
 import edu.gascnagercoil.kaalakolam.domain.ClassGroupBy
+import edu.gascnagercoil.kaalakolam.domain.ClassPoolState
 import edu.gascnagercoil.kaalakolam.domain.ElderMode
 import edu.gascnagercoil.kaalakolam.domain.ElderSession
 import edu.gascnagercoil.kaalakolam.domain.EldersDomain
 import edu.gascnagercoil.kaalakolam.domain.Interview
 import edu.gascnagercoil.kaalakolam.domain.InterviewAnswer
+import edu.gascnagercoil.kaalakolam.domain.M2Domain
 import edu.gascnagercoil.kaalakolam.domain.PredictionState
 import edu.gascnagercoil.kaalakolam.domain.ThemeMode
 import edu.gascnagercoil.kaalakolam.speech.rememberSpeechController
@@ -286,7 +288,29 @@ fun KaalaKolamVisualFixture(
         place = 0,
         createdAt = 1L,
     )
+    val visualClassRecords = M2Domain.sampleRecords()
     val visualAppState = when (visualState) {
+        "class-empty" -> uiState.appState.copy(
+            classPool = ClassPoolState(),
+        )
+        "class-sample" -> uiState.appState.copy(
+            classPool = ClassPoolState(sample = true),
+        )
+        "class-imported" -> uiState.appState.copy(
+            classPool = ClassPoolState(imports = visualClassRecords),
+        )
+        "class-place" -> uiState.appState.copy(
+            classPool = ClassPoolState(
+                imports = visualClassRecords,
+                groupBy = ClassGroupBy.PLACE,
+            ),
+        )
+        "class-decade" -> uiState.appState.copy(
+            classPool = ClassPoolState(
+                imports = visualClassRecords,
+                groupBy = ClassGroupBy.DECADE,
+            ),
+        )
         "elders-list", "elders-delete" -> uiState.appState.copy(
             interviews = listOf(visualInterview),
             elderSession = ElderSession(),
@@ -312,6 +336,7 @@ fun KaalaKolamVisualFixture(
         visualState in setOf("learn-topic", "learn-deep", "learn-game", "learn-words") ->
             Destination.LEARN.route
         visualState.startsWith("elders-") -> Destination.ELDERS.route
+        visualState.startsWith("class-") -> Destination.CLASS.route
         else -> visualState
     }
     CompositionLocalProvider(LocalFidelityRecorder provides fidelityRecorder) {
@@ -357,7 +382,8 @@ fun KaalaKolamVisualFixture(
                     appState = visualAppState,
                     initialDeletePendingId = if (visualState == "elders-delete") visualInterview.id else null,
                 )
-                Destination.CLASS.route -> ClassPoolPrototypeScreen(
+                Destination.CLASS.route, "class-empty", "class-sample", "class-imported",
+                "class-place", "class-decade" -> ClassPoolPrototypeScreen(
                     lang = lang,
                     appState = visualAppState,
                 )

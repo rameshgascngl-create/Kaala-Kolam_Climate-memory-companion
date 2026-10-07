@@ -383,8 +383,10 @@ private fun WfInput(
     minHeight: Int = 46,
     onValueChange: (String) -> Unit = {},
     accessibilityLabel: String? = null,
+    tag: String? = null,
 ) {
     val p = PrototypeTheme.palette
+    val tagged = if (tag == null) Modifier else Modifier.fidelityTag(tag)
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
@@ -393,6 +395,7 @@ private fun WfInput(
             .fillMaxWidth()
             .heightIn(min = minHeight.dp)
             .semantics { accessibilityLabel?.let { contentDescription = it } }
+            .then(tagged)
             .background(p.ground, RoundedCornerShape(10.dp))
             .border(1.dp, p.line, RoundedCornerShape(10.dp))
             .padding(horizontal = 12.dp, vertical = 10.dp),
@@ -1542,6 +1545,7 @@ fun ClassPoolPrototypeScreen(
                 minHeight = 64,
                 onValueChange = { code = it },
                 accessibilityLabel = copy.pastePlaceholder.text(lang),
+                tag = "class-import-input",
             )
             Spacer(Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -1567,6 +1571,7 @@ fun ClassPoolPrototypeScreen(
                     } else {
                         copy.trySample.text(lang)
                     },
+                    tag = "class-sample-toggle",
                     onClick = { onSampleChange(!appState.classPool.sample) },
                 )
             }

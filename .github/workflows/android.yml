@@ -286,6 +286,11 @@ jobs:
         id: static_qa
         run: python3 tools/native_static_qa.py
 
+      - name: Verify Class closure policy
+        if: needs.compile.result == 'success' && needs.golden-web.result == 'success'
+        id: class_closure
+        run: python3 tools/test_class_closure_policy.py
+
       - name: Verify M2 domain logic against web golden fixtures
         if: needs.compile.result == 'success' && needs.golden-web.result == 'success'
         id: m2_tests
@@ -342,6 +347,7 @@ jobs:
             app/build/visual-native/
             app/build/visual-tamil/
             app/build/visual-elders/
+            app/build/visual-class/
           if-no-files-found: warn
 
       - name: Upload debug APK
@@ -394,7 +400,7 @@ jobs:
         if: always() && needs.compile.result == 'success' && needs.golden-web.result == 'success'
         env:
           STEPS_JSON: >-
-            {"Content policy":"${{ steps.content.outcome }}","Native static QA":"${{ steps.static_qa.outcome }}","M2 web-golden tests":"${{ steps.m2_tests.outcome }}","Debug build/tests":"${{ steps.debug_build.outcome }}","Text width comparison (informational)":"${{ steps.text_width_info.outcome }}","Legacy visual comparison (informational)":"${{ steps.legacy_visual.outcome }}","Release QA build":"${{ steps.release_qa.outcome }}","Merged manifest permissions":"${{ steps.permissions.outcome }}"}
+            {"Content policy":"${{ steps.content.outcome }}","Native static QA":"${{ steps.static_qa.outcome }}","Class closure policy":"${{ steps.class_closure.outcome }}","M2 web-golden tests":"${{ steps.m2_tests.outcome }}","Debug build/tests":"${{ steps.debug_build.outcome }}","Text width comparison (informational)":"${{ steps.text_width_info.outcome }}","Legacy visual comparison (informational)":"${{ steps.legacy_visual.outcome }}","Release QA build":"${{ steps.release_qa.outcome }}","Merged manifest permissions":"${{ steps.permissions.outcome }}"}
         run: python3 tools/write_ci_results.py --job verify --head "$GITHUB_SHA" --steps-json "$STEPS_JSON"
 
       - name: Write verify BLOCKED result
@@ -742,4 +748,43 @@ jobs:
         with:
           name: KaalaKolam-elders-emulator-evidence
           path: app/build/emulator-evidence/
+          if-no-files-found: warn
+
+  emulator-class-process-death:
+    name: API 34 Class process-death resume
+    needs: verify
+    if: ${{ needs.verify.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Download debug APK
+        uses: actions/download-artifact@v5
+        with:
+          name: KaalaKolam-native-v2-debug-apk
+          path: app/build/outputs/apk/debug
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Launch API 34 emulator and verify Class rotation and process-death resume
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          disable-animations: true
+          script: bash tools/emulator_class_resume.sh
+
+      - name: Upload Class emulator evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaalaKolam-class-emulator-evidence
+          path: app/build/class-emulator-evidence/
           if-no-files-found: warn
