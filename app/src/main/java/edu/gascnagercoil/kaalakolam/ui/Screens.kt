@@ -51,6 +51,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.res.stringResource
@@ -91,7 +92,8 @@ fun HomeScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(p.ground),
+            .background(p.ground)
+            .testTag("citizen.home.list"),
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 18.dp, bottom = 28.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
@@ -295,6 +297,7 @@ fun HomeScreen(
                 PrototypeButton(
                     text = localized(lang, card.titleEn, card.titleTa),
                     filled = false,
+                    tag = if (card.route == TODAY_ROUTE) "citizen.home.today" else null,
                     onClick = { onNavigate(card.route) },
                 )
             }
