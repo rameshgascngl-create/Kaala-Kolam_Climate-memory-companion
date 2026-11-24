@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
                     onLanguageChange = viewModel::setLanguage,
                     onThemeChange = viewModel::setThemeMode,
                     onCurrentTabChange = viewModel::setCurrentTab,
+                    onPilotDistrictChange = viewModel::setPilotDistrict,
                     onBackup = viewModel::backupCode,
                     onValidateBackup = viewModel::validateBackup,
                     onRestore = viewModel::restore,

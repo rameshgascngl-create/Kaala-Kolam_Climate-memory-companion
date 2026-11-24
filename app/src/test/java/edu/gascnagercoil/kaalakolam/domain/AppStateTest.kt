@@ -6,6 +6,15 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class AppStateTest {
+    @Test fun districtPreferenceIsOptionalAndValidated() {
+        for (id in PILOT_DISTRICT_IDS) {
+            assertEquals(id, AppState(pilotDistrictId = id).repair().pilotDistrictId)
+        }
+        assertEquals("", AppState().repair().pilotDistrictId)
+        assertEquals("", AppState(pilotDistrictId = "unknown").repair().pilotDistrictId)
+        assertEquals("", AppState(pilotDistrictId = "  KANNIYAKUMARI").repair().pilotDistrictId)
+    }
+
     @Test
     fun repairCoercesInvalidLanguageAndSchema() {
         val repaired = AppState(

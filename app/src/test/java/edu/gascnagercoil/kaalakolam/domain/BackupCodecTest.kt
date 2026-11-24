@@ -11,6 +11,7 @@ class BackupCodecTest {
         val original = AppState(
             language = "ta",
             themeMode = ThemeMode.DARK,
+            pilotDistrictId = "KANNIYAKUMARI",
             learnedTopicIds = setOf("monsoon", "cyclone"),
             memoryFlags = mapOf("elder" to true, "council" to false),
             elderAlias = "பாட்டி — கொளச்சல்",

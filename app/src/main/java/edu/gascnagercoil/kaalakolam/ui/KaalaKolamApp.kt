@@ -101,6 +101,7 @@ fun KaalaKolamApp(
     onLanguageChange: (String) -> Unit,
     onThemeChange: (ThemeMode) -> Unit,
     onCurrentTabChange: (String) -> Unit = {},
+    onPilotDistrictChange: (String) -> Unit = {},
     onBackup: (AppState) -> String,
     onValidateBackup: (String) -> AppState?,
     onRestore: (AppState) -> Unit,
@@ -260,7 +261,8 @@ fun KaalaKolamApp(
                     )
                 }
                 composable(TODAY_ROUTE) {
-                    CitizenTodayScreen(lang = lang, onSafety = {
+                    CitizenTodayScreen(lang = lang, districtId = uiState.appState.pilotDistrictId,
+                        onDistrictChange = onPilotDistrictChange, onSafety = {
                         if (!navController.popBackStack(SAFETY_ROUTE, inclusive = false)) {
                             navController.navigate(SAFETY_ROUTE) { launchSingleTop = true }
                         }

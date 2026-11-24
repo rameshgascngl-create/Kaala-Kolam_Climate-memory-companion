@@ -8,9 +8,9 @@ enum class WarningAuthority(val domain: String) {
 
     fun acceptsSource(url: String): Boolean = runCatching {
         val uri = URI(url)
-        val host = uri.host?.lowercase() ?: return false
+        val host = uri.host ?: return false
         uri.scheme.equals("https", ignoreCase = true) && uri.userInfo == null &&
-            (host == domain || host.endsWith(".$domain"))
+            (host.equals(domain, ignoreCase = true) || host.endsWith(".$domain", ignoreCase = true))
     }.getOrDefault(false)
 }
 

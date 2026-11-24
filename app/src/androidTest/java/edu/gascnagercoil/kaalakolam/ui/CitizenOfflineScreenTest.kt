@@ -9,6 +9,10 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import edu.gascnagercoil.kaalakolam.domain.ThemeMode
 import edu.gascnagercoil.kaalakolam.ui.theme.KaalaKolamTheme
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import org.junit.Rule
 import org.junit.Test
 
@@ -17,7 +21,10 @@ class CitizenOfflineScreenTest {
 
     @Test fun todayShowsNoDataAndManualSelectionInEnglish() {
         composeRule.setContent {
-            KaalaKolamTheme(ThemeMode.LIGHT) { CitizenTodayScreen("en", onSafety = {}) }
+            var district by remember { mutableStateOf("") }
+            KaalaKolamTheme(ThemeMode.LIGHT) {
+                CitizenTodayScreen("en", districtId = district, onDistrictChange = { district = it }, onSafety = {})
+            }
         }
         composeRule.onNodeWithTag("citizen.weather.unavailable").assertExists()
         composeRule.onNodeWithText("Last official update: none").assertExists()

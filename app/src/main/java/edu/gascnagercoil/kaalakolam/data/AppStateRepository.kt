@@ -88,6 +88,10 @@ class AppStateRepository(context: Context) {
         store.updateData { current -> current.copy(themeMode = themeMode).repair() }
     }
 
+    suspend fun setPilotDistrict(id: String) {
+        store.updateData { current -> current.copy(pilotDistrictId = id).repair() }
+    }
+
     suspend fun setCurrentTab(tab: String) {
         store.updateData { current -> current.copy(currentTab = tab).repair() }
     }

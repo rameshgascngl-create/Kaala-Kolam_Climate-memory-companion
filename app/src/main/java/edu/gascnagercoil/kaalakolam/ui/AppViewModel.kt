@@ -54,6 +54,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch { stateRepository.setThemeMode(themeMode) }
     }
 
+    fun setPilotDistrict(id: String) {
+        viewModelScope.launch { stateRepository.setPilotDistrict(id) }
+    }
+
     fun setCurrentTab(tab: String) {
         viewModelScope.launch { stateRepository.setCurrentTab(tab) }
     }

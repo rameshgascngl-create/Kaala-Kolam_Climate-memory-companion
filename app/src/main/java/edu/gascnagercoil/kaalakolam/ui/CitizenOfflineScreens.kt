@@ -113,8 +113,7 @@ private fun OfficialLink(lang: String, authority: String, url: String) {
 }
 
 @Composable
-internal fun CitizenTodayScreen(lang: String, onSafety: () -> Unit) {
-    var districtId by rememberSaveable { mutableStateOf("") }
+internal fun CitizenTodayScreen(lang: String, districtId: String, onDistrictChange: (String) -> Unit, onSafety: () -> Unit) {
     val chosen = PilotDistrict.entries.firstOrNull { it.name == districtId }
     CitizenPage {
         item { CitizenHeading(citizenText(lang, "Today: weather and warnings", "இன்றைய வானிலை")) }
@@ -136,12 +135,16 @@ internal fun CitizenTodayScreen(lang: String, onSafety: () -> Unit) {
                     modifier = Modifier.testTag("citizen.district.selected"))
                 PilotDistrict.entries.forEach { district ->
                     OutlinedButton(
-                        onClick = { districtId = district.name },
+                        onClick = { onDistrictChange(district.name) },
                         modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("citizen.district." + district.name),
                     ) { Text(district.label(lang)) }
                 }
-                Text(citizenText(lang, "Selection is for this pilot screen only; no location is sent or forecast fetched.",
-                    "இந்தத் தேர்வு இத்திரைக்கு மட்டுமே. இருப்பிடத் தகவல் அனுப்பப்படுவதில்லை; முன்னறிவிப்பும் பெறப்படுவதில்லை."))
+                OutlinedButton(
+                    onClick = { onDistrictChange("") }, enabled = chosen != null,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("citizen.district.clear"),
+                ) { Text(citizenText(lang, "Clear district selection", "மாவட்டத் தேர்வை நீக்கவும்")) }
+                Text(citizenText(lang, "Your district is saved on this device. No location is sent or forecast fetched. A manually shared backup can include this preference.",
+                    "மாவட்டத் தேர்வு இச்சாதனத்தில் சேமிக்கப்படும். இருப்பிடத் தகவல் அனுப்பப்படுவதில்லை; முன்னறிவிப்பும் பெறப்படுவதில்லை. நீங்களாகப் பகிரும் காப்புப்பிரதியில் இத்தேர்வு இடம்பெறலாம்."))
             }
         }
         item {

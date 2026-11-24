@@ -79,6 +79,7 @@ class AppStateRealStorageTest {
                 groupBy = ClassGroupBy.DECADE,
             ),
             notes = "persist me",
+            pilotDistrictId = "TIRUNELVELI",
         )
 
         val firstProcess = newStore(file)
@@ -206,6 +207,7 @@ class AppStateRealStorageTest {
         assertEquals("ta", migrated.language)
         assertEquals("பாட்டி", migrated.elderAlias)
         assertEquals("v1 note", migrated.notes)
+        assertEquals("", migrated.pilotDistrictId)
         assertEquals("v1 reflection", migrated.reflection)
         assertEquals(setOf("water"), migrated.learnedTopicIds)
         assertEquals(true, migrated.memoryFlags["intro"])

@@ -31,11 +31,15 @@ data class AppState(
     val elderAlias: String = "",
     val notes: String = "",
     val reflection: String = "",
+    val pilotDistrictId: String = "",
 ) {
     companion object {
         const val CURRENT_SCHEMA = 3
     }
 }
+
+// Local preference IDs; never use as provider district identifiers.
+internal val PILOT_DISTRICT_IDS = setOf("KANNIYAKUMARI", "TIRUNELVELI", "TENKASI", "THOOTHUKUDI")
 
 fun AppState.repair(): AppState {
     val repairedLanguage = if (language == "ta") "ta" else "en"
@@ -75,6 +79,7 @@ fun AppState.repair(): AppState {
         schemaVersion = AppState.CURRENT_SCHEMA,
         language = repairedLanguage,
         currentTab = repairedCurrentTab,
+        pilotDistrictId = pilotDistrictId.takeIf { it in PILOT_DISTRICT_IDS } ?: "",
         learnedTopicIds = repairedTopics,
         memoryFlags = repairedFlags,
         predictionAnswers = repairedPredictions,
