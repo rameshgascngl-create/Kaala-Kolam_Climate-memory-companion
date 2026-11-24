@@ -73,6 +73,8 @@ import edu.gascnagercoil.kaalakolam.speech.rememberSpeechController
 import edu.gascnagercoil.kaalakolam.ui.theme.PrototypeTheme
 
 private const val ABOUT_ROUTE = "about"
+internal const val TODAY_ROUTE = "citizen-today"
+internal const val SAFETY_ROUTE = "citizen-safety"
 
 private enum class Destination(
     val route: String,
@@ -146,7 +148,7 @@ fun KaalaKolamApp(
             if (
                 restored != null &&
                 visibleRoute != restored.route &&
-                visibleRoute != ABOUT_ROUTE
+                visibleRoute !in setOf(ABOUT_ROUTE, TODAY_ROUTE, SAFETY_ROUTE)
             ) {
                 navController.navigate(restored.route) {
                     popUpTo(navController.graph.findStartDestination().id) { saveState = true }
@@ -158,7 +160,7 @@ fun KaalaKolamApp(
     }
 
     BackHandler(enabled = currentRoute != Destination.HOME.route) {
-        if (currentRoute == ABOUT_ROUTE) {
+        if (currentRoute in setOf(ABOUT_ROUTE, TODAY_ROUTE, SAFETY_ROUTE)) {
             navController.popBackStack()
         } else {
             onCurrentTabChange(Destination.HOME.route)
@@ -213,7 +215,11 @@ fun KaalaKolamApp(
                     HomeScreen(
                         appState = uiState.appState,
                         onNavigate = { route ->
-                            Destination.entries.firstOrNull { it.route == route }?.let(::navigatePrimary)
+                            if (route == TODAY_ROUTE || route == SAFETY_ROUTE) {
+                                navController.navigate(route) { launchSingleTop = true }
+                            } else {
+                                Destination.entries.firstOrNull { it.route == route }?.let(::navigatePrimary)
+                            }
                         },
                     )
                 }
@@ -252,6 +258,16 @@ fun KaalaKolamApp(
                         onAnswer = onPredictionAnswer,
                         onReset = onClearPredictions,
                     )
+                }
+                composable(TODAY_ROUTE) {
+                    CitizenTodayScreen(lang = lang, onSafety = {
+                        navController.navigate(SAFETY_ROUTE) { launchSingleTop = true }
+                    })
+                }
+                composable(SAFETY_ROUTE) {
+                    CitizenSafetyScreen(lang = lang, onToday = {
+                        navController.navigate(TODAY_ROUTE) { launchSingleTop = true }
+                    })
                 }
                 composable(ABOUT_ROUTE) {
                     AboutScreen(

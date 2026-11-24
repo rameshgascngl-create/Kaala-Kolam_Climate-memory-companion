@@ -179,7 +179,7 @@ fun HomeScreen(
                         "Safety steps for heat, floods, cyclones, lightning and the sea",
                         "வெப்பம், வெள்ளம், புயல், மின்னல், கடலுக்கான பாதுகாப்பு வழிகள்",
                     ),
-                    onClick = { onNavigate("learn") },
+                    onClick = { onNavigate(SAFETY_ROUTE) },
                 )
                 Text(
                     text = localized(
@@ -244,6 +244,13 @@ fun HomeScreen(
         }
 
         val cards = listOf(
+            HomeRouteCard(
+                route = TODAY_ROUTE,
+                titleEn = "Today: weather and warnings",
+                titleTa = "இன்றைய வானிலை",
+                bodyEn = "Choose a pilot district, check data availability and find official weather information.",
+                bodyTa = "மாவட்டத்தைத் தேர்ந்தெடுத்து, வானிலைத் தகவல் கிடைக்கிறதா என்பதை அறிந்து, அதிகாரப்பூர்வத் தகவல் வழிகளைப் பாருங்கள்.",
+            ),
             HomeRouteCard(
                 route = "elders",
                 titleEn = "Interview an elder",
