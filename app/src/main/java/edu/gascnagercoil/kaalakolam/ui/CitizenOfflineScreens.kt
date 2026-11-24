@@ -29,7 +29,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import edu.gascnagercoil.kaalakolam.ui.theme.PrototypeTheme
 
-private fun citizenText(lang: String, en: String, ta: String) = if (lang == "ta") ta else en
+internal fun citizenText(lang: String, en: String, ta: String) = if (lang == "ta") ta else en
 
 // Local UI identifiers only, not official meteorological district codes.
 internal enum class PilotDistrict(val en: String, val ta: String) {
@@ -70,7 +70,7 @@ private val guides = listOf(
 )
 
 @Composable
-private fun CitizenPage(content: androidx.compose.foundation.lazy.LazyListScope.() -> Unit) {
+internal fun CitizenPage(content: androidx.compose.foundation.lazy.LazyListScope.() -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().background(PrototypeTheme.palette.ground).testTag("citizen.page"),
         contentPadding = PaddingValues(16.dp),
@@ -80,7 +80,7 @@ private fun CitizenPage(content: androidx.compose.foundation.lazy.LazyListScope.
 }
 
 @Composable
-private fun CitizenCard(content: @Composable ColumnScope.() -> Unit) {
+internal fun CitizenCard(content: @Composable ColumnScope.() -> Unit) {
     val palette = PrototypeTheme.palette
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -91,13 +91,13 @@ private fun CitizenCard(content: @Composable ColumnScope.() -> Unit) {
 }
 
 @Composable
-private fun CitizenHeading(text: String) {
+internal fun CitizenHeading(text: String) {
     Text(text, color = PrototypeTheme.palette.flour, style = MaterialTheme.typography.headlineMedium,
         modifier = Modifier.semantics { heading() })
 }
 
 @Composable
-private fun OfficialLink(lang: String, authority: String, url: String) {
+internal fun OfficialLink(lang: String, authority: String, url: String) {
     val handler = LocalUriHandler.current
     var failed by rememberSaveable(url) { mutableStateOf(false) }
     OutlinedButton(

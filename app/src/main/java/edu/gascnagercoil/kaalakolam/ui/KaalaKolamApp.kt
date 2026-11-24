@@ -75,6 +75,9 @@ import edu.gascnagercoil.kaalakolam.ui.theme.PrototypeTheme
 private const val ABOUT_ROUTE = "about"
 internal const val TODAY_ROUTE = "citizen-today"
 internal const val SAFETY_ROUTE = "citizen-safety"
+internal const val CLIMATE_ROUTE = "citizen-climate"
+internal const val LEARNING_ROUTE = "citizen-learning"
+internal const val COMMUNITY_ROUTE = "citizen-community"
 
 private enum class Destination(
     val route: String,
@@ -140,6 +143,14 @@ fun KaalaKolamApp(
         }
     }
 
+    fun navigateCitizen(route: String) {
+        if (route == currentRoute) return
+        navController.navigate(route) {
+            popUpTo(Destination.HOME.route) { inclusive = false }
+            launchSingleTop = true
+        }
+    }
+
     LaunchedEffect(uiState.appState.currentTab, initialRoute) {
         if (initialRoute == Destination.HOME.route) {
             val restored = Destination.entries.firstOrNull {
@@ -149,7 +160,7 @@ fun KaalaKolamApp(
             if (
                 restored != null &&
                 visibleRoute != restored.route &&
-                visibleRoute !in setOf(ABOUT_ROUTE, TODAY_ROUTE, SAFETY_ROUTE)
+                visibleRoute !in setOf(ABOUT_ROUTE, TODAY_ROUTE, SAFETY_ROUTE, CLIMATE_ROUTE, LEARNING_ROUTE, COMMUNITY_ROUTE)
             ) {
                 navController.navigate(restored.route) {
                     popUpTo(navController.graph.findStartDestination().id) { saveState = true }
@@ -161,7 +172,7 @@ fun KaalaKolamApp(
     }
 
     BackHandler(enabled = currentRoute != Destination.HOME.route) {
-        if (currentRoute in setOf(ABOUT_ROUTE, TODAY_ROUTE, SAFETY_ROUTE)) {
+        if (currentRoute in setOf(ABOUT_ROUTE, TODAY_ROUTE, SAFETY_ROUTE, CLIMATE_ROUTE, LEARNING_ROUTE, COMMUNITY_ROUTE)) {
             navController.popBackStack()
         } else {
             onCurrentTabChange(Destination.HOME.route)
@@ -198,11 +209,15 @@ fun KaalaKolamApp(
                 )
             },
             bottomBar = {
-                PrototypeTabs(
-                    lang = lang,
-                    currentRoute = currentRoute,
-                    onNavigate = ::navigatePrimary,
-                )
+                if (CitizenSection.entries.any { it.route == currentRoute }) {
+                    CitizenNavigationBar(lang, currentRoute, ::navigateCitizen)
+                } else {
+                    PrototypeTabs(
+                        lang = lang,
+                        currentRoute = currentRoute,
+                        onNavigate = ::navigatePrimary,
+                    )
+                }
             },
         ) { padding ->
             NavHost(
@@ -262,18 +277,23 @@ fun KaalaKolamApp(
                 }
                 composable(TODAY_ROUTE) {
                     CitizenTodayScreen(lang = lang, districtId = uiState.appState.pilotDistrictId,
-                        onDistrictChange = onPilotDistrictChange, onSafety = {
-                        if (!navController.popBackStack(SAFETY_ROUTE, inclusive = false)) {
-                            navController.navigate(SAFETY_ROUTE) { launchSingleTop = true }
-                        }
-                    })
+                        onDistrictChange = onPilotDistrictChange, onSafety = { navigateCitizen(SAFETY_ROUTE) })
                 }
                 composable(SAFETY_ROUTE) {
-                    CitizenSafetyScreen(lang = lang, onToday = {
-                        if (!navController.popBackStack(TODAY_ROUTE, inclusive = false)) {
-                            navController.navigate(TODAY_ROUTE) { launchSingleTop = true }
-                        }
-                    })
+                    CitizenSafetyScreen(lang = lang, onToday = { navigateCitizen(TODAY_ROUTE) })
+                }
+                composable(CLIMATE_ROUTE) {
+                    CitizenClimateScreen(lang, uiState.appState.pilotDistrictId)
+                }
+                composable(LEARNING_ROUTE) {
+                    CitizenLearningScreen(lang) { route ->
+                        Destination.entries.firstOrNull { it.route == route }?.let(::navigatePrimary)
+                    }
+                }
+                composable(COMMUNITY_ROUTE) {
+                    CitizenCommunityScreen(lang) { route ->
+                        Destination.entries.firstOrNull { it.route == route }?.let(::navigatePrimary)
+                    }
                 }
                 composable(ABOUT_ROUTE) {
                     AboutScreen(
