@@ -72,7 +72,7 @@ private val guides = listOf(
 @Composable
 private fun CitizenPage(content: androidx.compose.foundation.lazy.LazyListScope.() -> Unit) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize().background(PrototypeTheme.palette.ground),
+        modifier = Modifier.fillMaxSize().background(PrototypeTheme.palette.ground).testTag("citizen.page"),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         content = content,

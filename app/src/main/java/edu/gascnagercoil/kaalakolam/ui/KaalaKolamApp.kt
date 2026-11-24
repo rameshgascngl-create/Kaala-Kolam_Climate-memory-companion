@@ -261,12 +261,16 @@ fun KaalaKolamApp(
                 }
                 composable(TODAY_ROUTE) {
                     CitizenTodayScreen(lang = lang, onSafety = {
-                        navController.navigate(SAFETY_ROUTE) { launchSingleTop = true }
+                        if (!navController.popBackStack(SAFETY_ROUTE, inclusive = false)) {
+                            navController.navigate(SAFETY_ROUTE) { launchSingleTop = true }
+                        }
                     })
                 }
                 composable(SAFETY_ROUTE) {
                     CitizenSafetyScreen(lang = lang, onToday = {
-                        navController.navigate(TODAY_ROUTE) { launchSingleTop = true }
+                        if (!navController.popBackStack(TODAY_ROUTE, inclusive = false)) {
+                            navController.navigate(TODAY_ROUTE) { launchSingleTop = true }
+                        }
                     })
                 }
                 composable(ABOUT_ROUTE) {

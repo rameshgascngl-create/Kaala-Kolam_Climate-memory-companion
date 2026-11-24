@@ -1,6 +1,8 @@
 package edu.gascnagercoil.kaalakolam.ui
 
 import androidx.compose.ui.test.assertExists
+import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -19,7 +21,10 @@ class CitizenOfflineScreenTest {
         }
         composeRule.onNodeWithTag("citizen.weather.unavailable").assertExists()
         composeRule.onNodeWithText("Last official update: none").assertExists()
+        composeRule.onNodeWithTag("citizen.page").performScrollToIndex(2)
         composeRule.onNodeWithTag("citizen.district.KANNIYAKUMARI").performClick()
+        composeRule.onNodeWithTag("citizen.district.selected").assertTextEquals("Kanniyakumari")
+        composeRule.onNodeWithTag("citizen.page").performScrollToIndex(0)
         composeRule.onNodeWithTag("citizen.weather.unavailable").assertExists()
         composeRule.onNodeWithText("Live information unavailable").assertExists()
     }

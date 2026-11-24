@@ -13,7 +13,7 @@ permissions:
 jobs:
   compile:
     name: Compile
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out source
         uses: actions/checkout@v5
@@ -64,7 +64,7 @@ jobs:
     name: Reference capture
     needs: compile
     if: ${{ always() }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out source
         uses: actions/checkout@v5
@@ -231,7 +231,7 @@ jobs:
     name: Verify
     needs: [compile, golden-web]
     if: ${{ always() }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out source
         uses: actions/checkout@v5
@@ -428,7 +428,7 @@ jobs:
     name: HARD fidelity
     needs: [compile, golden-web, verify]
     if: ${{ always() }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out source
         uses: actions/checkout@v5
@@ -534,7 +534,7 @@ jobs:
     name: PARITY regression
     needs: [compile, golden-web, verify]
     if: ${{ always() }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out source
         uses: actions/checkout@v5
@@ -626,7 +626,7 @@ jobs:
     name: Contact sheet (informational)
     needs: [compile, golden-web, verify, hard, parity]
     if: ${{ always() }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out source
         uses: actions/checkout@v5
@@ -715,7 +715,7 @@ jobs:
     name: API 34 Elders process-death resume
     needs: verify
     if: ${{ needs.verify.result == 'success' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out source
         uses: actions/checkout@v5
@@ -754,7 +754,7 @@ jobs:
     name: API 34 Class process-death resume
     needs: verify
     if: ${{ needs.verify.result == 'success' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out source
         uses: actions/checkout@v5
