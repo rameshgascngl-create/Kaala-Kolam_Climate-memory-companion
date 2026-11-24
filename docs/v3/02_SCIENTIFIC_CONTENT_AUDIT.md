@@ -12,3 +12,5 @@ Generated asset changes must use extractor/overrides, with synchronized bilingua
 | SCI-08 | navigation Predict | Eight factual estimates are not forecasts; rename Climate Challenge without breaking persisted route. |
 | SCI-09 | predictions ocean,sea | Retain assessed historical 91% ocean heat uptake and 0.20 m global sea rise 1901–2018 with periods and uncertainty. https://www.ipcc.ch/report/ar6/syr/summary-for-policymakers/ |
 Full 24-topic, 24-clip, 77-word, 2-game and 3-demo review remains open. No external or owner approval asserted.
+
+2026-11-24: SCI-03 and SCI-04 correction batch implemented in canonical path overrides, bilingual draft register and deterministically transformed generated assets. Existing scores and question IDs retained. Regression test added; full extractor, visual and Android CI pending. Source: IPCC AR6 WGI chapters 8/11 and MHA flood/urban flood guidance. Tamil editorial approval remains pending; do not mark full findings closed before QA and corpus review.

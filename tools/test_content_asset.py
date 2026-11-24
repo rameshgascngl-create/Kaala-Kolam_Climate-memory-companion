@@ -225,5 +225,19 @@ class ContentAssetTest(unittest.TestCase):
         self.assertEqual(8, flags.count(0))
 
 
+    def test_v3_flood_observation_and_moisture_science(self):
+        downpour = next(q for q in self.payloads["elders.json"]["elderQuestions"] if q["id"] == "downpour")
+        self.assertNotIn("walk your street", downpour["check"]["en"])
+        self.assertIn("Never enter floodwater", downpour["check"]["en"])
+        self.assertIn("வெள்ளநீரில் நடந்தோ வாகனத்திலோ செல்லாதீர்கள்", downpour["check"]["ta"])
+        self.assertIn("saturation vapour pressure", downpour["sci"]["en"])
+        vapour = next(q for q in self.payloads["predictions.json"]["predictions"] if q["id"] == "vapour")
+        self.assertIn("saturation vapour pressure", vapour["q"]["en"])
+        self.assertIn("unchanged relative humidity", vapour["why"]["en"])
+        self.assertEqual((6, 8), (vapour["lo"], vapour["hi"]))
+        for key, value in (("Q.downpour.check", downpour["check"]), ("Q.downpour.sci", downpour["sci"]), ("PRED.vapour.why", vapour["why"])):
+            draft = next(d for d in self.overrides["draftTamil"] if d["key"] == key)
+            self.assertEqual((draft["en"], draft["ta"]), (value["en"], value["ta"]))
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

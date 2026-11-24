@@ -154,6 +154,36 @@
       "from": "குறைந்த அழுத்தத்தாலும்",
       "to": "குறைந்த காற்றழுத்தத்தாலும்",
       "reason": "Storm surge is partly driven by low atmospheric pressure; use the approved meteorological term காற்றழுத்தம்."
+    },
+    {
+      "path": "elderQuestions[3].check",
+      "from": "Look for local reports of daily rainfall above 100 mm, and walk your street after rain to see where water stands.",
+      "to": "Compare dated local rainfall records and official flood reports. Observe only from a safe, dry place after authorities say it is safe. Never enter floodwater on foot or in a vehicle.",
+      "reason": "SCI-04: avoid hazardous post-rain fieldwork; MHA flood and urban flood guidance https://dgfscdhg.gov.in/floods and https://dgfscdhg.gov.in/urban-floods."
+    },
+    {
+      "path": "elderQuestions[3].sci",
+      "from": "Heavy-rain events have increased in many parts of India, consistent with warmer air holding about 7% more moisture for each 1 °C of warming.",
+      "to": "Heavy rainfall has increased in many regions, including parts of India. Near typical surface temperatures, saturation vapour pressure increases by about 7% per 1 °C of warming. Actual moisture and local rainfall also depend on humidity, circulation and other conditions.",
+      "reason": "SCI-03: distinguish saturation vapour pressure from actual atmospheric moisture and rainfall; IPCC AR6 WGI chapters 8 and 11."
+    },
+    {
+      "path": "predictions[4].why",
+      "from": "This is one reason heavy downpours intensify in a warmer world.",
+      "to": "Near typical surface temperatures, saturation vapour pressure increases by roughly 7% per 1 °C. At unchanged relative humidity, moisture can increase at a similar rate. This helps explain why heavy rain can intensify, but local rainfall does not increase by a fixed 7%.",
+      "reason": "SCI-03: clarify thermodynamic relationship and avoid fixed local rainfall scaling; IPCC AR6 WGI chapter 8."
+    },
+    {
+      "path": "predictions[4].q.en",
+      "from": "For each 1 °C of warming, air can hold about how much more water vapour?",
+      "to": "Near typical surface temperatures, by about what percentage does saturation vapour pressure increase for each 1 °C of warming?",
+      "reason": "SCI-03: specify saturation vapour pressure, retain existing numeric answer range."
+    },
+    {
+      "path": "predictions[4].q.ta",
+      "from": "ஒவ்வொரு 1 °C வெப்ப உயர்வுக்கும் காற்று சுமார் எவ்வளவு கூடுதல் நீராவியைத் தாங்கும்?",
+      "to": "பூமியின் மேற்பரப்பில் பொதுவாக நிலவும் வெப்பநிலைகளில், ஒவ்வொரு 1 °C வெப்ப உயர்வுக்கும் நீராவியின் நிறைவுற்ற ஆவி அமுக்கம் சுமார் எத்தனை சதவீதம் அதிகரிக்கிறது?",
+      "reason": "SCI-03: specify saturation vapour pressure, retain existing numeric answer range."
     }
   ],
   "draftTamil": [
@@ -562,8 +592,8 @@
       "class": "eldersCrossCheck",
       "id": "downpour",
       "field": "sci",
-      "en": "Heavy-rain events have increased in many parts of India, consistent with warmer air holding about 7% more moisture for each 1 °C of warming.",
-      "ta": "இந்தியாவின் பல பகுதிகளில் கனமழை நிகழ்வுகள் அதிகரித்துள்ளன; ஒவ்வொரு 1 °C வெப்பமாதலுக்கும் வெப்பமான காற்று சுமார் 7% கூடுதல் ஈரப்பதத்தைத் தாங்குவதற்கு இது பொருந்துகிறது.",
+      "en": "Heavy rainfall has increased in many regions, including parts of India. Near typical surface temperatures, saturation vapour pressure increases by about 7% per 1 °C of warming. Actual moisture and local rainfall also depend on humidity, circulation and other conditions.",
+      "ta": "இந்தியாவின் சில பகுதிகள் உட்படப் பல பகுதிகளில் கனமழை நிகழ்வுகள் அதிகரித்துள்ளன. பூமியின் மேற்பரப்பில் பொதுவாக நிலவும் வெப்பநிலைகளில், ஒவ்வொரு 1 °C வெப்ப உயர்வுக்கும் நீராவியின் நிறைவுற்ற ஆவி அமுக்கம் சுமார் 7% அதிகரிக்கிறது. உண்மையான நீராவி அளவும் உள்ளூர் மழையும் ஈரப்பதம், வளிமண்டலச் சுழற்சி மற்றும் பிற நிலைமைகளைச் சார்ந்தவை.",
       "status": "DRAFT",
       "reviewState": "NEEDS_OWNER_REVIEW"
     },
@@ -582,8 +612,8 @@
       "class": "eldersCrossCheck",
       "id": "downpour",
       "field": "check",
-      "en": "Look for local reports of daily rainfall above 100 mm, and walk your street after rain to see where water stands.",
-      "ta": "ஒரு நாளில் 100 மிமீக்கு மேல் பெய்த மழை பற்றிய உள்ளூர் அறிக்கைகளைத் தேடுங்கள்; மழைக்குப் பின் உங்கள் தெருவில் நடந்து நீர் எங்கு தேங்குகிறது எனப் பாருங்கள்.",
+      "en": "Compare dated local rainfall records and official flood reports. Observe only from a safe, dry place after authorities say it is safe. Never enter floodwater on foot or in a vehicle.",
+      "ta": "தேதியுடன் கூடிய உள்ளூர் மழைப்பதிவுகளையும் அதிகாரப்பூர்வ வெள்ள அறிக்கைகளையும் ஒப்பிடுங்கள். அதிகாரிகள் பாதுகாப்பானது என்று அறிவித்த பின்னரே, நீர் தேங்காத பாதுகாப்பான இடத்திலிருந்து கவனியுங்கள். வெள்ளநீரில் நடந்தோ வாகனத்திலோ செல்லாதீர்கள்.",
       "status": "DRAFT",
       "reviewState": "NEEDS_OWNER_REVIEW"
     },
@@ -862,8 +892,8 @@
       "class": "predictExplanation",
       "id": "vapour",
       "field": "why",
-      "en": "This is one reason heavy downpours intensify in a warmer world.",
-      "ta": "வெப்பமான உலகில் பெருமழை தீவிரமடைவதற்கு இதுவும் ஒரு காரணம்.",
+      "en": "Near typical surface temperatures, saturation vapour pressure increases by roughly 7% per 1 °C. At unchanged relative humidity, moisture can increase at a similar rate. This helps explain why heavy rain can intensify, but local rainfall does not increase by a fixed 7%.",
+      "ta": "பூமியின் மேற்பரப்பில் பொதுவாக நிலவும் வெப்பநிலைகளில், ஒவ்வொரு 1 °C வெப்ப உயர்வுக்கும் நீராவியின் நிறைவுற்ற ஆவி அமுக்கம் சுமார் 7% அதிகரிக்கிறது. ஒப்பு ஈரப்பதம் மாறாதபோது நீராவி அளவும் ஏறத்தாழ இதே விகிதத்தில் அதிகரிக்கலாம். கனமழை தீவிரமடைவதற்கு இது ஒரு காரணம்; ஆனால் உள்ளூர் மழை அளவு எப்போதும் 7% அதிகரிக்கும் என்பதல்ல.",
       "status": "DRAFT",
       "reviewState": "NEEDS_OWNER_REVIEW"
     },
