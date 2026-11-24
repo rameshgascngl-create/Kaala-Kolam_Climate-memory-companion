@@ -2,7 +2,7 @@ name: Native Android CI
 
 on:
   push:
-    branches: [native-v2]
+    branches: [native-v2, development/kaala-kolam-v3-public-climate-intelligence]
   pull_request:
     branches: [main]
   workflow_dispatch:
